@@ -8,25 +8,18 @@ var messages = [];
 var viewsDir = 'views';
 var rootDir = '.';
 var fs = require('fs');
-var path = require('path');
-var fsFileExists = null;
-if (process.version.indexOf('v0.8') !== -1) {
-  fsFileExists = fs;
-} else {
-  fsFileExists = path;
-}
 var EventEmitter = require("events").EventEmitter;
 var eventEmitter = new EventEmitter();
 
-fsFileExists.exists(viewsDir, function (exists) {
+fs.exists(viewsDir, function (exists) {
   if (!exists) {
     viewsDir = '/usr/local/lib/node_modules/quickquestion/views';
     rootDir = '/usr/local/lib/node_modules/quickquestion';
-    fsFileExists.exists(viewsDir, function (exists) {
+    fs.exists(viewsDir, function (exists) {
       if (!exists) {
         viewsDir = '/usr/lib/node_modules/quickquestion/views';
         rootDir = '/usr/lib/node_modules/quickquestion';
-        fsFileExists.exists(viewsDir, function (exists) {
+        fs.exists(viewsDir, function (exists) {
           if (!exists) {
             viewsDir = 'views';
             rootDir = '.';
