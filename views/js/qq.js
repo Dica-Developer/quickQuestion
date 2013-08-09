@@ -32,7 +32,7 @@
         $("#messageToSend").val("");
         $("#message").text(response);
       }, 'text/plain');
-      xhr.on('error', function (response) {
+      xhr.fail(function (response) {
         $("#message").text(response || "Message failed to send!");
       });
     });
