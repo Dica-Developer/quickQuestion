@@ -33,7 +33,7 @@
         $("#message").text(response);
       }, 'text/plain');
       xhr.fail(function (response) {
-        $("#message").text(response || "Message failed to send!");
+        $("#message").text(response.responseText || "Message failed to send!");
       });
     });
     refreshClientlist();
