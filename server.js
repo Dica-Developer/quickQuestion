@@ -53,7 +53,6 @@ apps.on('up', function (name, service) {
   }
   if (newClient) {
     clients.push(service.address);
-    console.log('new client found on', 'http://' + service.address);
   }
 });
 
@@ -62,7 +61,6 @@ apps.on('down', function (name, service) {
   for (i = 0; i < clients.length; i++) {
     if (clients[i] === service.address) {
       clients.pop(service.address);
-      console.log('client shutdown', 'http://' + service.address);
     }
   }
 });
