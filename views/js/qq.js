@@ -28,7 +28,7 @@
   $(function () {
     $('#sendMessage').bind('vclick', function () {
       var xhr = $.post('/sendMessageToAll', $("#messageToSend").val(), function (response) {
-        $("#messageToSend").text("");
+        $("#messageToSend").val("");
         $("#message").text(response);
       }, 'text');
       xhr.fail(function (response) {
