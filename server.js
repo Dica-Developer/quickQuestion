@@ -71,9 +71,6 @@ process.on('SIGINT', function () {
 process.on('SIGTERM', function () {
   process.exit(0);
 });
-process.on('SIGKILL', function () {
-  process.exit(0);
-});
 
 var serverExternal = http.createServer(function (request, response) {
   var i = 0;
