@@ -110,9 +110,6 @@ serverExternal.listen(0, function () {
     host: os.hostname(),
     port: port
   });
-
-  console.log('quick question external url: ' + os.hostname() +
-    ':' + port);
 });
 
 var serverInternal = http.createServer(function (request, response) {
