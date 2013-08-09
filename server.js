@@ -199,5 +199,5 @@ var serverInternal = http.createServer(function (request, response) {
 });
 serverInternal.listen(process.env.PORT || 0, '127.0.0.1', function () {
   var port = serverInternal.address().port;
-  console.log('Quick Question startet on: 127.0.0.1:' + port);
+  console.log('Use Quick Question by visiting: http://127.0.0.1:' + port);
 });
