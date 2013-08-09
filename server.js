@@ -2,12 +2,8 @@ var http = require('http');
 var url = require('url');
 var polo = require('polo');
 var os = require('os');
-
 var sys = require('sys');
 var exec = require('child_process').exec;
-var child;
-
-
 var apps = polo();
 var clients = [];
 var messages = [];
@@ -118,6 +114,14 @@ serverExternal.listen(0, function () {
   });
 });
 
+function callback(resp) {
+  console.log('STATUS: ' + resp.statusCode);
+}
+
+function errorCallback(e) {
+  console.log('Cannot send to client.', e);
+}
+
 var serverInternal = http.createServer(function (request, response) {
   var i = 0;
   var requestUrl = url.parse(request.url, true);
@@ -134,12 +138,16 @@ var serverInternal = http.createServer(function (request, response) {
               hostname: clients[i].split(':')[0],
               port: clients[i].split(':')[1],
               path: '/receive',
-              method: 'POST'
+              method: 'POST',
+              headers: {
+                'Connection': 'keep-alive',
+                'Content-Length': body.length
+              }
             };
-            var req = http.request(options);
-            req.on('error', function (e) {
-              console.log('Cannot send to client.', e);
-            });
+            // set content type of message
+            var req = http.request(options, callback);
+            req.setTimeout(1000);
+            req.on('error', errorCallback);
             req.end(body);
           }
           response.end('Message send.');
@@ -206,7 +214,7 @@ var serverInternal = http.createServer(function (request, response) {
 serverInternal.listen(process.env.PORT || 0, '127.0.0.1', function () {
   var port = serverInternal.address().port;
   console.log('Use Quick Question by visiting: http://127.0.0.1:' + port);
-  child = exec('open http://127.0.0.1:' + port, function (error, stdout, stderr) {
+  var child = exec('open http://127.0.0.1:' + port, function (error, stdout, stderr) {
     sys.print('stdout: ' + stdout);
     sys.print('stderr: ' + stderr);
     if (error !== null) {
