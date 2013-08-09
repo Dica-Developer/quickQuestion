@@ -19,8 +19,10 @@
     <ul style="max-height: 300px; overflow:auto;" id="messagelist" data-role="listview" data-inset="true" data-filter="true"></ul>
     <textarea id="messageToSend" style="height:100px;"></textarea>
     <a href="#" id="sendMessage" data-role="button">Send</a>
-    <ul id="clientlist" data-role="listview" data-autodividers="true" data-inset="true" data-filter="true">
-    </ul>
+    <div data-role="collapsible" data-iconpos="right" data-collapsed-icon="arrow-d" data-expanded-icon="arrow-u">
+      <h4>Connected Clients</h4>
+      <ul id="clientlist" data-role="listview" data-autodividers="true" data-inset="true" data-filter="true"></ul>
+    </div>
   </div>
   <div data-role="footer"> 
     <h4 id="message"></h4> 
