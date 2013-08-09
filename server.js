@@ -84,11 +84,11 @@ var serverExternal = http.createServer(function (request, response) {
       request.on('end', function () {
         if (body && body.length > 0) {
           messages.push(body);
+          // todo notify ui about it
         } else {
           console.warn('Empty message received!');
         }
       });
-      // todo notify ui about it
     } else {
       response.writeHead(404, {
         'Content-Type': 'text/plain'
