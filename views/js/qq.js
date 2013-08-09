@@ -31,7 +31,7 @@
         $("#messagelist").html($("#messageToSend").val());
         $("#messageToSend").val("");
         $("#message").text(response);
-      });
+      }, 'text/plain');
       xhr.on('error', function (response) {
         $("#message").text(response || "Message failed to send!");
       });
