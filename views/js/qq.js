@@ -36,9 +36,9 @@
         $("#message").text(response.responseText || "Message failed to send!");
       });
     });
-    refreshClientlist();
-    setInterval(refreshClientlist, 10000);
     refreshMessagelist();
+    setInterval(refreshMessagelist, 500);
+    refreshClientlist();
     setInterval(refreshClientlist, 30000);
   });
 }());
