@@ -143,8 +143,9 @@ var serverInternal = http.createServer(function (request, response) {
               port: clients[i].split(':')[1],
               path: '/receive',
               method: 'POST',
+              agent: false,
               headers: {
-                'Connection': 'keep-alive',
+                'Connection': 'false',
                 'Content-Length': body.length
               }
             };
