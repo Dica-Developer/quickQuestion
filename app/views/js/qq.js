@@ -5,12 +5,7 @@
 
   function refreshClientlist() {
     $.get('/clients', function (data) {
-      var i = 0;
-      var content = '';
-      for (i = 0; i < data.length; i++) {
-        content = content + '<li>' + data[i] + '</li>';
-      }
-      $('#clientlist').html(content);
+
     });
   }
 
