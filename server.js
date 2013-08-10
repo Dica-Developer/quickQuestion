@@ -119,7 +119,11 @@ function callback(resp) {
 }
 
 function errorCallback(e) {
-  console.log('Cannot send to client.', e);
+  if (e && 'ECONNRESET' === e.code) {
+    console.warn('Connection reset on sending message to client');
+  } else {
+    console.error('Cannot send to client.', e);
+  }
 }
 
 var serverInternal = http.createServer(function (request, response) {
