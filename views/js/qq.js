@@ -11,6 +11,7 @@
         content = content + '<li>' + data[i] + '</li>';
       }
       $('#clientlist').html(content);
+      $('#clientlist').listview('refresh');
     });
   }
 
@@ -22,6 +23,7 @@
         content = content + '<li>' + data[i] + '</li>';
       }
       $('#messagelist').html(content);
+      $('#messagelist').listview('refresh');
     });
   }
 
