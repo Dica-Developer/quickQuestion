@@ -5,7 +5,6 @@ var mountFolder = function (connect, dir) {
   return connect.static(require('path').resolve(dir));
 };
 
-
 // # Globbing
 // for performance reasons we're only matching one level down:
 // 'test/spec/{,*/}*.js'
@@ -33,12 +32,11 @@ module.exports = function (grunt) {
     },
     clean: {
       dist: {
-        files: [
-          {
+        files: [{
             dot: true,
             src: [
-              '<%= config.tmp %>/*',
-              '<%= config.dist %>/*'
+                '<%= config.tmp %>/*',
+                '<%= config.dist %>/*'
             ]
           }
         ]
@@ -49,8 +47,8 @@ module.exports = function (grunt) {
         jshintrc: '.jshintrc'
       },
       all: [
-        '<%= config.app %>/scripts/{,*/}*.js',
-        'test/spec/{,*/}*.js'
+          '<%= config.app %>/scripts/{,*/}*.js',
+          'test/spec/{,*/}*.js'
       ]
     },
     requirejs: {
@@ -71,8 +69,8 @@ module.exports = function (grunt) {
         dest: '<%= config.dist %>'
       },
       html: [
-        '<%= config.app %>/popup.html',
-        '<%= config.app %>/options.html'
+          '<%= config.app %>/popup.html',
+          '<%= config.app %>/options.html'
       ]
     },
     usemin: {
@@ -84,8 +82,7 @@ module.exports = function (grunt) {
     },
     imagemin: {
       dist: {
-        files: [
-          {
+        files: [{
             expand: true,
             cwd: '<%= config.app %>/images',
             src: '{,*/}*.{png,jpg,jpeg}',
@@ -96,8 +93,7 @@ module.exports = function (grunt) {
     },
     svgmin: {
       dist: {
-        files: [
-          {
+        files: [{
             expand: true,
             cwd: '<%= config.app %>/images',
             src: '{,*/}*.svg',
@@ -110,8 +106,8 @@ module.exports = function (grunt) {
       dist: {
         files: {
           '<%= datameerTools.dist %>/styles/main.css': [
-            '.tmp/styles/{,*/}*.css',
-            '<%= config.app %>/styles/{,*/}*.css'
+              '.tmp/styles/{,*/}*.css',
+              '<%= config.app %>/styles/{,*/}*.css'
           ]
         }
       }
@@ -129,8 +125,7 @@ module.exports = function (grunt) {
            removeEmptyAttributes: true,
            removeOptionalTags: true*/
         },
-        files: [
-          {
+        files: [{
             expand: true,
             cwd: '<%= config.app %>',
             src: '*.html',
@@ -139,25 +134,21 @@ module.exports = function (grunt) {
         ]
       }
     },
-    // Put files not handled in other tasks here
     copy: {
       app: {
-        files: [
-          {
+        files: [{
             expand: true,
             cwd: '<%= config.tmp %>',
             dest: '<%= config.dist %>/node-webkit.app/Contents/Resources/',
             src: 'app.zip',
-            rename: function(dest, src) {
-              console.log(dest, src);
+            rename: function (dest, src) {
               return dest + src.substring(0, src.indexOf('/')) + '/app.nw';
             }
           }
         ]
       },
       webkit: {
-        files: [
-          {
+        files: [{
             expand: true,
             cwd: '<%=config.resources %>/node-webkit/mac-os',
             dest: '<%= config.dist %>/',
@@ -170,9 +161,9 @@ module.exports = function (grunt) {
       server: [],
       test: [],
       dist: [
-        'imagemin',
-        'svgmin',
-        'htmlmin'
+          'imagemin',
+          'svgmin',
+          'htmlmin'
       ]
     },
     compress: {
@@ -180,8 +171,7 @@ module.exports = function (grunt) {
         options: {
           archive: '<%= config.tmp %>/app.zip'
         },
-        files: [
-          {
+        files: [{
             expand: true,
             cwd: '<%= config.app %>',
             src: ['**/*'],
@@ -197,8 +187,7 @@ module.exports = function (grunt) {
     }
   });
 
-
-  grunt.registerTask('chmod', 'Add lost Permissions.', function() {
+  grunt.registerTask('chmod', 'Add lost Permissions.', function () {
     var fs = require('fs');
     fs.chmodSync('dist/node-webkit.app/Contents/Frameworks/node-webkit Helper EH.app/Contents/MacOS/node-webkit Helper EH', '555');
     fs.chmodSync('dist/node-webkit.app/Contents/Frameworks/node-webkit Helper NP.app/Contents/MacOS/node-webkit Helper NP', '555');
@@ -206,24 +195,42 @@ module.exports = function (grunt) {
     fs.chmodSync('dist/node-webkit.app/Contents/MacOS/node-webkit', '555');
   });
 
+  grunt.registerTask('createLinuxApp', 'Add lost Permissions.', function () {
+    // cat /usr/bin/nw app.nw > app && chmod +x app
+    var childProcess = require('child_process');
+    var exec = childProcess.exec;
+    var child = exec('cat resources/node-webkit/linux_ia64/nw tmp/app.zip > dist/qq && chmod +x app', function (error, stdout, stderr) {
+      console.log(stderr, stdout, error);
+    });
+    while (child.exitCode === null) {
+      console.log(child.exitCode);
+    }
+  });
+
+  grunt.registerTask('dist-linux', [
+      'clean:dist',
+      'compress:app',
+      'createLinuxApp'
+  ]);
+
   grunt.registerTask('dist', [
-    'clean:dist',
-    'copy:webkit',
-    'compress:app',
-    'copy:app',
-    'chmod'
+      'clean:dist',
+      'copy:webkit',
+      'compress:app',
+      'copy:app',
+      'chmod'
   ]);
 
   grunt.registerTask('test', [
-    'clean:server',
-    'concurrent:test',
-    'connect:test',
-    'mocha'
+      'clean:server',
+      'concurrent:test',
+      'connect:test',
+      'mocha'
   ]);
 
   grunt.registerTask('default', [
-    'jshint',
-    'test',
-    'build'
+      'jshint',
+      'test',
+      'build'
   ]);
 };
