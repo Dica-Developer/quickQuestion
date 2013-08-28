@@ -82,6 +82,17 @@ $(function () {
     }
   });
 
+  $("#messageToSend").bind('keydown', function (e) {
+    var isShiftPressed = e.shiftKey;
+    switch (e.which) {
+    case 13:
+      if (!isShiftPressed) {
+        e.preventDefault();
+      }
+      break;
+    }
+  });
+
   window.onresize = resize;
   resize();
 });
