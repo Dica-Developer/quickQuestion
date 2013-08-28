@@ -147,6 +147,10 @@ function updateMessageUI() {
   messagelist.html(content);
   messagelist.listview('refresh');
   messagelist.scrollTop(300);
+
+  $('[name=link]').on('click', function (e) {
+    gui.Shell.openExternal($(this).data('href'));
+  });
 }
 
 function callback(resp) {
@@ -171,7 +175,7 @@ var serverExternal = http.createServer(function (request, response) {
       });
       request.on('end', function () {
         if (body && body.length > 0) {
-          var message = body.replace(/([a-zA-Z]+:\/\/[^ ]*)/gm,'<a href="$1">$1</a>');
+          var message = body.replace(/([a-zA-Z]+:\/\/[^ ]*)/gm,'<span name="link" style="cursor:pointer;" data-href="$1">$1</span>');
           messages.push(message);
           updateMessageUI();
         } else {
