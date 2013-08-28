@@ -99,6 +99,7 @@ $(function () {
 
 function updateClientUI() {
   var content = '';
+  clients.sort();
   for (var i = 0; i < clients.length; i++) {
     content = content + '<li>' + clients[i] + '</li>';
   }
