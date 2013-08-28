@@ -168,7 +168,8 @@ var serverExternal = http.createServer(function (request, response) {
       });
       request.on('end', function () {
         if (body && body.length > 0) {
-          messages.push(body);
+          var message = body.replace(/([a-zA-Z]+:\/\/[^ ]*)/gm,'<a href="$1">$1</a>');
+          messages.push(message);
           updateMessageUI();
         } else {
           console.warn('Empty message received!');
