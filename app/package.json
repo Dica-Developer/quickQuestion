@@ -1,7 +1,7 @@
 {
-    "name": "QuickQuestion",
-    "main": "views/index.html",
-    "window": {
-            "toolbar": true
-        }
+  "name": "QuickQuestion",
+  "main": "views/index.html",
+  "window": {
+    "toolbar": false
+  }
 }
