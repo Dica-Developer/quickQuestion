@@ -134,7 +134,7 @@ apps.on('down', function (name, service) {
 });
 
 function updateMessageUI() {
-  flipTray()
+  flipTray();
   var content = '';
   for (var i = 0; i < messages.length; i++) {
     content = content + '<li>' + messages[i] + '</li>';
