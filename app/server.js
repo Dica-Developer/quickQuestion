@@ -43,9 +43,6 @@ function sendMessageToAll(message) {
     }
     return 'Message send.';
   } else {
-    response.writeHead(404, {
-      'Content-Type': 'text/plain'
-    });
     return 'We do not send empty messages.';
   }
 }
