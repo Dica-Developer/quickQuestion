@@ -8,13 +8,15 @@ var apps = polo();
 var clients = [];
 var messages = [];
 
-var tray = new gui.Tray({icon: 'img/icon1.png'});
+var tray = new gui.Tray({
+  icon: 'img/icon1.png'
+});
 
-function flipTray(){
+function flipTray() {
   var icon = tray.icon;
-  if(icon.indexOf('icon1') > -1){
+  if (icon.indexOf('icon1') > -1) {
     tray.icon = 'img/icon2.png';
-  }else{
+  } else {
     tray.icon = 'img/icon1.png';
   }
 }
@@ -34,22 +36,21 @@ $(function () {
     sendMessage($("#messageToSend").val());
   });
 
-  $("#messageToSend").bind('keyup', function(e){
+  $("#messageToSend").bind('keyup', function (e) {
     var isShiftPressed = e.shiftKey;
-    switch(e.which){
-      case 13:
-        if(!isShiftPressed){
-          e.preventDefault();
-          sendMessage($("#messageToSend").val());
-        }
-        break;
+    switch (e.which) {
+    case 13:
+      if (!isShiftPressed) {
+        e.preventDefault();
+        sendMessage($("#messageToSend").val());
+      }
+      break;
     }
   });
 
 });
 
-
-function updateClientUI(){
+function updateClientUI() {
   var content = '';
   for (var i = 0; i < clients.length; i++) {
     content = content + '<li>' + clients[i] + '</li>';
@@ -85,7 +86,7 @@ apps.on('down', function (name, service) {
   updateClientUI();
 });
 
-function updateMessageUI(){
+function updateMessageUI() {
   flipTray()
   var content = '';
   for (var i = 0; i < messages.length; i++) {
