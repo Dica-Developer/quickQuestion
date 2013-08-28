@@ -20,7 +20,8 @@ module.exports = function (grunt) {
   var config = {
     app: 'app',
     dist: 'dist',
-    tmp: 'tmp'
+    tmp: 'tmp',
+    resources: 'resources'
   };
 
   grunt.initConfig({
@@ -140,19 +141,27 @@ module.exports = function (grunt) {
     },
     // Put files not handled in other tasks here
     copy: {
-      dist: {
+      app: {
         files: [
           {
             expand: true,
-            dot: true,
             cwd: '<%= config.tmp %>',
-            dest: '<%= config.dist %>',
-            src: [
-              '*.zip'
-            ],
+            dest: '<%= config.dist %>/node-webkit.app/Contents/Resources/',
+            src: 'app.zip',
             rename: function(dest, src) {
+              console.log(dest, src);
               return dest + src.substring(0, src.indexOf('/')) + '/app.nw';
             }
+          }
+        ]
+      },
+      webkit: {
+        files: [
+          {
+            expand: true,
+            cwd: '<%=config.resources %>/node-webkit/mac-os',
+            dest: '<%= config.dist %>/',
+            src: '**'
           }
         ]
       }
@@ -167,7 +176,7 @@ module.exports = function (grunt) {
       ]
     },
     compress: {
-      main: {
+      app: {
         options: {
           archive: '<%= config.tmp %>/app.zip'
         },
@@ -188,10 +197,21 @@ module.exports = function (grunt) {
     }
   });
 
-  grunt.registerTask('zipApp', [
+
+  grunt.registerTask('chmod', 'Add lost Permissions.', function() {
+    var fs = require('fs');
+    fs.chmodSync('dist/node-webkit.app/Contents/Frameworks/node-webkit Helper EH.app/Contents/MacOS/node-webkit Helper EH', '555');
+    fs.chmodSync('dist/node-webkit.app/Contents/Frameworks/node-webkit Helper NP.app/Contents/MacOS/node-webkit Helper NP', '555');
+    fs.chmodSync('dist/node-webkit.app/Contents/Frameworks/node-webkit Helper.app/Contents/MacOS/node-webkit Helper', '555');
+    fs.chmodSync('dist/node-webkit.app/Contents/MacOS/node-webkit', '555');
+  });
+
+  grunt.registerTask('dist', [
     'clean:dist',
-    'compress',
-    'copy:dist'
+    'copy:webkit',
+    'compress:app',
+    'copy:app',
+    'chmod'
   ]);
 
   grunt.registerTask('test', [
@@ -199,20 +219,6 @@ module.exports = function (grunt) {
     'concurrent:test',
     'connect:test',
     'mocha'
-  ]);
-
-  grunt.registerTask('build', [
-    'clean:dist',
-    'chromeManifest:dist',
-    'useminPrepare',
-    'requirejs',
-    'concurrent:dist',
-    'cssmin',
-    'concat',
-    'uglify',
-    'copy',
-    'usemin',
-    'crx'
   ]);
 
   grunt.registerTask('default', [
