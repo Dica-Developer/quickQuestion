@@ -21,6 +21,34 @@ function flipTray() {
   }
 }
 
+function sendMessageToAll(message) {
+  if (message && message.length > 0) {
+    for (var i = 0; i < clients.length; i++) {
+      var options = {
+        hostname: clients[i].split(':')[0],
+        port: clients[i].split(':')[1],
+        path: '/receive',
+        method: 'POST',
+        agent: false,
+        headers: {
+          'Connection': 'false',
+          'Content-Length': message.length
+        }
+      };
+      // set content type of message
+      var req = http.request(options, callback);
+      req.setTimeout(1000);
+      req.on('error', errorCallback);
+      req.end(message);
+    }
+    return 'Message send.';
+  } else {
+    response.writeHead(404, {
+      'Content-Type': 'text/plain'
+    });
+    return 'We do not send empty messages.';
+  }
+}
 
 function sendMessage(val) {
   var result = sendMessageToAll(val);
@@ -29,8 +57,17 @@ function sendMessage(val) {
   }
   $("#message").text(result);
 }
-$(function () {
 
+function resize() {
+  var newHeight = $(window).innerHeight() + $('#messageToSend').height() - ($('#content').height() + $('#footer').height() + 30);
+  if (newHeight < $('#messageToSend').height()) {
+    $('#messageToSend').height(newHeight);
+  } else {
+    $('#messageToSend').height(newHeight + $('#messageToSend').height());
+  }
+}
+
+$(function () {
   var sendMessageButton = $('#sendMessage');
   sendMessageButton.bind('vclick', function () {
     sendMessage($("#messageToSend").val());
@@ -48,6 +85,8 @@ $(function () {
     }
   });
 
+  window.onresize = resize;
+  resize();
 });
 
 function updateClientUI() {
@@ -106,35 +145,6 @@ function errorCallback(e) {
     console.warn('Connection reset on sending message to client');
   } else {
     console.error('Cannot send to client.', e);
-  }
-}
-
-function sendMessageToAll(message) {
-  if (message && message.length > 0) {
-    for (var i = 0; i < clients.length; i++) {
-      var options = {
-        hostname: clients[i].split(':')[0],
-        port: clients[i].split(':')[1],
-        path: '/receive',
-        method: 'POST',
-        agent: false,
-        headers: {
-          'Connection': 'false',
-          'Content-Length': message.length
-        }
-      };
-      // set content type of message
-      var req = http.request(options, callback);
-      req.setTimeout(1000);
-      req.on('error', errorCallback);
-      req.end(message);
-    }
-    return 'Message send.';
-  } else {
-    response.writeHead(404, {
-      'Content-Type': 'text/plain'
-    });
-    return 'We do not send empty messages.';
   }
 }
 
