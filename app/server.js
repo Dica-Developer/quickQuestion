@@ -2,9 +2,23 @@ var http = require('http');
 var url = require('url');
 var os = require('os');
 var polo = require('polo');
+var gui = require('nw.gui');
+
 var apps = polo();
 var clients = [];
 var messages = [];
+
+var tray = new gui.Tray({icon: 'img/icon1.png'});
+
+function flipTray(){
+  var icon = tray.icon;
+  if(icon.indexOf('icon1') > -1){
+    tray.icon = 'img/icon2.png';
+  }else{
+    tray.icon = 'img/icon1.png';
+  }
+}
+
 
 function sendMessage(val) {
   var result = sendMessageToAll(val);
@@ -72,6 +86,7 @@ apps.on('down', function (name, service) {
 });
 
 function updateMessageUI(){
+  flipTray()
   var content = '';
   for (var i = 0; i < messages.length; i++) {
     content = content + '<li>' + messages[i] + '</li>';
