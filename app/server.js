@@ -142,6 +142,7 @@ function updateMessageUI() {
   var messagelist = $('#messagelist');
   messagelist.html(content);
   messagelist.listview('refresh');
+  messagelist.scrollTop(300);
 }
 
 function callback(resp) {
