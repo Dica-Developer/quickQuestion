@@ -6,23 +6,43 @@ var apps = polo();
 var clients = [];
 var messages = [];
 
+function sendMessage(val) {
+  var result = sendMessageToAll(val);
+  if ('Message send.' === result) {
+    $("#messageToSend").val("");
+  }
+  $("#message").text(result);
+}
 $(function () {
-  $('#sendMessage').bind('vclick', function () {
-    var result = sendMessageToAll($("#messageToSend").val());
-    if ('Message send.' === result) {
-      $("#messageToSend").val("");
-    }
-    $("#message").text(result);
+
+  var sendMessageButton = $('#sendMessage');
+  sendMessageButton.bind('vclick', function () {
+    sendMessage($("#messageToSend").val());
   });
+
+  $("#messageToSend").bind('keyup', function(e){
+    var isShiftPressed = e.shiftKey;
+    switch(e.which){
+      case 13:
+        if(!isShiftPressed){
+          e.preventDefault();
+          sendMessage($("#messageToSend").val());
+        }
+        break;
+    }
+  });
+
 });
+
 
 function updateClientUI(){
   var content = '';
   for (var i = 0; i < clients.length; i++) {
     content = content + '<li>' + clients[i] + '</li>';
   }
-  $('#clientlist').html(content);
-  $('#clientlist').listview('refresh');
+  var clientlist = $('#clientlist');
+  clientlist.html(content);
+  clientlist.listview('refresh');
 }
 
 apps.on('up', function (name, service) {
@@ -56,8 +76,9 @@ function updateMessageUI(){
   for (var i = 0; i < messages.length; i++) {
     content = content + '<li>' + messages[i] + '</li>';
   }
-  $('#messagelist').html(content);
-  $('#messagelist').listview('refresh');
+  var messagelist = $('#messagelist');
+  messagelist.html(content);
+  messagelist.listview('refresh');
 }
 
 function callback(resp) {
@@ -74,7 +95,7 @@ function errorCallback(e) {
 
 function sendMessageToAll(message) {
   if (message && message.length > 0) {
-    for (i = 0; i < clients.length; i++) {
+    for (var i = 0; i < clients.length; i++) {
       var options = {
         hostname: clients[i].split(':')[0],
         port: clients[i].split(':')[1],
