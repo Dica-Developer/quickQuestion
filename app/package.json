@@ -1,6 +1,7 @@
 {
     "name": "QuickQuestion",
     "main": "views/index.html",
+    "version": "v0.0.1",
     "window": {
             "toolbar": true
         }

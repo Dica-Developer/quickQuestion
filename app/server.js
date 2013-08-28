@@ -3,10 +3,13 @@ var url = require('url');
 var os = require('os');
 var polo = require('polo');
 var gui = require('nw.gui');
+var autoUpdate = require('../auto-update.js');
 
 var apps = polo();
 var clients = [];
 var messages = [];
+
+autoUpdate.checkForNewVerion();
 
 var tray = new gui.Tray({icon: 'img/icon1.png'});
 
