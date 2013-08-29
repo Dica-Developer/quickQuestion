@@ -59,11 +59,7 @@ function sendMessage(val) {
 
 function resize() {
   var newHeight = $(window).innerHeight() + $('#messageToSend').height() - ($('#content').height() + $('#footer').height() + 30);
-  if (newHeight < $('#messageToSend').height()) {
-    $('#messageToSend').height(newHeight);
-  } else {
-    $('#messageToSend').height(newHeight + $('#messageToSend').height());
-  }
+  $('#messageToSend').height(newHeight);
 }
 
 $(function () {
