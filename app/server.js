@@ -15,6 +15,8 @@ var tray = new gui.Tray({
 });
 
 function flipTray() {
+  'use strict';
+
   var icon = tray.icon;
   if (icon.indexOf('icon1') > -1) {
     tray.icon = 'img/icon2.png';
@@ -23,7 +25,25 @@ function flipTray() {
   }
 }
 
+function responseCallback(resp) {
+  'use strict';
+
+  console.log('STATUS: ' + resp.statusCode);
+}
+
+function errorCallback(event) {
+  'use strict';
+
+  if (event && 'ECONNRESET' === event.code) {
+    console.warn('Connection reset on sending message to client');
+  } else {
+    console.error('Cannot send to client.', event);
+  }
+}
+
 function sendMessageToAll(message) {
+  'use strict';
+
   if (message && message.length > 0) {
     for (var i = 0; i < clients.length; i++) {
       var options = {
@@ -38,7 +58,7 @@ function sendMessageToAll(message) {
         }
       };
       // set content type of message
-      var req = http.request(options, callback);
+      var req = http.request(options, responseCallback);
       req.setTimeout(1000);
       req.on('error', errorCallback);
       req.end(message);
@@ -50,37 +70,45 @@ function sendMessageToAll(message) {
 }
 
 function sendMessage(val) {
+  'use strict';
+
   var result = sendMessageToAll(val);
   if ('Message send.' === result) {
-    $("#messageToSend").val("");
+    $('#messageToSend').val('');
   }
-  $("#message").text(result);
+  $('#message').text(result);
 }
 
 function resize() {
-  var newHeight = $(window).innerHeight() + $('#messageToSend').height() - ($('#content').height() + $('#footer').height() + 30);
-  $('#messageToSend').height(newHeight);
+  'use strict';
+
+  var messageToSend = $('#messageToSend');
+  var newHeight = $(window).innerHeight() + messageToSend.height() - ($('#content').height() + $('#footer').height() + 30);
+  messageToSend.height(newHeight);
 }
 
 $(function () {
+  'use strict';
+
   var sendMessageButton = $('#sendMessage');
   sendMessageButton.bind('vclick', function () {
-    sendMessage($("#messageToSend").val());
+    sendMessage($('#messageToSend').val());
   });
 
-  $("#messageToSend").bind('keyup', function (e) {
+  var messageToSend = $('#messageToSend');
+  messageToSend.bind('keyup', function (e) {
     var isShiftPressed = e.shiftKey;
     switch (e.which) {
     case 13:
       if (!isShiftPressed) {
         e.preventDefault();
-        sendMessage($("#messageToSend").val());
+        sendMessage($('#messageToSend').val());
       }
       break;
     }
   });
 
-  $("#messageToSend").bind('keydown', function (e) {
+  messageToSend.bind('keydown', function (e) {
     var isShiftPressed = e.shiftKey;
     switch (e.which) {
     case 13:
@@ -102,6 +130,8 @@ $(function () {
 });
 
 function updateClientUI() {
+  'use strict';
+
   var content = '';
   clients.sort();
   for (var i = 0; i < clients.length; i++) {
@@ -113,6 +143,8 @@ function updateClientUI() {
 }
 
 apps.on('up', function (name, service) {
+  'use strict';
+
   // handle service name 'quickquestion'
   var newClient = true;
   var i;
@@ -129,6 +161,8 @@ apps.on('up', function (name, service) {
 });
 
 apps.on('down', function (name, service) {
+  'use strict';
+
   var i;
   for (i = 0; i < clients.length; i++) {
     if (clients[i] === service.address) {
@@ -139,46 +173,39 @@ apps.on('down', function (name, service) {
 });
 
 function updateMessageUI() {
+  'use strict';
+
   flipTray();
   var content = '';
   for (var i = 0; i < messages.length; i++) {
     content = content + '<li>' + messages[i] + '</li>';
   }
-  var messagelist = $('#messagelist');
-  messagelist.html(content);
-  messagelist.listview('refresh');
-  messagelist.scrollTop($('#messagelist')[0].scrollHeight);
+  var messageList = $('#messagelist');
+  messageList.html(content);
+  messageList.listview('refresh');
+  messageList.scrollTop(messageList[0].scrollHeight);
   clearTimeout(resizeTimeout);
   resizeTimeout = window.setTimeout(resize, 100);
 
-  $('[name=link]').on('click', function (e) {
+  $('[data-name="link"]').on('click', function () {
     gui.Shell.openExternal($(this).data('href'));
   });
 }
 
-function callback(resp) {
-  console.log('STATUS: ' + resp.statusCode);
-}
-
-function errorCallback(e) {
-  if (e && 'ECONNRESET' === e.code) {
-    console.warn('Connection reset on sending message to client');
-  } else {
-    console.error('Cannot send to client.', e);
-  }
-}
 
 var serverExternal = http.createServer(function (request, response) {
+  'use strict';
+
   var requestUrl = url.parse(request.url, true);
   if ('POST' === request.method) {
     if ('/receive' === requestUrl.pathname) {
-      var body = "";
+      var body = '';
       request.on('data', function (chunk) {
         body += chunk;
       });
       request.on('end', function () {
         if (body && body.length > 0) {
-          var message = body.replace(/([a-zA-Z]+:\/\/[^ ]*)/gm, '<span name="link" style="cursor:pointer;" data-href="$1">$1</span>');
+          var message = body.replace(/([a-zA-Z]+:\/\/[^ ]*)/gm, '<span data-name="link" style="cursor:pointer;" data-href="$1">$1</span>');
           messages.push(message);
           updateMessageUI();
         } else {
@@ -200,6 +227,8 @@ var serverExternal = http.createServer(function (request, response) {
 });
 
 serverExternal.listen(0, function () {
+  'use strict';
+
   var port = serverExternal.address().port;
 
   apps.put({
