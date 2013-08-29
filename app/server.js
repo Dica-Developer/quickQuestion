@@ -8,6 +8,7 @@ var autoUpdate = require('../auto-update.js');
 var apps = polo();
 var clients = [];
 var messages = [];
+var resizeTimeout;
 
 var tray = new gui.Tray({
   icon: 'img/icon1.png'
@@ -94,8 +95,12 @@ $(function () {
     }
   });
 
-  window.onresize = resize;
-  resize();
+  window.onresize = function () {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = window.setTimeout(resize, 100);
+  };
+  clearTimeout(resizeTimeout);
+  resizeTimeout = window.setTimeout(resize, 100);
 
   autoUpdate.checkForNewVersion();
 });
@@ -147,7 +152,8 @@ function updateMessageUI() {
   messagelist.html(content);
   messagelist.listview('refresh');
   messagelist.scrollTop(300);
-  resize();
+  clearTimeout(resizeTimeout);
+  resizeTimeout = window.setTimeout(resize, 100);
 
   $('[name=link]').on('click', function (e) {
     gui.Shell.openExternal($(this).data('href'));
