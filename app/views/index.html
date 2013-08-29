@@ -23,6 +23,17 @@
   <div id="footer" data-role="footer"> 
     <h4 id="message"></h4> 
   </div>
+    <div class="ui-popup-container ui-popup-hidden" id="popupDialog-popup"><div data-role="popup" id="popupDialog" data-overlay-theme="a" data-theme="c" style="max-width:400px;" class="ui-corner-all ui-popup ui-body-c ui-overlay-shadow" aria-disabled="false" data-disabled="false" data-shadow="true" data-corners="true" data-transition="none" data-position-to="origin">
+        <div data-role="header" data-theme="a" class="ui-corner-top ui-header ui-bar-a" role="banner">
+            <h1 class="ui-title" role="heading" aria-level="1">Update</h1>
+        </div>
+        <div data-role="content" data-theme="d" class="ui-corner-bottom ui-content ui-body-d" role="main">
+            <h3 class="ui-title">An update is available.</h3>
+            <p>Do you want to apply this update</p>
+            <a href="#" id="update-no" data-role="button" data-inline="true" data-rel="back" data-theme="c" data-corners="true" data-shadow="true" data-iconshadow="true" data-wrapperels="span" class="ui-btn ui-btn-up-c ui-shadow ui-btn-corner-all ui-btn-inline"><span class="ui-btn-inner ui-btn-corner-all"><span class="ui-btn-text">No</span></span></a>
+            <a href="#" id="update-yes" data-role="button" data-inline="true" data-rel="back" data-transition="flow" data-theme="b" data-corners="true" data-shadow="true" data-iconshadow="true" data-wrapperels="span" class="ui-btn ui-btn-up-b ui-shadow ui-btn-corner-all ui-btn-inline"><span class="ui-btn-inner ui-btn-corner-all"><span class="ui-btn-text">Yes</span></span></a>
+        </div>
+    </div></div>
 </div>
 </body>
 </html>

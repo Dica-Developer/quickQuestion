@@ -4,11 +4,30 @@ var os = require('os');
 var polo = require('polo');
 var gui = require('nw.gui');
 var autoUpdate = require('../js/auto-update.js');
+var currentWindow = gui.Window.get();
 
 var apps = polo();
 var clients = [];
 var messages = [];
 var resizeTimeout;
+
+autoUpdate.on('updateNeeded', function(){
+  'use strict';
+  var popupDialog = $('#popupDialog');
+  var windowTitle = currentWindow.title;
+  popupDialog.on('click', '#update-yes', function(){
+    autoUpdate.emit('update');
+    autoUpdate.on('progress', function(message){
+      currentWindow.title = message;
+    });
+    autoUpdate.on('updateDone', function(progress){
+      currentWindow.title = windowTitle;
+      console.log(progress);
+      //inform user to restart
+    });
+  });
+  popupDialog.popup('open');
+});
 
 var tray = new gui.Tray({
   icon: 'img/icon1.png'
@@ -125,8 +144,6 @@ $(function () {
   };
   clearTimeout(resizeTimeout);
   resizeTimeout = window.setTimeout(resize, 100);
-
-  autoUpdate.checkForNewVersion();
 });
 
 function updateClientUI() {
