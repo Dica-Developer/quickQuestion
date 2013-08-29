@@ -1,15 +1,6 @@
 /*jshint camelcase: false*/
 // Generated on 2013-08-01 using generator-chrome-extension 0.2.3
 'use strict';
-var mountFolder = function (connect, dir) {
-  return connect.static(require('path').resolve(dir));
-};
-
-// # Globbing
-// for performance reasons we're only matching one level down:
-// 'test/spec/{,*/}*.js'
-// use this if you want to recursively match all subfolders:
-// 'test/spec/**/*.js'
 
 module.exports = function (grunt) {
   // load all grunt tasks
@@ -19,23 +10,16 @@ module.exports = function (grunt) {
   var config = {
     app: 'app',
     dist: 'dist',
-    tmp: 'tmp',
     resources: 'resources'
   };
 
   grunt.initConfig({
     config: config,
-    watch: {
-      options: {
-        spawn: false
-      }
-    },
     clean: {
       dist: {
         files: [{
             dot: true,
             src: [
-                '<%= config.tmp %>/*',
                 '<%= config.dist %>/*'
             ]
           }
@@ -47,30 +31,15 @@ module.exports = function (grunt) {
         jshintrc: '.jshintrc'
       },
       all: [
-          '<%= config.app %>/scripts/{,*/}*.js',
-          'test/spec/{,*/}*.js'
+          '<%= config.app %>/{,*/}*.js'
       ]
-    },
-    requirejs: {
-      dist: {
-        // Options: https://github.com/jrburke/r.js/blob/master/build/example.build.js
-        options: {
-          // `name` and `out` is set by grunt-usemin
-          baseUrl: 'app/scripts',
-          optimize: 'none',
-          preserveLicenseComments: false,
-          useStrict: true,
-          wrap: true
-        }
-      }
     },
     useminPrepare: {
       options: {
         dest: '<%= config.dist %>'
       },
       html: [
-          '<%= config.app %>/popup.html',
-          '<%= config.app %>/options.html'
+          '<%= config.app %>/{,*/}*.html'
       ]
     },
     usemin: {
@@ -86,17 +55,6 @@ module.exports = function (grunt) {
             expand: true,
             cwd: '<%= config.app %>/images',
             src: '{,*/}*.{png,jpg,jpeg}',
-            dest: '<%= config.dist %>/images'
-          }
-        ]
-      }
-    },
-    svgmin: {
-      dist: {
-        files: [{
-            expand: true,
-            cwd: '<%= config.app %>/images',
-            src: '{,*/}*.svg',
             dest: '<%= config.dist %>/images'
           }
         ]
@@ -153,20 +111,6 @@ module.exports = function (grunt) {
           }
         ]
       }
-    },
-    concurrent: {
-      server: [],
-      test: [],
-      dist: [
-          'imagemin',
-          'svgmin',
-          'htmlmin'
-      ]
-    },
-    bower: {
-      all: {
-        rjsConfig: '<%= config.app %>/scripts/popup.js'
-      }
     }
   });
 
@@ -203,16 +147,8 @@ module.exports = function (grunt) {
       'chmod'
   ]);
 
-  grunt.registerTask('test', [
-      'clean:server',
-      'concurrent:test',
-      'connect:test',
-      'mocha'
+  grunt.registerTask('check', [
+    'jshint'
   ]);
 
-  grunt.registerTask('default', [
-      'jshint',
-      'test',
-      'build'
-  ]);
 };
