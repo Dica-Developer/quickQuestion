@@ -33,7 +33,8 @@ module.exports = function (grunt) {
         jshintrc: '.jshintrc'
       },
       all: [
-        '<%= config.app %>/{,*/}*.js'
+        '<%= config.app %>/js/server.js',
+        '<%= config.app %>/js/auto-update.js'
       ]
     },
     useminPrepare: {
