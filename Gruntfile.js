@@ -18,14 +18,12 @@ module.exports = function (grunt) {
     config: config,
     clean: {
       dist: {
-        files: [
-          {
-            dot: true,
-            src: [
-              '<%= config.dist %>/*'
-            ]
-          }
-        ]
+        files: [{
+          dot: true,
+          src: [
+            '<%= config.dist %>/*'
+          ]
+        }]
       }
     },
     jshint: {
@@ -54,14 +52,12 @@ module.exports = function (grunt) {
     },
     imagemin: {
       dist: {
-        files: [
-          {
-            expand: true,
-            cwd: '<%= config.app %>/images',
-            src: '{,*/}*.{png,jpg,jpeg}',
-            dest: '<%= config.dist %>/images'
-          }
-        ]
+        files: [{
+          expand: true,
+          cwd: '<%= config.app %>/images',
+          src: '{,*/}*.{png,jpg,jpeg}',
+          dest: '<%= config.dist %>/images'
+        }]
       }
     },
     cssmin: {
@@ -87,36 +83,38 @@ module.exports = function (grunt) {
            removeEmptyAttributes: true,
            removeOptionalTags: true*/
         },
-        files: [
-          {
-            expand: true,
-            cwd: '<%= config.app %>',
-            src: '*.html',
-            dest: '<%= config.dist %>'
-          }
-        ]
+        files: [{
+          expand: true,
+          cwd: '<%= config.app %>',
+          src: '*.html',
+          dest: '<%= config.dist %>'
+        }]
       }
     },
     copy: {
-      app: {
-        files: [
-          {
-            expand: true,
-            cwd: '<%= config.app %>',
-            dest: '<%= config.dist %>/node-webkit.app/Contents/Resources/app.nw',
-            src: '**'
-          }
-        ]
+      appLinux: {
+        files: [{
+          expand: true,
+          cwd: '<%= config.app %>',
+          dest: '<%= config.dist %>/app.nw',
+          src: '**'
+        }]
+      },
+      appMacos: {
+        files: [{
+          expand: true,
+          cwd: '<%= config.app %>',
+          dest: '<%= config.dist %>/node-webkit.app/Contents/Resources/app.nw',
+          src: '**'
+        }]
       },
       webkit: {
-        files: [
-          {
-            expand: true,
-            cwd: '<%=config.resources %>/node-webkit/mac-os',
-            dest: '<%= config.dist %>/',
-            src: '**'
-          }
-        ]
+        files: [{
+          expand: true,
+          cwd: '<%=config.resources %>/node-webkit/mac-os',
+          dest: '<%= config.dist %>/',
+          src: '**'
+        }]
       }
     }
   });
@@ -129,21 +127,20 @@ module.exports = function (grunt) {
     fs.chmodSync('dist/node-webkit.app/Contents/MacOS/node-webkit', '555');
   });
 
-  grunt.registerTask('createLinuxApp', 'Add lost Permissions.', function () {
+  grunt.registerTask('createLinuxApp', 'Create linux distribution.', function () {
     var fs = require('fs');
     var childProcess = require('child_process');
     var exec = childProcess.exec;
-    exec('mkdir dist; cp resources/node-webkit/linux_ia64/nw.pak dist/ && cat resources/node-webkit/linux_ia64/nw tmp/app.zip > dist/qq && chmod a+x dist/qq; touch dist/ready', function (error, stdout, stderr) {
+    exec('mkdir dist; cp resources/node-webkit/linux_ia64/nw.pak dist/ && cp resources/node-webkit/linux_ia64/nw dist/qq && chmod a+x dist/qq; touch dist/ready', function (error, stdout, stderr) {
       console.log(stderr, stdout, error);
     });
-    while (!fs.existsSync('dist/ready')) {
-    }
+    while (!fs.existsSync('dist/ready')) {}
   });
 
   grunt.registerTask('dist-linux', [
     'jshint',
     'clean:dist',
-    'compress:app',
+    'copy:appLinux',
     'createLinuxApp'
   ]);
 
@@ -151,7 +148,7 @@ module.exports = function (grunt) {
     'jshint',
     'clean:dist',
     'copy:webkit',
-    'copy:app',
+    'copy:appMacos',
     'chmod'
   ]);
 
