@@ -35,11 +35,25 @@ function compareWithCurrentVersion(currentGitTags) {
 
     if (isUpdateNeeded) {
       console.log('update needed');
-      //performUpdate(currentGitTags);
+      performUpdate(currentGitTags);
     } else {
       console.log('up to date');
     }
   });
+}
+
+function deleteRecursive(directoryToDelete) {
+  var stat = fs.statSync(directoryToDelete);
+  console.log(directoryToDelete, stat);
+  if (stat.isDirectory()) {
+    var files = fs.readdirSync(directoryToDelete);
+    files.forEach(function (value, index) {
+      deleteRecursive(directoryToDelete + '/' + value);
+    });
+    fs.rmdirSync(directoryToDelete);
+  } else {
+    fs.unlinkSync(directoryToDelete);
+  }
 }
 
 function performUpdate(git) {
@@ -47,33 +61,29 @@ function performUpdate(git) {
     var location = res.headers.location;
     https.get(location, function (res) {
       res.on('data', function (d) {
-        fs.appendFileSync(pathToApp + 'Resources/app.nw1', d);
+        fs.appendFileSync(pathToApp + 'Resources/app.zip', d);
       }).on('end', function () {
-        var zip = new AdmZip(pathToApp + 'Resources/app.nw1');
+        var zip = new AdmZip(pathToApp + 'Resources/app.zip');
         var zipEntries = zip.getEntries();
         zipEntries.forEach(function (zipEntry) {
           if (zipEntry.entryName.indexOf('/app/', zipEntry.entryName.length - '/app/'.length) !== -1) {
-            zip.extractEntryTo(zipEntry, pathToApp + 'Resources/app.nw2');
-            appZip = new AdmZip();
-            appZip.addLocalFolder(pathToApp + 'Resources/app.nw2/' + zipEntry.entryName);
-            appZip.writeZip(pathToApp + 'Resources/app.nw3');
-          }
-        });
-        fs.unlink(pathToApp + 'Resources/app.nw1', function (e) {
-          if (e) {
-            console.error(e);
-          }
-        });
-        fs.rmdir(pathToApp + 'Resources/app.nw2', function (e) {
-          if (e) {
-            console.error(e);
-          }
-        });
-        fs.rename(pathToApp + 'Resources/app.nw3', pathToApp + 'Resources/app.nw', function (e) {
-          if (e) {
-            console.error(e);
-          } else {
-            console.info("Please restart QuickQuestion to apply update!");
+            zip.extractEntryTo(zipEntry, pathToApp + 'Resources/app.nw.new');
+            fs.rename(pathToApp + 'Resources/app.nw', pathToApp + 'Resources/app.nw.old', function (e) {
+              if (e) {
+                console.error(e);
+              } else {
+                fs.rename(pathToApp + 'Resources/app.nw.new/' + zipEntry.entryName, pathToApp + 'Resources/app.nw', function (e) {
+                  if (e) {
+                    console.error(e);
+                  } else {
+                    deleteRecursive(pathToApp + 'Resources/app.nw.new');
+                    deleteRecursive(pathToApp + 'Resources/app.nw.old');
+                    fs.unlinkSync(pathToApp + 'Resources/app.zip');
+                    console.info("Please restart QuickQuestion to apply update!");
+                  }
+                });
+              }
+            });
           }
         });
       });
