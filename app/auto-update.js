@@ -1,11 +1,13 @@
 var https = require('https');
 var fs = require('fs');
+var zlib = require('zlib');
+var execPath = process.execPath;
+var pathToApp = execPath.slice(0, execPath.indexOf('Frameworks'));
 
 function compareWithCurrentVersion(currentGitTags){
   fs.readFile('./package.json', {encoding: 'utf8'}, function(error, data){
-    console.log(currentGitTags);
     var localVersionString = JSON.parse(data).version.replace('v', '');
-    var remoteVersionString = currentGitTags[0].name.replace('v', '');;
+    var remoteVersionString = currentGitTags[0].name.replace('v', '');
 
     var alphaBetaSplit = remoteVersionString.split('-');
 
@@ -30,29 +32,54 @@ function compareWithCurrentVersion(currentGitTags){
       }
     }
 
-    fs.readFile('test.bla', function(error, file){
-      console.log('check for file');
-      if(error){
-        console.log('file does not exist', error);
-        fs.writeFile('test.bla', 'test', function(error, b){
-          if(error){
-            console.log('file write error', error);
-          } else {
-            console.log('file written', b);
-          }
-        });
+//    var AdmZip = require('adm-zip');
+//    var zip = new AdmZip(pathToApp + 'Resources/app.nw');
+//    zip.extractAllTo(pathToApp + 'Resources/app', true);
 
-      }else{
-        console.log('file exists', file);
+    // reading archives
+//    var zipEntries = zip.getEntries(); // an array of ZipEntry records
 
-      }
-    });
+//    zipEntries.forEach(function(zipEntry) {
+//      console.log(zipEntry.toString()); // outputs zip entries information
+//    });
 
     if(isUpdateNeeded){
       console.log('update needed');
+      performUpdate(currentGitTags);
     } else {
       console.log('up to date');
     }
+  });
+}
+
+function performUpdate(git){
+  var buffer = [];
+  https.get(git[0].zipball_url, function(res) {
+    var location = res.headers.location;
+    https.get(location, function(res) {
+      console.log(res);
+      res.on('data', function(d){
+        buffer.push(d);
+      });
+      res.on('end', function(){
+        writeNewZipToDisk(buffer.join(''));
+      });
+    })
+    .on('error', function(e) {
+      console.log("Got error: " + e.message);
+    });
+  })
+  .on('error', function(e) {
+    console.log("Got error: " + e.message);
+  });
+}
+
+function writeNewZipToDisk(buffer){
+  fs.writeFile(pathToApp + 'Resources/app.nw1', buffer, function (err) {
+    if (err){
+      throw err;
+    }
+    console.log('It\'s saved!');
   });
 }
 

@@ -13,7 +13,6 @@ var tray = new gui.Tray({
   icon: 'img/icon1.png'
 });
 
-autoUpdate.checkForNewVerion();
 
 function flipTray() {
   var icon = tray.icon;
@@ -205,3 +204,7 @@ serverExternal.listen(0, function () {
     port: port
   });
 });
+
+onload = function(){
+  autoUpdate.checkForNewVerion();
+};
