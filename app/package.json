@@ -1,8 +1,13 @@
 {
-    "name": "QuickQuestion",
-    "main": "views/index.html",
-    "version": "v0.0.1",
-    "window": {
-            "toolbar": true
-        }
+  "name": "QuickQuestion",
+  "main": "views/index.html",
+  "version": "v0.0.1",
+  "window": {
+    "toolbar": true,
+    "icon": "img/icon1.png",
+    "width": 650,
+    "height": 650,
+    "min_width": 650,
+    "min_height": 650
+  }
 }
