@@ -8,8 +8,8 @@ function compareWithCurrentVersion(currentGitTags) {
   fs.readFile('./package.json', {
     encoding: 'utf8'
   }, function (error, data) {
-    var localVersionString = JSON.parse(data).version.replace('v', '');
-    var remoteVersionString = currentGitTags[currentGitTags.length - 1].name.replace('v', '');
+    var localVersionString = JSON.parse(data).version;
+    var remoteVersionString = currentGitTags[0].name;
 
     var alphaBetaSplit = remoteVersionString.split('-');
 
