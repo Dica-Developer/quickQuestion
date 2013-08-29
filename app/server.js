@@ -147,7 +147,7 @@ function updateMessageUI() {
   var messagelist = $('#messagelist');
   messagelist.html(content);
   messagelist.listview('refresh');
-  messagelist.scrollTop(300);
+  messagelist.scrollTop($('#messagelist')[0].scrollHeight);
   clearTimeout(resizeTimeout);
   resizeTimeout = window.setTimeout(resize, 100);
 
