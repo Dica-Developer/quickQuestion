@@ -1,7 +1,7 @@
 {
   "name": "QuickQuestion",
   "main": "views/index.html",
-  "version": "v0.0.1",
+  "version": "v0.9.0",
   "window": {
     "toolbar": true,
     "icon": "img/icon1.png",
