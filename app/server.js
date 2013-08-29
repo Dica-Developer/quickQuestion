@@ -13,7 +13,6 @@ var tray = new gui.Tray({
   icon: 'img/icon1.png'
 });
 
-
 function flipTray() {
   var icon = tray.icon;
   if (icon.indexOf('icon1') > -1) {
@@ -97,6 +96,8 @@ $(function () {
 
   window.onresize = resize;
   resize();
+
+  autoUpdate.checkForNewVersion();
 });
 
 function updateClientUI() {
@@ -175,7 +176,7 @@ var serverExternal = http.createServer(function (request, response) {
       });
       request.on('end', function () {
         if (body && body.length > 0) {
-          var message = body.replace(/([a-zA-Z]+:\/\/[^ ]*)/gm,'<span name="link" style="cursor:pointer;" data-href="$1">$1</span>');
+          var message = body.replace(/([a-zA-Z]+:\/\/[^ ]*)/gm, '<span name="link" style="cursor:pointer;" data-href="$1">$1</span>');
           messages.push(message);
           updateMessageUI();
         } else {
@@ -205,7 +206,3 @@ serverExternal.listen(0, function () {
     port: port
   });
 });
-
-onload = function(){
-  autoUpdate.checkForNewVerion();
-};
