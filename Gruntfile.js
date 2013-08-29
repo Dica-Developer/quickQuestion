@@ -1,8 +1,9 @@
 /*jshint camelcase: false*/
 // Generated on 2013-08-01 using generator-chrome-extension 0.2.3
-'use strict';
 
 module.exports = function (grunt) {
+  'use strict';
+
   // load all grunt tasks
   require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
 
@@ -17,10 +18,11 @@ module.exports = function (grunt) {
     config: config,
     clean: {
       dist: {
-        files: [{
+        files: [
+          {
             dot: true,
             src: [
-                '<%= config.dist %>/*'
+              '<%= config.dist %>/*'
             ]
           }
         ]
@@ -31,7 +33,7 @@ module.exports = function (grunt) {
         jshintrc: '.jshintrc'
       },
       all: [
-          '<%= config.app %>/{,*/}*.js'
+        '<%= config.app %>/{,*/}*.js'
       ]
     },
     useminPrepare: {
@@ -39,7 +41,7 @@ module.exports = function (grunt) {
         dest: '<%= config.dist %>'
       },
       html: [
-          '<%= config.app %>/{,*/}*.html'
+        '<%= config.app %>/{,*/}*.html'
       ]
     },
     usemin: {
@@ -51,7 +53,8 @@ module.exports = function (grunt) {
     },
     imagemin: {
       dist: {
-        files: [{
+        files: [
+          {
             expand: true,
             cwd: '<%= config.app %>/images',
             src: '{,*/}*.{png,jpg,jpeg}',
@@ -64,8 +67,8 @@ module.exports = function (grunt) {
       dist: {
         files: {
           '<%= datameerTools.dist %>/styles/main.css': [
-              '.tmp/styles/{,*/}*.css',
-              '<%= config.app %>/styles/{,*/}*.css'
+            '.tmp/styles/{,*/}*.css',
+            '<%= config.app %>/styles/{,*/}*.css'
           ]
         }
       }
@@ -83,7 +86,8 @@ module.exports = function (grunt) {
            removeEmptyAttributes: true,
            removeOptionalTags: true*/
         },
-        files: [{
+        files: [
+          {
             expand: true,
             cwd: '<%= config.app %>',
             src: '*.html',
@@ -94,7 +98,8 @@ module.exports = function (grunt) {
     },
     copy: {
       app: {
-        files: [{
+        files: [
+          {
             expand: true,
             cwd: '<%= config.app %>',
             dest: '<%= config.dist %>/node-webkit.app/Contents/Resources/app.nw',
@@ -103,7 +108,8 @@ module.exports = function (grunt) {
         ]
       },
       webkit: {
-        files: [{
+        files: [
+          {
             expand: true,
             cwd: '<%=config.resources %>/node-webkit/mac-os',
             dest: '<%= config.dist %>/',
@@ -126,25 +132,24 @@ module.exports = function (grunt) {
     var fs = require('fs');
     var childProcess = require('child_process');
     var exec = childProcess.exec;
-    var child = exec('mkdir dist; cp resources/node-webkit/linux_ia64/nw.pak dist/ && cat resources/node-webkit/linux_ia64/nw tmp/app.zip > dist/qq && chmod a+x dist/qq; touch dist/ready', function (error, stdout, stderr) {
+    exec('mkdir dist; cp resources/node-webkit/linux_ia64/nw.pak dist/ && cat resources/node-webkit/linux_ia64/nw tmp/app.zip > dist/qq && chmod a+x dist/qq; touch dist/ready', function (error, stdout, stderr) {
       console.log(stderr, stdout, error);
     });
     while (!fs.existsSync('dist/ready')) {
-	
     }
   });
 
   grunt.registerTask('dist-linux', [
-      'clean:dist',
-      'compress:app',
-      'createLinuxApp'
+    'clean:dist',
+    'compress:app',
+    'createLinuxApp'
   ]);
 
   grunt.registerTask('dist', [
-      'clean:dist',
-      'copy:webkit',
-      'copy:app',
-      'chmod'
+    'clean:dist',
+    'copy:webkit',
+    'copy:app',
+    'chmod'
   ]);
 
   grunt.registerTask('check', [
