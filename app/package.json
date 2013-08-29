@@ -2,12 +2,22 @@
   "name": "QuickQuestion",
   "main": "views/index.html",
   "version": "v0.9.4",
+  "description": "Collaboration tool for intranets without the need for a hard coded identity.",
+  "keywords": ["collaboration", "chat", "P2P", "decentralized"],
+  "repositories": [{
+    "type": "git",
+    "url": "https://github.com/Dica-Developer/quickQuestion",
+    "path": "/"
+  }],
+  "single-instance": true,
   "window": {
+    "title": "Quick Question",
     "toolbar": true,
     "icon": "img/icon1.png",
     "width": 650,
     "height": 650,
     "min_width": 650,
     "min_height": 650
-  }
+  },
+  "chromium-args": "--enable-logging --log-level=0"
 }
