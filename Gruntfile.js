@@ -140,12 +140,14 @@ module.exports = function (grunt) {
   });
 
   grunt.registerTask('dist-linux', [
+    'jshint',
     'clean:dist',
     'compress:app',
     'createLinuxApp'
   ]);
 
   grunt.registerTask('dist', [
+    'jshint',
     'clean:dist',
     'copy:webkit',
     'copy:app',
