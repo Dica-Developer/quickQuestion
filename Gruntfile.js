@@ -196,14 +196,14 @@ module.exports = function (grunt) {
   });
 
   grunt.registerTask('createLinuxApp', 'Add lost Permissions.', function () {
-    // cat /usr/bin/nw app.nw > app && chmod +x app
+    var fs = require('fs');
     var childProcess = require('child_process');
     var exec = childProcess.exec;
-    var child = exec('cat resources/node-webkit/linux_ia64/nw tmp/app.zip > dist/qq && chmod +x app', function (error, stdout, stderr) {
+    var child = exec('mkdir dist; cp resources/node-webkit/linux_ia64/nw.pak dist/ && cat resources/node-webkit/linux_ia64/nw tmp/app.zip > dist/qq && chmod a+x dist/qq; touch dist/ready', function (error, stdout, stderr) {
       console.log(stderr, stdout, error);
     });
-    while (child.exitCode === null) {
-      console.log(child.exitCode);
+    while (!fs.existsSync('dist/ready')) {
+	
     }
   });
 
