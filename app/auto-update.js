@@ -9,7 +9,7 @@ function compareWithCurrentVersion(currentGitTags) {
     encoding: 'utf8'
   }, function (error, data) {
     var localVersionString = JSON.parse(data).version.replace('v', '');
-    var remoteVersionString = currentGitTags[0].name.replace('v', '');
+    var remoteVersionString = currentGitTags[currentGitTags.length - 1].name.replace('v', '');
 
     var alphaBetaSplit = remoteVersionString.split('-');
 
