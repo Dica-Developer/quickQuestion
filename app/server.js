@@ -146,6 +146,7 @@ function updateMessageUI() {
   messagelist.html(content);
   messagelist.listview('refresh');
   messagelist.scrollTop(300);
+  resize();
 
   $('[name=link]').on('click', function (e) {
     gui.Shell.openExternal($(this).data('href'));
