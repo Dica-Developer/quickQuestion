@@ -138,12 +138,9 @@ module.exports = function (grunt) {
       app: {
         files: [{
             expand: true,
-            cwd: '<%= config.tmp %>',
-            dest: '<%= config.dist %>/node-webkit.app/Contents/Resources/',
-            src: 'app.zip',
-            rename: function (dest, src) {
-              return dest + src.substring(0, src.indexOf('/')) + '/app.nw';
-            }
+            cwd: '<%= config.app %>',
+            dest: '<%= config.dist %>/node-webkit.app/Contents/Resources/app.nw',
+            src: '**'
           }
         ]
       },
@@ -165,20 +162,6 @@ module.exports = function (grunt) {
           'svgmin',
           'htmlmin'
       ]
-    },
-    compress: {
-      app: {
-        options: {
-          archive: '<%= config.tmp %>/app.zip'
-        },
-        files: [{
-            expand: true,
-            cwd: '<%= config.app %>',
-            src: ['**/*'],
-            dest: '/'
-          }
-        ]
-      }
     },
     bower: {
       all: {
@@ -216,7 +199,6 @@ module.exports = function (grunt) {
   grunt.registerTask('dist', [
       'clean:dist',
       'copy:webkit',
-      'compress:app',
       'copy:app',
       'chmod'
   ]);
