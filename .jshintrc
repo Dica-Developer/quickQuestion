@@ -22,6 +22,7 @@
     "require": true,
     "process": true,
     "exports": true,
-    "$": true
+    "$": true,
+    "module": true
   }
 }
