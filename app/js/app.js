@@ -1,7 +1,9 @@
 var server = require('../js/server.js');
-var gui = require('nw.gui');
 var autoUpdate = require('../js/auto-update.js');
-var currentWindow = gui.Window.get();
+var gui = require('nw.gui');
+var GuiHandler = require('../js/guiHandling.js');
+new GuiHandler(gui);
+
 var resizeTimeout,
   messages = [];
 
@@ -107,32 +109,12 @@ server.on('messageSendError', function(errorMessage){
 autoUpdate.on('updateNeeded', function () {
   'use strict';
   var popupDialog = $('#popupDialog');
-  var windowTitle = currentWindow.title;
   popupDialog.on('click', '#update-yes', function () {
     autoUpdate.emit('update');
-    autoUpdate.on('progress', function (message) {
-      currentWindow.title = message;
-    });
     autoUpdate.on('updateDone', function (progress) {
-      currentWindow.title = windowTitle;
       console.log(progress);
       //inform user to restart
     });
   });
   popupDialog.popup('open');
 });
-
-//var tray = new gui.Tray({
-//  icon: 'img/icon1.png'
-//});
-//
-//function flipTray() {
-//  'use strict';
-//
-//  var icon = tray.icon;
-//  if (icon.indexOf('icon1') > -1) {
-//    tray.icon = 'img/icon2.png';
-//  } else {
-//    tray.icon = 'img/icon1.png';
-//  }
-//}
