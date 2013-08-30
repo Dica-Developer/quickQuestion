@@ -106,6 +106,20 @@ module.exports = function (grunt) {
           cwd: '<%= config.app %>',
           dest: '<%= config.dist %>/node-webkit.app/Contents/Resources/app.nw',
           src: '**'
+        },
+        {
+          expand: true,
+          cwd: '<%= config.resources %>/macFiles/',
+          dest: '<%= config.dist %>/node-webkit.app/Contents/',
+          filter: 'isFile',
+          src: '*.plist'
+        },
+        {
+          expand: true,
+          cwd: '<%= config.resources %>/macFiles/',
+          dest: '<%= config.dist %>/node-webkit.app/Contents/Resources/',
+          filter: 'isFile',
+          src: '*.icns'
         }]
       },
       webkit: {
@@ -116,15 +130,25 @@ module.exports = function (grunt) {
           src: '**'
         }]
       }
+    },
+    rename: {
+      app: {
+        files: [
+          {
+            src: '<%= config.dist %>/node-webkit.app',
+            dest: '<%= config.dist %>/Quick Question.app'
+          }
+        ]
+      }
     }
   });
 
   grunt.registerTask('chmod', 'Add lost Permissions.', function () {
     var fs = require('fs');
-    fs.chmodSync('dist/node-webkit.app/Contents/Frameworks/node-webkit Helper EH.app/Contents/MacOS/node-webkit Helper EH', '555');
-    fs.chmodSync('dist/node-webkit.app/Contents/Frameworks/node-webkit Helper NP.app/Contents/MacOS/node-webkit Helper NP', '555');
-    fs.chmodSync('dist/node-webkit.app/Contents/Frameworks/node-webkit Helper.app/Contents/MacOS/node-webkit Helper', '555');
-    fs.chmodSync('dist/node-webkit.app/Contents/MacOS/node-webkit', '555');
+    fs.chmodSync('dist/Quick Question.app/Contents/Frameworks/node-webkit Helper EH.app/Contents/MacOS/node-webkit Helper EH', '555');
+    fs.chmodSync('dist/Quick Question.app/Contents/Frameworks/node-webkit Helper NP.app/Contents/MacOS/node-webkit Helper NP', '555');
+    fs.chmodSync('dist/Quick Question.app/Contents/Frameworks/node-webkit Helper.app/Contents/MacOS/node-webkit Helper', '555');
+    fs.chmodSync('dist/Quick Question.app/Contents/MacOS/node-webkit', '555');
   });
 
   grunt.registerTask('createLinuxApp', 'Create linux distribution.', function () {
@@ -149,6 +173,7 @@ module.exports = function (grunt) {
     'clean:dist',
     'copy:webkit',
     'copy:appMacos',
+    'rename:app',
     'chmod'
   ]);
 
