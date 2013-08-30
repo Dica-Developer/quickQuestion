@@ -11,17 +11,6 @@ var responseCallback = function(resp) {
   console.log('STATUS: ' + resp.statusCode);
 };
 
-var errorCallback = function(event) {
-  'use strict';
-
-  if (event && 'ECONNRESET' === event.code) {
-    console.warn('Connection reset on sending message to client');
-  } else {
-    console.error('Cannot send to client.', event);
-  }
-  //TODO emit error event
-};
-
 function Server(){
   'use strict';
 
@@ -82,7 +71,7 @@ Server.prototype.sendMessageToAll = function (message) {
       // set content type of message
       var req = http.request(options, responseCallback);
       req.setTimeout(1000);
-      req.on('error', errorCallback);
+      req.on('error', this.errorCallback);
       req.end(message);
     }
     this.emit('messageSendSuccess');
@@ -134,6 +123,16 @@ Server.prototype.applyServer = function(){
       port: port
     });
   });
+};
+
+Server.prototype.errorCallback = function(event) {
+  'use strict';
+
+  if (event && 'ECONNRESET' === event.code) {
+    this.emit('warning', 'Connection reset on sending message to client');
+  } else {
+    this.emit('error', new Error('Cannot send to client.'));
+  }
 };
 
 module.exports = new Server();

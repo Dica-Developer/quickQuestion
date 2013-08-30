@@ -106,6 +106,12 @@ server.on('messageSendError', function(errorMessage){
   $('#message').text(errorMessage);
 });
 
+server.on('error', function(e){
+  'use strict';
+
+  throw e;
+});
+
 autoUpdate.on('updateNeeded', function () {
   'use strict';
   var popupDialog = $('#popupDialog');
