@@ -13,7 +13,7 @@
   "window": {
     "title": "Quick Question",
     "toolbar": true,
-    "icon": "img/icon1.png",
+    "icon": "/img/tray.png",
     "width": 650,
     "height": 650,
     "min_width": 650,
