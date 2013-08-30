@@ -1,71 +1,72 @@
 var server = require('../js/server.js');
 var autoUpdate = require('../js/auto-update.js');
-var gui, currentWindow, tray;
 
-
-function GuiHandling(GUI){
+function GuiHandling(gui){
   'use strict';
 
+  var _this = this;
   this.trayOnly = false;
-  gui = GUI;
-  tray = new gui.Tray({
-    icon: 'img/icon1.png'
+  this.trayIsLocked = false;
+  this.gui = gui;
+  this.ICON_PATHS = {
+    standard: 'img/tray.png',
+    update: 'img/tray-update.png',
+    message: 'img/tray-nessage.png'
+  };
+  this.tray = new this.gui.Tray({
+    icon: _this.ICON_PATHS.standard
   });
-  currentWindow = gui.Window.get();
-  currentWindow.on('blur', this.setTrayOnly);
-  currentWindow.on('focus', this.unsetTrayOnly);
-  currentWindow.on('minimize', this.setTrayOnly);
-  currentWindow.on('maximize', this.unsetTrayOnly);
+  this.currentWindow = this.gui.Window.get();
+
+  this.handleUpdateProgress = function(updateMessage){
+    if(!_this.trayIsLocked){
+      _this.trayIsLocked = true;
+      _this.tray.icon = _this.ICON_PATHS.update;
+    }
+    _this.setWindowTitle(updateMessage);
+  };
+
+  this.handleUpdateDone = function(){
+    _this.trayIsLocked = false;
+    _this.tray.icon = _this.ICON_PATHS.standard;
+    _this.setWindowTitle();
+  };
+
+  this.handleIncomingMessage = function(){
+    if(_this.trayOnly && !_this.trayIsLocked){
+      _this.tray.icon = _this.ICON_PATHS.message;
+    }
+  };
+
+  this.setTrayOnly = function(){
+    _this.trayOnly = true;
+  };
+
+  this.unsetTrayOnly = function(){
+    _this.trayOnly = false;
+  };
+
+  this.currentWindow.on('blur', this.setTrayOnly);
+  this.currentWindow.on('focus', this.unsetTrayOnly);
+  this.currentWindow.on('minimize', this.setTrayOnly);
+  this.currentWindow.on('maximize', this.unsetTrayOnly);
   server.on('newClient', this.newClientConnected);
-  server.on('message', this.incomingMessage);
-  autoUpdate.on('progress', this.setWindowTitle);
-  autoUpdate.on('updateDone', this.setWindowTitle);
+  server.on('message', this.handleIncomingMessage);
+  autoUpdate.on('progress', this.handleUpdateProgress);
+  autoUpdate.on('updateDone', this.handleUpdateDone);
+
 }
-
-GuiHandling.prototype.flipTray = function() {
-  'use strict';
-
-  var icon = tray.icon;
-  if (icon.indexOf('icon1') > -1) {
-    tray.icon = 'img/icon2.png';
-  } else {
-
-  }
-};
-
-GuiHandling.prototype.setTrayOnly = function(){
-  'use strict';
-
-  this.trayOnly = true;
-};
-
-GuiHandling.prototype.unsetTrayOnly = function(){
-  'use strict';
-
-  this.trayOnly = false;
-};
 
 GuiHandling.prototype.newClientConnected = function(){
   'use strict';
 
-  if(this.trayOnly){
-    this.flipTray();
-  }
-};
-
-GuiHandling.prototype.incomingMessage = function(){
-  'use strict';
-
-  if(this.trayOnly){
-    this.flipTray();
-  }
 };
 
 GuiHandling.prototype.setWindowTitle = function(message){
   'use strict';
 
   message = message || 'Quick Question';
-  currentWindow.title = message;
+  this.currentWindow.title = message;
 };
 
 module.exports = GuiHandling;
