@@ -13,8 +13,10 @@ function GuiHandling(gui){
     update: 'img/tray-update.png',
     message: 'img/tray-nessage.png'
   };
+  this.trayMenu = this.createTrayMenu();
   this.tray = new this.gui.Tray({
-    icon: _this.ICON_PATHS.standard
+    icon: _this.ICON_PATHS.standard,
+    menu: this.trayMenu
   });
   this.currentWindow = this.gui.Window.get();
 
@@ -67,6 +69,33 @@ GuiHandling.prototype.setWindowTitle = function(message){
 
   message = message || 'Quick Question';
   this.currentWindow.title = message;
+};
+
+GuiHandling.prototype.createTrayMenu = function(){
+  'use strict';
+
+  var _this = this;
+  var menu = new this.gui.Menu();
+  var updateItem = new this.gui.MenuItem({
+    label: 'Check for updates',
+    click: function(){
+      console.log('updateItem');
+      autoUpdate.emit('checkForUpdates');
+    }
+  });
+  var separator = new this.gui.MenuItem({type: 'separator'});
+  var quitItem = new this.gui.MenuItem({
+    label: 'Quit Quick Question',
+    click: function(){
+      console.log('quitItem');
+      _this.currentWindow.close();
+    }
+  });
+
+  menu.append(updateItem);
+  menu.append(separator);
+  menu.append(quitItem);
+  return menu;
 };
 
 module.exports = GuiHandling;
