@@ -115,7 +115,7 @@ AutoUpdate.prototype.performUpdate = function() {
                     if (e) {
                       _this.emit('error', e);
                     } else {
-                      _this.emit('progress', 'Deleteing old files');
+                      _this.emit('progress', 'Deleting old files');
                       deleteRecursive(pathToApp + 'Resources/app.nw.new');
                       deleteRecursive(pathToApp + 'Resources/app.nw.old');
                       fs.unlinkSync(pathToApp + 'Resources/app.zip');
