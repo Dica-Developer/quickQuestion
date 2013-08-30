@@ -7,7 +7,7 @@ You must have the following programs installed, to start working with QuickQuest
 
 After installing [node.js](http://nodejs.org/ "Node.js"), you run the following command:
 		
-        npm install
+    npm install
 
 After installing the required programs, checkout the [code](https://github.com/Dica-Developer/quickQuestion "Quick Question").
 Use the following commands to build the distribution:
