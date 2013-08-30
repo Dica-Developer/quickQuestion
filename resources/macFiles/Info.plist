@@ -21,9 +21,9 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>v0.6.0</string>
+	<string>v0.9.4</string>
 	<key>CFBundleVersion</key>
-	<string>v0.6.0</string>
+	<string>v0.9.4 Rev: 0ae0566</string>
 	<key>LSFileQuarantineEnabled</key>
 	<true/>
 	<key>LSMinimumSystemVersion</key>
