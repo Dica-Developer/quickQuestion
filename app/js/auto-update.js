@@ -11,7 +11,6 @@ function deleteRecursive(directoryToDelete) {
   'use strict';
 
   var stat = fs.statSync(directoryToDelete);
-  console.log(directoryToDelete, stat);
   if (stat.isDirectory()) {
     var files = fs.readdirSync(directoryToDelete);
     files.forEach(function (value) {
@@ -46,7 +45,7 @@ AutoUpdate.prototype.getTagsFromGithub = function(){
       _this.emit('getTagsReady');
     });
   }).on('error', function (e) {
-      console.log('Got error: ' + e.message);
+      _this.emit('error', e);
     });
 };
 
@@ -107,17 +106,16 @@ AutoUpdate.prototype.performUpdate = function() {
               zip.extractEntryTo(zipEntry, pathToApp + 'Resources/app.nw.new');
               fs.rename(pathToApp + 'Resources/app.nw', pathToApp + 'Resources/app.nw.old', function (e) {
                 if (e) {
-                  console.error(e);
+                  _this.emit('error', e);
                 } else {
                   fs.rename(pathToApp + 'Resources/app.nw.new/' + zipEntry.entryName, pathToApp + 'Resources/app.nw', function (e) {
                     if (e) {
-                      console.error(e);
+                      _this.emit('error', e);
                     } else {
-                      _this.emit('progress', 'Adding files');
+                      _this.emit('progress', 'Deleteing old files');
                       deleteRecursive(pathToApp + 'Resources/app.nw.new');
                       deleteRecursive(pathToApp + 'Resources/app.nw.old');
                       fs.unlinkSync(pathToApp + 'Resources/app.zip');
-                      console.info('Please restart QuickQuestion to apply update!');
                       _this.emit('updateDone');
                     }
                   });
@@ -127,11 +125,11 @@ AutoUpdate.prototype.performUpdate = function() {
           });
         });
     }).on('error', function (e) {
-        console.log('Got error: ' + e.message);
+        _this.emit('error', e);
       });
   })
     .on('error', function (e) {
-      console.log('Got error: ' + e.message);
+      _this.emit('error', e);
     });
 };
 
