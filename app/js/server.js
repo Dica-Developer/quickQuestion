@@ -29,7 +29,7 @@ function Server(){
 
   this.clients = [];
   this.polo = polo();
-  this.createServer();
+  this.applyServer();
   this.polo.on('up', function(name, service){
 
     // handle service name 'quickquestion'
@@ -43,6 +43,7 @@ function Server(){
     if (newClient) {
       _this.clients.push(service.address);
       _this.emit('updateClients');
+      _this.emit('newClient');
     }
   });
 
@@ -55,15 +56,6 @@ function Server(){
       }
     }
     _this.emit('updateClients');
-  });
-
-  this.externalServer.listen(0, function () {
-    var port = _this.externalServer.address().port;
-    _this.polo.put({
-      name: 'quickquestion',
-      host: os.hostname(),
-      port: port
-    });
   });
 
   this.on('sendMessageToAll', this.sendMessageToAll);
@@ -99,7 +91,7 @@ Server.prototype.sendMessageToAll = function (message) {
   }
 };
 
-Server.prototype.createServer = function(){
+Server.prototype.applyServer = function(){
   'use strict';
   var _this = this;
 
@@ -132,6 +124,15 @@ Server.prototype.createServer = function(){
       });
       response.end('ಠ_ಠ');
     }
+  });
+
+  this.externalServer.listen(0, function () {
+    var port = this.address().port;
+    _this.polo.put({
+      name: 'quickquestion',
+      host: os.hostname(),
+      port: port
+    });
   });
 };
 
