@@ -1,56 +1,17 @@
 var http = require('http');
 var url = require('url');
-var os = require('os');
 var polo = require('polo');
-var gui = require('nw.gui');
-var autoUpdate = require('../js/auto-update.js');
-var currentWindow = gui.Window.get();
+var os = require('os');
+var sys = require('sys');
+var events = require('events');
 
-var apps = polo();
-var clients = [];
-var messages = [];
-var resizeTimeout;
-
-autoUpdate.on('updateNeeded', function(){
-  'use strict';
-  var popupDialog = $('#popupDialog');
-  var windowTitle = currentWindow.title;
-  popupDialog.on('click', '#update-yes', function(){
-    autoUpdate.emit('update');
-    autoUpdate.on('progress', function(message){
-      currentWindow.title = message;
-    });
-    autoUpdate.on('updateDone', function(progress){
-      currentWindow.title = windowTitle;
-      console.log(progress);
-      //inform user to restart
-    });
-  });
-  popupDialog.popup('open');
-});
-
-var tray = new gui.Tray({
-  icon: 'img/icon1.png'
-});
-
-function flipTray() {
-  'use strict';
-
-  var icon = tray.icon;
-  if (icon.indexOf('icon1') > -1) {
-    tray.icon = 'img/icon2.png';
-  } else {
-    tray.icon = 'img/icon1.png';
-  }
-}
-
-function responseCallback(resp) {
+var responseCallback = function(resp) {
   'use strict';
 
   console.log('STATUS: ' + resp.statusCode);
-}
+};
 
-function errorCallback(event) {
+var errorCallback = function(event) {
   'use strict';
 
   if (event && 'ECONNRESET' === event.code) {
@@ -58,16 +19,66 @@ function errorCallback(event) {
   } else {
     console.error('Cannot send to client.', event);
   }
+  //TODO emit error event
+};
+
+function Server(){
+  'use strict';
+
+  var _this = this;
+
+  this.clients = [];
+  this.polo = polo();
+  this.createServer();
+  this.polo.on('up', function(name, service){
+
+    // handle service name 'quickquestion'
+    var newClient = true;
+    var i;
+    for (i = 0; i < _this.clients.length; i++) {
+      if (_this.clients[i] === service.address) {
+        newClient = false;
+      }
+    }
+    if (newClient) {
+      _this.clients.push(service.address);
+      _this.emit('updateClients');
+    }
+  });
+
+  this.polo.on('down', function (name, service) {
+
+    var i;
+    for (i = 0; i < _this.clients.length; i++) {
+      if (_this.clients[i] === service.address) {
+        _this.clients.pop(service.address);
+      }
+    }
+    _this.emit('updateClients');
+  });
+
+  this.externalServer.listen(0, function () {
+    var port = _this.externalServer.address().port;
+    _this.polo.put({
+      name: 'quickquestion',
+      host: os.hostname(),
+      port: port
+    });
+  });
+
+  this.on('sendMessageToAll', this.sendMessageToAll);
 }
 
-function sendMessageToAll(message) {
+sys.inherits(Server, events.EventEmitter);
+
+Server.prototype.sendMessageToAll = function (message) {
   'use strict';
 
   if (message && message.length > 0) {
-    for (var i = 0; i < clients.length; i++) {
+    for (var i = 0; i < this.clients.length; i++) {
       var options = {
-        hostname: clients[i].split(':')[0],
-        port: clients[i].split(':')[1],
+        hostname: this.clients[i].split(':')[0],
+        port: this.clients[i].split(':')[1],
         path: '/receive',
         method: 'POST',
         agent: false,
@@ -82,175 +93,46 @@ function sendMessageToAll(message) {
       req.on('error', errorCallback);
       req.end(message);
     }
-    return 'Message send.';
+    this.emit('messageSendSuccess');
   } else {
-    return 'We do not send empty messages.';
+    this.emit('messageSendError', 'We do not send empty messages.');
   }
-}
+};
 
-function sendMessage(val) {
+Server.prototype.createServer = function(){
   'use strict';
+  var _this = this;
 
-  var result = sendMessageToAll(val);
-  if ('Message send.' === result) {
-    $('#messageToSend').val('');
-  }
-  $('#message').text(result);
-}
+  this.externalServer = http.createServer(function (request, response) {
 
-function resize() {
-  'use strict';
-
-  var messageToSend = $('#messageToSend');
-  var newHeight = $(window).innerHeight() + messageToSend.height() - ($('#content').height() + $('#footer').height() + 30);
-  messageToSend.height(newHeight);
-}
-
-$(function () {
-  'use strict';
-
-  var sendMessageButton = $('#sendMessage');
-  sendMessageButton.bind('vclick', function () {
-    sendMessage($('#messageToSend').val());
-  });
-
-  var messageToSend = $('#messageToSend');
-  messageToSend.bind('keyup', function (e) {
-    var isShiftPressed = e.shiftKey;
-    switch (e.which) {
-    case 13:
-      if (!isShiftPressed) {
-        e.preventDefault();
-        sendMessage($('#messageToSend').val());
+    var requestUrl = url.parse(request.url, true);
+    if ('POST' === request.method) {
+      if ('/receive' === requestUrl.pathname) {
+        var body = '';
+        request.on('data', function (chunk) {
+          body += chunk;
+        });
+        request.on('end', function () {
+          if (body && body.length > 0) {
+            var message = body.replace(/([a-zA-Z]+:\/\/[^ ]*)/gm, '<span data-name="link" style="cursor:pointer;" data-href="$1">$1</span>');
+            _this.emit('newMessage', message);
+          } else {
+            _this.emit('emptyMessage');
+          }
+        });
+      } else {
+        response.writeHead(404, {
+          'Content-Type': 'text/plain'
+        });
+        response.end('ಠ_ಠ');
       }
-      break;
-    }
-  });
-
-  messageToSend.bind('keydown', function (e) {
-    var isShiftPressed = e.shiftKey;
-    switch (e.which) {
-    case 13:
-      if (!isShiftPressed) {
-        e.preventDefault();
-      }
-      break;
-    }
-  });
-
-  window.onresize = function () {
-    clearTimeout(resizeTimeout);
-    resizeTimeout = window.setTimeout(resize, 100);
-  };
-  clearTimeout(resizeTimeout);
-  resizeTimeout = window.setTimeout(resize, 100);
-});
-
-function updateClientUI() {
-  'use strict';
-
-  var content = '';
-  clients.sort();
-  for (var i = 0; i < clients.length; i++) {
-    content = content + '<li>' + clients[i] + '</li>';
-  }
-  var clientlist = $('#clientlist');
-  clientlist.html(content);
-  clientlist.listview('refresh');
-}
-
-apps.on('up', function (name, service) {
-  'use strict';
-
-  // handle service name 'quickquestion'
-  var newClient = true;
-  var i;
-  for (i = 0; i < clients.length; i++) {
-    if (clients[i] === service.address) {
-      newClient = false;
-    }
-  }
-  if (newClient) {
-    clients.push(service.address);
-  }
-
-  updateClientUI();
-});
-
-apps.on('down', function (name, service) {
-  'use strict';
-
-  var i;
-  for (i = 0; i < clients.length; i++) {
-    if (clients[i] === service.address) {
-      clients.pop(service.address);
-    }
-  }
-  updateClientUI();
-});
-
-function updateMessageUI() {
-  'use strict';
-
-  flipTray();
-  var content = '';
-  for (var i = 0; i < messages.length; i++) {
-    content = content + '<li>' + messages[i] + '</li>';
-  }
-  var messageList = $('#messagelist');
-  messageList.html(content);
-  messageList.listview('refresh');
-  messageList.scrollTop(messageList[0].scrollHeight);
-  clearTimeout(resizeTimeout);
-  resizeTimeout = window.setTimeout(resize, 100);
-
-  $('[data-name="link"]').on('click', function () {
-    gui.Shell.openExternal($(this).data('href'));
-  });
-}
-
-
-var serverExternal = http.createServer(function (request, response) {
-  'use strict';
-
-  var requestUrl = url.parse(request.url, true);
-  if ('POST' === request.method) {
-    if ('/receive' === requestUrl.pathname) {
-      var body = '';
-      request.on('data', function (chunk) {
-        body += chunk;
-      });
-      request.on('end', function () {
-        if (body && body.length > 0) {
-          var message = body.replace(/([a-zA-Z]+:\/\/[^ ]*)/gm, '<span data-name="link" style="cursor:pointer;" data-href="$1">$1</span>');
-          messages.push(message);
-          updateMessageUI();
-        } else {
-          console.warn('Empty message received!');
-        }
-      });
     } else {
       response.writeHead(404, {
         'Content-Type': 'text/plain'
       });
       response.end('ಠ_ಠ');
     }
-  } else {
-    response.writeHead(404, {
-      'Content-Type': 'text/plain'
-    });
-    response.end('ಠ_ಠ');
-  }
-});
-
-serverExternal.listen(0, function () {
-  'use strict';
-
-  var port = serverExternal.address().port;
-
-  apps.put({
-    name: 'quickquestion',
-    host: os.hostname(),
-    port: port
   });
-});
+};
+
+module.exports = new Server();
