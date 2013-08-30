@@ -56,16 +56,17 @@ AutoUpdate.prototype.compareWithCurrentVersion = function() {
   fs.readFile('./package.json', {
     encoding: 'utf8'
   }, function (error, data) {
-    var localVersionString = JSON.parse(data).version;
-    var remoteVersionString = _this.currentGitTags[0].name;
+    var versionSplitLocal, versionSplitRemote,
+      localVersionString = JSON.parse(data).version,
+      remoteVersionString = _this.currentGitTags[0].name,
+      isUpdateNeeded = false,
+      index = 0, loopLength;
 
-    var versionSplitLocal, versionSplitRemote;
     versionSplitRemote = remoteVersionString.split('.');
     versionSplitLocal = localVersionString.split('.');
+    loopLength = versionSplitLocal.length;
 
-    var isUpdateNeeded = false;
-
-    for (var index = 0, length = versionSplitLocal.length; index < length; ++index) {
+    for (; index < loopLength; ++index) {
       var remoteVersion = parseInt(versionSplitRemote[index], 10);
       var localVersion = parseInt(versionSplitLocal[index], 10);
       if (localVersion < remoteVersion) {
@@ -83,24 +84,26 @@ AutoUpdate.prototype.compareWithCurrentVersion = function() {
 AutoUpdate.prototype.performUpdate = function() {
   'use strict';
 
-  var _this = this;
+  var _this = this,
+    location, contentLength, downloadedLength = 0,
+    progress, message, zip, zipEntries;
+
   /*jshint camelcase: false*/
   https.get(this.currentGitTags[0].zipball_url, function (res) {
-    var location = res.headers.location;
-    var downloadedLength = 0;
+    location = res.headers.location;
     _this.emit('progress', 'Start download');
     https.get(location, function (res) {
-      var contentLength = res.headers['content-length'];
+      contentLength = res.headers['content-length'];
       res.on('data', function (d) {
         downloadedLength = downloadedLength + d.length;
-        var progress = (100 * downloadedLength / contentLength).toFixed(2);
-        var message = 'Download ' + progress + '% done.';
+        progress = (100 * downloadedLength / contentLength).toFixed(2);
+        message = 'Download ' + progress + '% done.';
         _this.emit('progress', message);
         fs.appendFileSync(pathToApp + 'Resources/app.zip', d);
       }).on('end', function () {
           _this.emit('progress', 'Download done');
-          var zip = new AdmZip(pathToApp + 'Resources/app.zip');
-          var zipEntries = zip.getEntries();
+          zip = new AdmZip(pathToApp + 'Resources/app.zip');
+          zipEntries = zip.getEntries();
           zipEntries.forEach(function (zipEntry) {
             if (zipEntry.entryName.indexOf('/app/', zipEntry.entryName.length - '/app/'.length) !== -1) {
               zip.extractEntryTo(zipEntry, pathToApp + 'Resources/app.nw.new');
