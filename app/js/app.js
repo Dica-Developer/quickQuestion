@@ -117,8 +117,7 @@ autoUpdate.on('updateNeeded', function () {
   var popupDialog = $('#popupDialog');
   popupDialog.on('click', '#update-yes', function () {
     autoUpdate.emit('update');
-    autoUpdate.on('updateDone', function (progress) {
-      console.log(progress);
+    autoUpdate.on('updateDone', function () {
       //inform user to restart
     });
   });
