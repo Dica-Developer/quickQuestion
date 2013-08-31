@@ -114,12 +114,18 @@ server.on('error', function(e){
 
 autoUpdate.on('updateNeeded', function () {
   'use strict';
-  var popupDialog = $('#popupDialog');
-  popupDialog.on('click', '#update-yes', function () {
+  var confirmUpdate = $('#confirmUpdate');
+  confirmUpdate.on('click', '#update-yes', function () {
     autoUpdate.emit('update');
-    autoUpdate.on('updateDone', function () {
-      //inform user to restart
-    });
   });
-  popupDialog.popup('open');
+  confirmUpdate.popup('open');
+});
+autoUpdate.on('updateDone', function () {
+  'use strict';
+
+  var confirmRestart = $('#confirmRestart');
+  confirmRestart.on('click', '#restart-yes', function () {
+    gui.Window.get().reload();
+  });
+  confirmRestart.popup('open');
 });
