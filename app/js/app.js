@@ -105,10 +105,14 @@ server.on('messageSendError', function (errorMessage) {
   $('#message').text(errorMessage);
 });
 
-server.on('error', function (e) {
+server.on('serverError', function (message) {
   'use strict';
+  console.error(message);
+});
 
-  throw e;
+server.on('serverWarning', function (message) {
+  'use strict';
+  console.warn(message);
 });
 
 autoUpdate.on('updateNeeded', function () {

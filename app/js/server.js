@@ -54,7 +54,10 @@ sys.inherits(Server, events.EventEmitter);
 
 Server.prototype.sendMessageToAll = function (message) {
   'use strict';
-
+  var _this = this;
+  var callErrorCallback = function (event) {
+    _this.errorCallback(event);
+  };
   if (message && message.length > 0) {
     var i = 0;
     for (i = 0; i < this.clients.length; i++) {
@@ -71,7 +74,7 @@ Server.prototype.sendMessageToAll = function (message) {
       };
       var req = http.request(options, responseCallback);
       req.setTimeout(1000);
-      req.on('error', this.errorCallback);
+      req.on('error', callErrorCallback);
       req.end(message);
     }
     this.emit('messageSendSuccess');
@@ -125,13 +128,13 @@ Server.prototype.applyServer = function () {
   });
 };
 
-Server.prototype.errorCallback = function (event) {
+Server.prototype.errorCallback = function (error) {
   'use strict';
 
-  if (event && 'ECONNRESET' === event.code) {
-    this.emit('warning', 'Connection reset on sending message to client');
+  if (error && 'ECONNRESET' === error.code) {
+    this.emit('serverWarning', 'Connection reset on sending message to client');
   } else {
-    this.emit('error', new Error('Cannot send to client.'));
+    this.emit('serverError', error.message);
   }
 };
 
