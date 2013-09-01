@@ -26,4 +26,4 @@ Use the following commands to build the distribution:
 
 The app can then be found in the folder:
 
-	/quickQuestion/dist/
+	quickQuestion/dist/
