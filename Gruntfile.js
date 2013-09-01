@@ -11,6 +11,7 @@ module.exports = function (grunt) {
   var config = {
     app: 'app',
     dist: 'dist',
+    tmp: 'tmp',
     resources: 'resources'
   };
 
@@ -21,7 +22,8 @@ module.exports = function (grunt) {
         files: [{
           dot: true,
           src: [
-            '<%= config.dist %>/*'
+            '<%= config.dist %>/*',
+            '<%= config.tmp %>/*'
           ]
         }]
       }
@@ -131,6 +133,40 @@ module.exports = function (grunt) {
           dest: '<%= config.dist %>/',
           src: '**'
         }]
+      },
+      copyWinToTmp: {
+        files: [{
+          expand: true,
+          cwd: '<%= config.resources %>/node-webkit/windows/',
+          dest: '<%= config.tmp %>/',
+          src: '**'
+        }]
+      }
+    },
+    compress: {
+      appToTmp: {
+        options: {
+          archive: '<%= config.tmp %>/app.zip'
+        },
+        files: [
+          {
+            expand: true,
+            cwd:'<%= config.app %>',
+            src: ['**']
+          }
+        ]
+      },
+      finalWindowsApp: {
+        options: {
+          archive: '<%= config.dist %>/QuickQuestion.zip'
+        },
+        files: [
+          {
+            expand: true,
+            cwd:'<%= config.tmp %>',
+            src: ['**']
+          }
+        ]
       }
     },
     rename: {
@@ -139,6 +175,14 @@ module.exports = function (grunt) {
           {
             src: '<%= config.dist %>/node-webkit.app',
             dest: '<%= config.dist %>/Quick Question.app'
+          }
+        ]
+      },
+      zipToApp: {
+        files: [
+          {
+            src: '<%= config.tmp %>/app.zip',
+            dest: '<%= config.tmp %>/app.nw'
           }
         ]
       }
@@ -163,11 +207,31 @@ module.exports = function (grunt) {
     while (!fs.existsSync('dist/ready')) {}
   });
 
+  grunt.registerTask('createWindowsApp', 'Create windows distribution.', function () {
+    var fs = require('fs');
+    var childProcess = require('child_process');
+    var exec = childProcess.exec;
+    exec('copy /b tmp\\nw.exe+tmp\\app.nw tmp\\QuickQuestion.exe && del tmp\\app.nw tmp\\nw.exe && echo.>tmp\\ready', function (error, stdout, stderr) {
+      console.log(stderr, stdout, error);
+    });
+    while (!fs.existsSync('tmp/ready')) {}
+  });
+
   grunt.registerTask('dist-linux', [
     'jshint',
     'clean:dist',
     'copy:appLinux',
     'createLinuxApp'
+  ]);
+
+  grunt.registerTask('dist-win', [
+    'jshint',
+    'clean:dist',
+    'copy:copyWinToTmp',
+    'compress:appToTmp',
+    'rename:zipToApp',
+    'createWindowsApp',
+    'compress:finalWindowsApp'
   ]);
 
   grunt.registerTask('dist', [
