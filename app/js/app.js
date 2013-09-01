@@ -125,7 +125,7 @@ autoUpdate.on('updateDone', function () {
 
   var confirmRestart = $('#confirmRestart');
   confirmRestart.on('click', '#restart-yes', function () {
-    gui.Window.get().reload();
+    gui.Window.get().reload(3);
   });
   confirmRestart.popup('open');
 });
