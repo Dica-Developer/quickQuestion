@@ -19,5 +19,6 @@
     "min_width": 650,
     "min_height": 650
   },
-  "chromium-args": "--enable-logging --log-level=0 --child-clean-exit --hide-scrollbars"
+  "chromium-args": "--child-clean-exit --hide-scrollbars"
+  // logging is enabled with the following commands --enable-logging --v=1 --log-level=0 
 }
