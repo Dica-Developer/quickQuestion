@@ -16,7 +16,7 @@ function resize() {
   'use strict';
 
   var messageToSend = $('#messageToSend');
-  var newHeight = $(window).innerHeight() + messageToSend.height() - ($('#content').height() + $('#footer').height() + 30);
+  var newHeight = $(window).innerHeight() + messageToSend.height() - ($('#content').height() + $('#footer').height() + 32);
   messageToSend.height(newHeight);
 }
 
