@@ -1,7 +1,7 @@
 var server = require('../js/server.js');
 var autoUpdate = require('../js/auto-update.js');
 
-function GuiHandling(gui){
+function GuiHandling(gui) {
   'use strict';
 
   var _this = this;
@@ -20,31 +20,31 @@ function GuiHandling(gui){
   });
   this.currentWindow = this.gui.Window.get();
 
-  this.handleUpdateProgress = function(updateMessage){
-    if(!_this.trayIsLocked){
+  this.handleUpdateProgress = function (updateMessage) {
+    if (!_this.trayIsLocked) {
       _this.trayIsLocked = true;
       _this.tray.icon = _this.ICON_PATHS.update;
     }
     _this.setWindowTitle(updateMessage);
   };
 
-  this.handleUpdateDone = function(){
+  this.handleUpdateDone = function () {
     _this.trayIsLocked = false;
     _this.tray.icon = _this.ICON_PATHS.standard;
     _this.setWindowTitle();
   };
 
-  this.handleIncomingMessage = function(){
-    if(_this.trayOnly && !_this.trayIsLocked){
+  this.handleIncomingMessage = function () {
+    if (_this.trayOnly && !_this.trayIsLocked) {
       _this.tray.icon = _this.ICON_PATHS.message;
     }
   };
 
-  this.setTrayOnly = function(){
+  this.setTrayOnly = function () {
     _this.trayOnly = true;
   };
 
-  this.unsetTrayOnly = function(){
+  this.unsetTrayOnly = function () {
     _this.trayOnly = false;
   };
 
@@ -59,34 +59,36 @@ function GuiHandling(gui){
 
 }
 
-GuiHandling.prototype.newClientConnected = function(){
+GuiHandling.prototype.newClientConnected = function () {
   'use strict';
 
 };
 
-GuiHandling.prototype.setWindowTitle = function(message){
+GuiHandling.prototype.setWindowTitle = function (message) {
   'use strict';
 
   message = message || 'Quick Question';
   this.currentWindow.title = message;
 };
 
-GuiHandling.prototype.createTrayMenu = function(){
+GuiHandling.prototype.createTrayMenu = function () {
   'use strict';
 
   var _this = this;
   var menu = new this.gui.Menu();
   var updateItem = new this.gui.MenuItem({
     label: 'Check for updates',
-    click: function(){
+    click: function () {
       console.log('updateItem');
       autoUpdate.emit('checkForUpdates');
     }
   });
-  var separator = new this.gui.MenuItem({type: 'separator'});
+  var separator = new this.gui.MenuItem({
+    type: 'separator'
+  });
   var quitItem = new this.gui.MenuItem({
     label: 'Quit Quick Question',
-    click: function(){
+    click: function () {
       console.log('quitItem');
       _this.currentWindow.close();
     }

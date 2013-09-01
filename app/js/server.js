@@ -5,13 +5,13 @@ var os = require('os');
 var sys = require('sys');
 var events = require('events');
 
-var responseCallback = function(resp) {
+var responseCallback = function (resp) {
   'use strict';
 
   console.log('STATUS: ' + resp.statusCode);
 };
 
-function Server(){
+function Server() {
   'use strict';
 
   var _this = this;
@@ -19,7 +19,7 @@ function Server(){
   this.clients = [];
   this.polo = polo();
   this.applyServer();
-  this.polo.on('up', function(name, service){
+  this.polo.on('up', function (name, service) {
 
     // handle service name 'quickquestion'
     var newClient = true;
@@ -56,7 +56,8 @@ Server.prototype.sendMessageToAll = function (message) {
   'use strict';
 
   if (message && message.length > 0) {
-    for (var i = 0; i < this.clients.length; i++) {
+    var i = 0;
+    for (i = 0; i < this.clients.length; i++) {
       var options = {
         hostname: this.clients[i].split(':')[0],
         port: this.clients[i].split(':')[1],
@@ -80,7 +81,7 @@ Server.prototype.sendMessageToAll = function (message) {
   }
 };
 
-Server.prototype.applyServer = function(){
+Server.prototype.applyServer = function () {
   'use strict';
   var _this = this;
 
@@ -125,7 +126,7 @@ Server.prototype.applyServer = function(){
   });
 };
 
-Server.prototype.errorCallback = function(event) {
+Server.prototype.errorCallback = function (event) {
   'use strict';
 
   if (event && 'ECONNRESET' === event.code) {

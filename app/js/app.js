@@ -61,8 +61,7 @@ $(function () {
   resizeTimeout = window.setTimeout(resize, 100);
 });
 
-
-server.on('updateClients', function(){
+server.on('updateClients', function () {
   'use strict';
   var content = '';
   this.clients.sort();
@@ -74,7 +73,7 @@ server.on('updateClients', function(){
   clientlist.listview('refresh');
 });
 
-server.on('newMessage', function(message){
+server.on('newMessage', function (message) {
   'use strict';
   messages.push(message);
   var content = '';
@@ -93,20 +92,20 @@ server.on('newMessage', function(message){
   });
 });
 
-server.on('messageSendSuccess', function(){
+server.on('messageSendSuccess', function () {
   'use strict';
 
   $('#messageToSend').val('');
   $('#message').text('Message send.');
 });
 
-server.on('messageSendError', function(errorMessage){
+server.on('messageSendError', function (errorMessage) {
   'use strict';
 
   $('#message').text(errorMessage);
 });
 
-server.on('error', function(e){
+server.on('error', function (e) {
   'use strict';
 
   throw e;

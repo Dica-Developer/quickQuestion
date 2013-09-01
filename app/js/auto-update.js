@@ -34,7 +34,7 @@ function AutoUpdate() {
 }
 sys.inherits(AutoUpdate, events.EventEmitter);
 
-AutoUpdate.prototype.getTagsFromGithub = function(){
+AutoUpdate.prototype.getTagsFromGithub = function () {
   'use strict';
   var _this = this;
 
@@ -45,11 +45,11 @@ AutoUpdate.prototype.getTagsFromGithub = function(){
       _this.emit('getTagsReady');
     });
   }).on('error', function (e) {
-      _this.emit('error', e);
-    });
+    _this.emit('error', e);
+  });
 };
 
-AutoUpdate.prototype.compareWithCurrentVersion = function() {
+AutoUpdate.prototype.compareWithCurrentVersion = function () {
   'use strict';
   var _this = this;
 
@@ -60,7 +60,8 @@ AutoUpdate.prototype.compareWithCurrentVersion = function() {
       localVersionString = JSON.parse(data).version,
       remoteVersionString = _this.currentGitTags[0].name,
       isUpdateNeeded = false,
-      index = 0, loopLength;
+      index = 0,
+      loopLength;
 
     versionSplitRemote = remoteVersionString.split('.');
     versionSplitLocal = localVersionString.split('.');
@@ -81,7 +82,7 @@ AutoUpdate.prototype.compareWithCurrentVersion = function() {
   });
 };
 
-AutoUpdate.prototype.performUpdate = function() {
+AutoUpdate.prototype.performUpdate = function () {
   'use strict';
 
   var _this = this,
@@ -101,35 +102,35 @@ AutoUpdate.prototype.performUpdate = function() {
         _this.emit('progress', message);
         fs.appendFileSync(pathToApp + 'Resources/app.zip', d);
       }).on('end', function () {
-          _this.emit('progress', 'Download done');
-          zip = new AdmZip(pathToApp + 'Resources/app.zip');
-          zipEntries = zip.getEntries();
-          zipEntries.forEach(function (zipEntry) {
-            if (zipEntry.entryName.indexOf('/app/', zipEntry.entryName.length - '/app/'.length) !== -1) {
-              zip.extractEntryTo(zipEntry, pathToApp + 'Resources/app.nw.new');
-              fs.rename(pathToApp + 'Resources/app.nw', pathToApp + 'Resources/app.nw.old', function (e) {
-                if (e) {
-                  _this.emit('error', e);
-                } else {
-                  fs.rename(pathToApp + 'Resources/app.nw.new/' + zipEntry.entryName, pathToApp + 'Resources/app.nw', function (e) {
-                    if (e) {
-                      _this.emit('error', e);
-                    } else {
-                      _this.emit('progress', 'Deleting old files');
-                      deleteRecursive(pathToApp + 'Resources/app.nw.new');
-                      deleteRecursive(pathToApp + 'Resources/app.nw.old');
-                      fs.unlinkSync(pathToApp + 'Resources/app.zip');
-                      _this.emit('updateDone');
-                    }
-                  });
-                }
-              });
-            }
-          });
+        _this.emit('progress', 'Download done');
+        zip = new AdmZip(pathToApp + 'Resources/app.zip');
+        zipEntries = zip.getEntries();
+        zipEntries.forEach(function (zipEntry) {
+          if (zipEntry.entryName.indexOf('/app/', zipEntry.entryName.length - '/app/'.length) !== -1) {
+            zip.extractEntryTo(zipEntry, pathToApp + 'Resources/app.nw.new');
+            fs.rename(pathToApp + 'Resources/app.nw', pathToApp + 'Resources/app.nw.old', function (e) {
+              if (e) {
+                _this.emit('error', e);
+              } else {
+                fs.rename(pathToApp + 'Resources/app.nw.new/' + zipEntry.entryName, pathToApp + 'Resources/app.nw', function (e) {
+                  if (e) {
+                    _this.emit('error', e);
+                  } else {
+                    _this.emit('progress', 'Deleting old files');
+                    deleteRecursive(pathToApp + 'Resources/app.nw.new');
+                    deleteRecursive(pathToApp + 'Resources/app.nw.old');
+                    fs.unlinkSync(pathToApp + 'Resources/app.zip');
+                    _this.emit('updateDone');
+                  }
+                });
+              }
+            });
+          }
         });
-    }).on('error', function (e) {
-        _this.emit('error', e);
       });
+    }).on('error', function (e) {
+      _this.emit('error', e);
+    });
   })
     .on('error', function (e) {
       _this.emit('error', e);
