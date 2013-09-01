@@ -1,7 +1,7 @@
 {
   "name": "QuickQuestion",
   "main": "views/index.html",
-  "version": "v0.9.4",
+  "version": "0.9.4",
   "description": "Collaboration tool for intranets without the need for a hard coded identity.",
   "keywords": ["collaboration", "chat", "P2P", "decentralized"],
   "repositories": [{
@@ -19,6 +19,5 @@
     "min_width": 650,
     "min_height": 650
   },
-  "chromium-args": "--child-clean-exit --hide-scrollbars"
-  // logging is enabled with the following commands --enable-logging --v=1 --log-level=0 
+  "chromium-args": "--child-clean-exit --hide-scrollbars" 
 }
