@@ -201,7 +201,7 @@ module.exports = function (grunt) {
     var fs = require('fs');
     var childProcess = require('child_process');
     var exec = childProcess.exec;
-    exec('mkdir dist; cp resources/node-webkit/linux_ia64/nw.pak dist/ && cp resources/node-webkit/linux_ia64/nw dist/qq && chmod a+x dist/qq; touch dist/ready', function (error, stdout, stderr) {
+    exec('mkdir dist; cp resources/node-webkit/linux_ia64/nw.pak dist/ && cp resources/node-webkit/linux_ia64/nw dist/node-webkit && cp resources/linux/qq dist/qq && chmod a+x dist/qq; touch dist/ready', function (error, stdout, stderr) {
       console.log(stderr, stdout, error);
     });
     while (!fs.existsSync('dist/ready')) {}
