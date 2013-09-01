@@ -66,9 +66,9 @@ Server.prototype.sendMessageToAll = function (message) {
         agent: false,
         headers: {
           'Connection': 'false',
+          'Content-Type': 'text/plain; charset=utf-8'
         }
       };
-      // set content type of message
       var req = http.request(options, responseCallback);
       req.setTimeout(1000);
       req.on('error', this.errorCallback);
