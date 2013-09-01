@@ -22,7 +22,7 @@ Use the following commands to build the distribution:
 
 3. For Windows:
 
-		format c:
+		grunt dist-win
 
 The app can then be found in the folder:
 
