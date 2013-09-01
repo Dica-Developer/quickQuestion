@@ -79,8 +79,13 @@ GuiHandling.prototype.createTrayMenu = function () {
   var updateItem = new this.gui.MenuItem({
     label: 'Check for updates',
     click: function () {
-      console.log('updateItem');
       autoUpdate.emit('checkForUpdates');
+    }
+  });
+  var devTools = new this.gui.MenuItem({
+    label: 'Debug Quick Question',
+    click: function () {
+      _this.currentWindow.showDevTools();
     }
   });
   var separator = new this.gui.MenuItem({
@@ -89,12 +94,12 @@ GuiHandling.prototype.createTrayMenu = function () {
   var quitItem = new this.gui.MenuItem({
     label: 'Quit Quick Question',
     click: function () {
-      console.log('quitItem');
       _this.currentWindow.close();
     }
   });
 
   menu.append(updateItem);
+  menu.append(devTools);
   menu.append(separator);
   menu.append(quitItem);
   return menu;
