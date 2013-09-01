@@ -66,7 +66,6 @@ Server.prototype.sendMessageToAll = function (message) {
         agent: false,
         headers: {
           'Connection': 'false',
-          'Content-Length': message.length
         }
       };
       // set content type of message
