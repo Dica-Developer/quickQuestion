@@ -1,8 +1,7 @@
 var server = require('../js/server.js');
 var autoUpdate = require('../js/auto-update.js');
 var gui = require('nw.gui');
-var GuiHandler = require('../js/guiHandling.js');
-new GuiHandler(gui);
+require('../js/guiHandling.js');
 
 var resizeTimeout,
   messages = [];

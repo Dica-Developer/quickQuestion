@@ -1,13 +1,13 @@
 var server = require('../js/server.js');
 var autoUpdate = require('../js/auto-update.js');
 
-function GuiHandling(gui) {
+function GuiHandling() {
   'use strict';
 
   var _this = this;
   this.trayOnly = false;
   this.trayIsLocked = false;
-  this.gui = gui;
+  this.gui = window.nwDispatcher.nwGui;
   this.ICON_PATHS = {
     standard: 'img/tray.png',
     update: 'img/tray-update.png',
@@ -53,7 +53,7 @@ function GuiHandling(gui) {
   this.currentWindow.on('minimize', this.setTrayOnly);
   this.currentWindow.on('maximize', this.unsetTrayOnly);
   server.on('newClient', this.newClientConnected);
-  server.on('message', this.handleIncomingMessage);
+  server.on('newMessage', this.handleIncomingMessage);
   autoUpdate.on('progress', this.handleUpdateProgress);
   autoUpdate.on('updateDone', this.handleUpdateDone);
 
@@ -105,4 +105,4 @@ GuiHandling.prototype.createTrayMenu = function () {
   return menu;
 };
 
-module.exports = GuiHandling;
+module.exports = new GuiHandling();
