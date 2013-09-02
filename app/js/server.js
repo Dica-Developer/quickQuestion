@@ -54,14 +54,15 @@ sys.inherits(Server, events.EventEmitter);
 
 Server.prototype.sendMessageToAll = function (message) {
   'use strict';
+  var options = null;
   var _this = this;
   var callErrorCallback = function (event) {
-    _this.errorCallback(event);
+    _this.errorCallback(event, message, options);
   };
   if (message && message.length > 0) {
     var i = 0;
     for (i = 0; i < this.clients.length; i++) {
-      var options = {
+      options = {
         hostname: this.clients[i].split(':')[0],
         port: this.clients[i].split(':')[1],
         path: '/receive',
@@ -128,13 +129,13 @@ Server.prototype.applyServer = function () {
   });
 };
 
-Server.prototype.errorCallback = function (error) {
+Server.prototype.errorCallback = function (error, message, options) {
   'use strict';
 
   if (error && 'ECONNRESET' === error.code) {
-    this.emit('serverWarning', 'Connection reset on sending message to client');
+    this.emit('log.warning', 'Connection reset on sending message to client');
   } else {
-    this.emit('serverError', error.message);
+    this.emit('log.error', {message: error.message, messageToSend: message, sendOptions: options} );
   }
 };
 
