@@ -53,6 +53,35 @@ $(function () {
     }
   });
 
+  var dropbox = document.getElementById('messageToSend');
+  dropbox.addEventListener('drop', function (e) {
+    e.stopPropagation();
+    e.preventDefault();
+
+    var dt = e.dataTransfer;
+    var files = dt.files;
+
+    for (var i = 0; i < files.length; i++) {
+      if (files[i].type.indexOf('image/') === 0) {
+        var elementLi = document.getElementById('imagepreview');
+        var img = document.createElement("img");
+        img.setAttribute('height', '50');
+        img.file = files[i];
+        elementLi.appendChild(img);
+    
+        var reader = new FileReader();
+        reader.onload = (function(aImg) {
+          return function(e) {
+            aImg.src = e.target.result;
+          };
+        })(img);
+        reader.readAsDataURL(files[i]);
+      } else {
+        $('#otherpreview').append('<div>Send file "' + files[i].path + '" of type "' + files[i].type + '" with size of ' + files[i].size + ' bytes.</div>'); 
+      }
+    }
+  }, false);
+
   window.onresize = function () {
     clearTimeout(resizeTimeout);
     resizeTimeout = window.setTimeout(resize, 100);
