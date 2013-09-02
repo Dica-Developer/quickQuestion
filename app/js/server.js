@@ -70,7 +70,6 @@ Server.prototype.sendMessageToAll = function (message) {
         method: 'POST',
         agent: false,
         headers: {
-          'Connection': 'false',
           'Content-Type': 'text/plain; charset=utf-8'
         }
       };
