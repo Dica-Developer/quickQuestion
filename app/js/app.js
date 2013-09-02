@@ -72,12 +72,23 @@ server.on('updateClients', function () {
   clientlist.listview('refresh');
 });
 
+function hashCode(text) {
+  'use strict';
+  var hash = 0;
+  for (var i = 0; i < text.length; i++) {
+    var code = text.charCodeAt(i);
+    hash = ((hash << 5) - hash) + code;
+    hash = hash & hash; // Convert to 32bit integer
+  }
+  return hash;
+}
+
 server.on('newMessage', function (message) {
   'use strict';
   messages.push(message);
   var content = '';
   for (var i = 0; i < messages.length; i++) {
-    content = content + '<li><p>' + message.sender + '</p>' + messages[i].content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</li>';
+    content = content + '<li style="background-color: rgba(255, 255, ' + ((hashCode(message.sender) % 10) + 25) + ', 0.3);"><p>' + message.sender + '</p>' + messages[i].content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</li>';
   }
   var messageList = $('#messagelist');
   messageList.html(content);
