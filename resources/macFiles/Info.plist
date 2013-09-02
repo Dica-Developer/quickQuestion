@@ -9,7 +9,7 @@
 	<key>CFBundleExecutable</key>
 	<string>node-webkit</string>
 	<key>CFBundleGetInfoString</key>
-	<string>© Rhio Kim, 2013</string>
+	<string>© dica developer, 2013</string>
 	<key>CFBundleIconFile</key>
 	<string>icon.icns</string>
 	<key>CFBundleInfoDictionaryVersion</key>
@@ -21,9 +21,9 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>v0.9.4</string>
+	<string>0.9.5</string>
 	<key>CFBundleVersion</key>
-	<string>v0.9.4 Rev: 0ae0566</string>
+	<string>0.9.5</string>
 	<key>LSFileQuarantineEnabled</key>
 	<true/>
 	<key>LSMinimumSystemVersion</key>
