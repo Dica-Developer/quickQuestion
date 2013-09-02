@@ -100,6 +100,7 @@ Server.prototype.applyServer = function () {
         request.on('end', function () {
           if (body && body.length > 0) {
             var message = body.replace(/([a-zA-Z]+:\/\/[^ ]*)/gm, '<span data-name="link" style="cursor:pointer;" data-href="$1">$1</span>');
+            message = '<p>' + request.headers.host + '</p>' + message;
             _this.emit('newMessage', message);
           } else {
             _this.emit('emptyMessage');
