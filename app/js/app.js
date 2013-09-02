@@ -4,7 +4,8 @@ var gui = require('nw.gui');
 require('../js/guiHandling.js');
 
 var resizeTimeout,
-  messages = [];
+  messages = [],
+  colors = ['gray', 'red', 'lime', 'yellow', 'blue', 'fuchsia', 'aqua', 'white', 'silver'];
 
 function sendMessage(val) {
   'use strict';
@@ -88,7 +89,7 @@ server.on('newMessage', function (message) {
   messages.push(message);
   var content = '';
   for (var i = 0; i < messages.length; i++) {
-    content = content + '<li style="background-color: rgba(255, 255, ' + ((hashCode(message.sender) % 10) + 25) + ', 0.3);"><p>' + message.sender + '</p>' + messages[i].content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</li>';
+    content = content + '<li style="background-color: ' + colors[Math.abs(hashCode(messages[i].sender)) % 9] + ';"><p>' + messages[i].sender + '</p>' + messages[i].content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</li>';
   }
   var messageList = $('#messagelist');
   messageList.html(content);
