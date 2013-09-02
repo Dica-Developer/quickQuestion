@@ -77,7 +77,7 @@ server.on('newMessage', function (message) {
   messages.push(message);
   var content = '';
   for (var i = 0; i < messages.length; i++) {
-    content = content + '<li><p>' + message.sender + '</p>' + messages[i] + '</li>';
+    content = content + '<li><p>' + message.sender + '</p>' + messages[i].content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</li>';
   }
   var messageList = $('#messagelist');
   messageList.html(content);
