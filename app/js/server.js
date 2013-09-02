@@ -126,6 +126,7 @@ Server.prototype.applyServer = function () {
     var port = this.address().port;
     _this.polo.put({
       name: 'quickquestion',
+      // TODO: select one from os.networkInterfaces() instead of sending the hostname
       host: os.hostname(),
       port: port
     });
