@@ -107,17 +107,17 @@ server.on('messageSendError', function (errorMessage) {
 
 server.on('log.error', function (message) {
   'use strict';
-  console.error(message.toString());
+  console.error(JSON.stringify(message));
 });
 
 server.on('log.info', function (message) {
   'use strict';
-  console.info(message.toString());
+  console.info(JSON.stringify(message));
 });
 
 server.on('log.warning', function (message) {
   'use strict';
-  console.warn(message.toString());
+  console.warn(JSON.stringify(message));
 });
 
 autoUpdate.on('updateNeeded', function () {
