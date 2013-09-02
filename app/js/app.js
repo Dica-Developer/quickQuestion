@@ -2,6 +2,7 @@ var server = require('../js/server.js');
 var autoUpdate = require('../js/auto-update.js');
 var gui = require('nw.gui');
 require('../js/guiHandling.js');
+var logDB = require('../js/db.js').logs;
 
 var resizeTimeout,
   messages = [],
@@ -152,6 +153,7 @@ server.on('messageSendError', function (errorMessage) {
 server.on('log.error', function (message) {
   'use strict';
   console.error(JSON.stringify(message));
+  logDB.query.insert({timestamp: new Date(), message: message});
 });
 
 server.on('log.info', function (message) {
@@ -180,4 +182,13 @@ autoUpdate.on('updateDone', function () {
     gui.Window.get().reload(3);
   });
   confirmRestart.popup('open');
+});
+
+gui.Window.get().on('close', function() {
+  'use strict';
+
+  this.hide(); // Pretend to be closed already
+  console.log('We\'re closing...');
+  logDB.save();
+  this.close(true);
 });
