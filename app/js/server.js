@@ -20,31 +20,32 @@ function Server() {
   this.polo = polo();
   this.applyServer();
   this.polo.on('up', function (name, service) {
-
-    // handle service name 'quickquestion'
-    var newClient = true;
-    var i;
-    for (i = 0; i < _this.clients.length; i++) {
-      if (_this.clients[i] === service.address) {
-        newClient = false;
+    if ('quickquestion' === name) {
+      var newClient = true;
+      var i;
+      for (i = 0; i < _this.clients.length; i++) {
+        if (_this.clients[i] === service.address) {
+          newClient = false;
+        }
       }
-    }
-    if (newClient) {
-      _this.clients.push(service.address);
-      _this.emit('updateClients');
-      _this.emit('newClient');
+      if (newClient) {
+        _this.clients.push(service.address);
+        _this.emit('updateClients');
+        _this.emit('newClient');
+      }
     }
   });
 
   this.polo.on('down', function (name, service) {
-
-    var i;
-    for (i = 0; i < _this.clients.length; i++) {
-      if (_this.clients[i] === service.address) {
-        _this.clients.pop(service.address);
+    if ('quickquestion' === name) {
+      var i;
+      for (i = 0; i < _this.clients.length; i++) {
+        if (_this.clients[i] === service.address) {
+          _this.clients.pop(service.address);
+        }
       }
+      _this.emit('updateClients');
     }
-    _this.emit('updateClients');
   });
 
   this.on('sendMessageToAll', this.sendMessageToAll);
