@@ -89,7 +89,11 @@ server.on('newMessage', function (message) {
   messages.push(message);
   var content = '';
   for (var i = 0; i < messages.length; i++) {
-    content = content + '<li style="background-color: ' + colors[Math.abs(hashCode(messages[i].sender)) % 9] + ';"><p>' + messages[i].sender + '</p>' + messages[i].content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</li>';
+    if (messages[i].contentType.indexOf('text/plain') === 0) {
+      content = content + '<li style="background-color: ' + colors[Math.abs(hashCode(messages[i].remoteAddress)) % 9] + ';"><p>' + messages[i].remoteAddress + ':' + messages[i].remotePort + '</p>' + messages[i].content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</li>';
+    } else {
+      // TODO display download link
+    }
   }
   var messageList = $('#messagelist');
   messageList.html(content);
