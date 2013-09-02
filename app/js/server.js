@@ -103,6 +103,7 @@ Server.prototype.applyServer = function () {
             var message = {};
             message.content = body.replace(/([a-zA-Z]+:\/\/[^ ]*)/gm, '<span data-name="link" style="cursor:pointer;" data-href="$1">$1</span>');
             message.sender = request.socket.remoteAddress + ':' + request.socket.remotePort;
+            message.contentType = request.headers['content-type'];
             _this.emit('newMessage', message);
           } else {
             _this.emit('emptyMessage');
