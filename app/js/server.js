@@ -8,7 +8,7 @@ var events = require('events');
 var responseCallback = function (resp) {
   'use strict';
 
-  console.log('STATUS: ' + resp.statusCode);
+  console.info('STATUS: ' + resp.statusCode);
 };
 
 function Server() {
