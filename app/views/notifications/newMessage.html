@@ -7,22 +7,20 @@
             background-color: #000;
         }
         #message {
-            color: white;
+            color: white; display: block;
         }
     </style>
     <script type="text/javascript">
         function init(){
             var nwGui = nwDispatcher.requireNwGui();
             var thisWindow = nwGui.Window.get();
-            var elem = document.getElementById('close');
-            elem.addEventListener('click', function(){
+            document.body.onclick = function(){
                thisWindow.hide();
-            });
+            };
         }
     </script>
 </head>
 <body onload="init()">
-<a href="" id="close">Close</a>
 <div id="message">You received <span id="messageCount">0</span> new <span id="messageTempus">message</span>!</div>
 </body>
 </html>
