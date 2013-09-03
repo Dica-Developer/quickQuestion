@@ -5,6 +5,7 @@ var autoUpdate = require('../js/auto-update.js');
 var gui = require('nw.gui');
 require('../js/guiHandling.js');
 var logDB = require('../js/db.js').logs;
+var notifications = require('../js/notification.js');
 
 var resizeTimeout,
   messages = [],
@@ -128,6 +129,7 @@ function hashCode(text) {
 
 server.on('newMessage', function (message) {
   'use strict';
+  notifications.newMessage();
   messages.push(message);
   var content = '';
   for (var i = 0; i < messages.length; i++) {
@@ -153,6 +155,7 @@ server.on('newMessage', function (message) {
   $('[data-name="link"]').on('click', function () {
     gui.Shell.openExternal($(this).data('href'));
   });
+
 });
 
 server.on('messageSendSuccess', function () {

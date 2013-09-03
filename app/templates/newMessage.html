@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <style>
+        body {
+            background-color: #000;
+        }
+        #message {
+            color: white;
+        }
+    </style>
+    <script type="text/javascript">
+        function init(){
+            var nwGui = nwDispatcher.requireNwGui();
+            var thisWindow = nwGui.Window.get();
+            var elem = document.getElementById('close');
+            elem.addEventListener('click', function(){
+               thisWindow.hide();
+            });
+        }
+    </script>
+</head>
+<body onload="init()">
+<a href="" id="close">Close</a>
+<div id="message">You received <span id="messageCount">0</span> new <span id="messageTempus">message</span>!</div>
+</body>
+</html>
