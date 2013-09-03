@@ -1,4 +1,4 @@
-/*global $, window, document*/
+/*global $, window, document, FileReader*/
 
 var server = require('../js/server.js');
 var autoUpdate = require('../js/auto-update.js');
@@ -70,8 +70,9 @@ $(function () {
 
     var dt = e.dataTransfer;
     var files = dt.files;
+    var i = 0;
 
-    for (var i = 0; i < files.length; i++) {
+    for (i = 0; i < files.length; i++) {
       var liElement = $('<li>');
       liElement.data('path', files[i].path);
       liElement.data('type', files[i].type);
@@ -119,8 +120,9 @@ server.on('updateClients', function () {
 
 function hashCode(text) {
   'use strict';
-  var hash = 0;
-  for (var i = 0; i < text.length; i++) {
+  var hash = 0,
+    i = 0;
+  for (i = 0; i < text.length; i++) {
     var code = text.charCodeAt(i);
     hash = ((hash << 5) - hash) + code;
     hash = hash & hash; // Convert to 32bit integer
@@ -132,8 +134,9 @@ server.on('newMessage', function (message) {
   'use strict';
   notifications.newMessage();
   messages.push(message);
-  var content = '';
-  for (var i = 0; i < messages.length; i++) {
+  var content = '',
+    i = 0;
+  for (i = 0; i < messages.length; i++) {
     var sendOn = messages[i].timestamp.getFullYear() + '-' + ('0' + (messages[i].timestamp.getMonth() + 1)).slice(-2) + '-' + ('0' + messages[i].timestamp.getDate()).slice(-2) + ' ' + ('0' + messages[i].timestamp.getHours()).slice(-2) + ':' + ('0' + messages[i].timestamp.getMinutes()).slice(-2) + ':' + ('0' + messages[i].timestamp.getSeconds()).slice(-2);
     content = content + '<li style="background-color: ' + colors[Math.abs(hashCode(messages[i].remoteAddress)) % 9] + ';"><p>' + messages[i].remoteAddress + ':' + messages[i].remotePort + ' ' + sendOn + '</p>';
     if (messages[i].contentType.indexOf('text/plain') === 0) {
