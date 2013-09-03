@@ -54,6 +54,12 @@ $(function () {
     }
   });
 
+  function addImage(img) {
+    return function (e) {
+      img.src = e.target.result;
+    };
+  }
+
   var dropbox = document.getElementById('messageToSend');
   dropbox.addEventListener('drop', function (e) {
     e.stopPropagation();
@@ -69,13 +75,9 @@ $(function () {
         img.setAttribute('height', '50');
         img.file = files[i];
         elementLi.appendChild(img);
-    
+
         var reader = new FileReader();
-        reader.onload = (function(aImg) {
-          return function(e) {
-            aImg.src = e.target.result;
-          };
-        })(img);
+        reader.onload = addImage(img);
         reader.readAsDataURL(files[i]);
       } else {
         $('#otherpreview').append('<div>Send file "' + files[i].path + '" of type "' + files[i].type + '" with size of ' + files[i].size + ' bytes.</div>');
@@ -153,7 +155,10 @@ server.on('messageSendError', function (errorMessage) {
 server.on('log.error', function (message) {
   'use strict';
   console.error(JSON.stringify(message));
-  logDB.query.insert({timestamp: new Date(), message: message});
+  logDB.query.insert({
+    timestamp: new Date(),
+    message: message
+  });
 });
 
 server.on('log.info', function (message) {
@@ -184,7 +189,7 @@ autoUpdate.on('updateDone', function () {
   confirmRestart.popup('open');
 });
 
-gui.Window.get().on('close', function() {
+gui.Window.get().on('close', function () {
   'use strict';
 
   this.hide(); // Pretend to be closed already
