@@ -91,6 +91,10 @@ $(function () {
   };
   clearTimeout(resizeTimeout);
   resizeTimeout = window.setTimeout(resize, 100);
+
+  window.setTimeout(function() {
+    gui.Window.get().show();
+  }, 100);
 });
 
 server.on('updateClients', function () {

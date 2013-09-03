@@ -17,7 +17,8 @@
     "width": 650,
     "height": 650,
     "min_width": 650,
-    "min_height": 650
+    "min_height": 650,
+    "show": false
   },
-  "chromium-args": "--child-clean-exit --hide-scrollbars" 
+  "chromium-args": "--child-clean-exit --hide-scrollbars"
 }
