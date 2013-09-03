@@ -141,7 +141,7 @@ Server.prototype.errorCallback = function (error, message, options) {
   if (error && 'ECONNRESET' === error.code) {
     this.emit('log.warning', 'Connection reset on sending message to client');
   } else {
-    this.emit('log.error', {message: error.message, messageToSend: message, sendOptions: options} );
+    this.emit('log.error', {message: error.message, messageToSend: message, sendOptions: options});
   }
 };
 
