@@ -58,7 +58,7 @@ $(function () {
 
   function addImage(img) {
     return function (e) {
-      img.src = e.target.result;
+      img.attr('src', e.target.result);
     };
   }
 
@@ -71,20 +71,24 @@ $(function () {
     var files = dt.files;
 
     for (var i = 0; i < files.length; i++) {
+      var liElement = $('<li>');
+      liElement.data('path', files[i].path);
+      liElement.data('type', files[i].type);
+      $('#filesToSend').append(liElement);
       if (files[i].type.indexOf('image/') === 0) {
-        var elementLi = document.getElementById('imagepreview');
-        var img = document.createElement('img');
-        img.setAttribute('height', '50');
-        img.file = files[i];
-        elementLi.appendChild(img);
+        var img = $('<img>');
+        img.attr('height', '50');
+        img.attr('src', files[i].path);
+        liElement.append(img);
 
         var reader = new FileReader();
         reader.onload = addImage(img);
         reader.readAsDataURL(files[i]);
       } else {
-        $('#otherpreview').append('<div>Send file "' + files[i].path + '" of type "' + files[i].type + '" with size of ' + files[i].size + ' bytes.</div>');
+        liElement.text('file: "' + files[i].path + '" type: "' + files[i].type + '" size: ' + files[i].size);
       }
     }
+    $('#filesToSend').listview('refresh');
   }, false);
 
   window.onresize = function () {
@@ -127,12 +131,17 @@ server.on('newMessage', function (message) {
   messages.push(message);
   var content = '';
   for (var i = 0; i < messages.length; i++) {
+    var sendOn = messages[i].timestamp.getFullYear() + '-' + ('0' + (messages[i].timestamp.getMonth() + 1)).slice(-2) + '-' + ('0' + messages[i].timestamp.getDate()).slice(-2) + ' ' + ('0' + messages[i].timestamp.getHours()).slice(-2) + ':' + ('0' + messages[i].timestamp.getMinutes()).slice(-2) + ':' + ('0' + messages[i].timestamp.getSeconds()).slice(-2);
+    content = content + '<li style="background-color: ' + colors[Math.abs(hashCode(messages[i].remoteAddress)) % 9] + ';"><p>' + messages[i].remoteAddress + ':' + messages[i].remotePort + ' ' + sendOn + '</p>';
     if (messages[i].contentType.indexOf('text/plain') === 0) {
-      var sendOn = messages[i].timestamp.getFullYear() + '-' + ('0' + (messages[i].timestamp.getMonth() + 1)).slice(-2) + '-' + ('0' + messages[i].timestamp.getDate()).slice(-2) + ' ' + ('0' + messages[i].timestamp.getHours()).slice(-2) + ':' + ('0' + messages[i].timestamp.getMinutes()).slice(-2) + ':' + ('0' + messages[i].timestamp.getSeconds()).slice(-2);
-      content = content + '<li style="background-color: ' + colors[Math.abs(hashCode(messages[i].remoteAddress)) % 9] + ';"><p>' + messages[i].remoteAddress + ':' + messages[i].remotePort + ' ' + sendOn + '</p>' + messages[i].content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</li>';
+      content = content + messages[i].content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    } else if (messages[i].contentType.indexOf('image/') === 0) {
+      content = content + '<img src="' + messages[i].content + '" height="50"></img>';
     } else {
-      // TODO display download link
+      // TODO download / open link
+      // content = content + '<a href="' + messages[i].content + '">file</a>';
     }
+    content = content + '</li>';
   }
   var messageList = $('#messagelist');
   messageList.html(content);

@@ -1,3 +1,4 @@
+/*global window*/
 var http = require('http');
 var url = require('url');
 var polo = require('polo');
@@ -53,35 +54,48 @@ function Server() {
 
 sys.inherits(Server, events.EventEmitter);
 
-Server.prototype.sendMessageToAll = function (message) {
+Server.prototype.sendMessage = function (message, type) {
   'use strict';
-  var options = null;
   var _this = this;
+  var options = null;
   var callErrorCallback = function (event) {
     _this.errorCallback(event, message, options);
   };
+  var i = 0;
+  for (i = 0; i < this.clients.length; i++) {
+    options = {
+      hostname: this.clients[i].split(':')[0],
+      port: this.clients[i].split(':')[1],
+      path: '/receive',
+      method: 'POST',
+      agent: false,
+      headers: {
+        'Content-Type': type
+      }
+    };
+    var req = http.request(options, responseCallback);
+    req.setTimeout(1000);
+    req.on('error', callErrorCallback);
+    req.end(message);
+  }
+  this.emit('messageSendSuccess');
+};
+
+Server.prototype.sendMessageToAll = function (message) {
+  'use strict';
+  var i = 0;
   if (message && message.length > 0) {
-    var i = 0;
-    for (i = 0; i < this.clients.length; i++) {
-      options = {
-        hostname: this.clients[i].split(':')[0],
-        port: this.clients[i].split(':')[1],
-        path: '/receive',
-        method: 'POST',
-        agent: false,
-        headers: {
-          'Content-Type': 'text/plain; charset=utf-8'
-        }
-      };
-      var req = http.request(options, responseCallback);
-      req.setTimeout(1000);
-      req.on('error', callErrorCallback);
-      req.end(message);
-    }
-    this.emit('messageSendSuccess');
+    this.sendMessage(message, 'text/plain; charset=utf-8');
   } else {
     this.emit('messageSendError', 'We do not send empty messages.');
   }
+  var filesToSend = window.$('#filesToSend > li');
+  for (i = 0; i < filesToSend.length; i++) {
+    // TODO set application/octet-stream if type is empty
+    this.sendMessage(window.$(filesToSend[i]).data('path'), window.$(filesToSend[i]).data('type'));
+    window.$(filesToSend[i]).remove();
+  }
+  window.$('#filesToSend').listview('refresh');
 };
 
 Server.prototype.applyServer = function () {
@@ -140,7 +154,11 @@ Server.prototype.errorCallback = function (error, message, options) {
   if (error && 'ECONNRESET' === error.code) {
     this.emit('log.warning', 'Connection reset on sending message to client');
   } else {
-    this.emit('log.error', {message: error.message, messageToSend: message, sendOptions: options});
+    this.emit('log.error', {
+      message: error.message,
+      messageToSend: message,
+      sendOptions: options
+    });
   }
 };
 
