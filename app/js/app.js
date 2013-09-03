@@ -138,10 +138,9 @@ server.on('newMessage', function (message) {
     if (messages[i].contentType.indexOf('text/plain') === 0) {
       content = content + messages[i].content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     } else if (messages[i].contentType.indexOf('image/') === 0) {
-      content = content + '<img src="' + messages[i].content + '" height="50"></img>';
+      content = content + '<span data-name="link" style="cursor:pointer;" data-href="' + messages[i].content + '"><img src="' + messages[i].content + '" height="50"></img></span>';
     } else {
-      // TODO download / open link
-      // content = content + '<a href="' + messages[i].content + '">file</a>';
+      content = content + '<span data-name="link" style="cursor:pointer;" data-href="' + messages[i].content + '">filename</span>';
     }
     content = content + '</li>';
   }
