@@ -104,6 +104,7 @@ Server.prototype.applyServer = function () {
             message.remoteAddress = request.socket.remoteAddress;
             message.remotePort = request.socket.remotePort;
             message.contentType = request.headers['content-type'];
+            message.timestamp = new Date();
             _this.emit('newMessage', message);
           } else {
             _this.emit('emptyMessage');
