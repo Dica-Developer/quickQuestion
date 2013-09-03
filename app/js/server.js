@@ -122,7 +122,7 @@ Server.prototype.applyServer = function () {
         request.on('end', function () {
           if (body && body.length > 0) {
             var message = {};
-            message.content = body.replace(/([a-zA-Z]+:\/\/[^ ]*)/gm, '<span data-name="link" style="cursor:pointer;" data-href="$1">$1</span>');
+            message.content = body;
             message.remoteAddress = request.socket.remoteAddress;
             message.remotePort = request.socket.remotePort;
             message.contentType = request.headers['content-type'];
