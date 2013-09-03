@@ -92,12 +92,15 @@ Server.prototype.sendMessageToAll = function (message) {
   }
   var filesToSend = window.$('#filesToSend > li');
   for (i = 0; i < filesToSend.length; i++) {
-    // TODO set application/octet-stream if type is empty
-    var dataUriPrefix = 'data:' + window.$(filesToSend[i]).data('type') + ';base64,';
+    var type = 'application/octet-stream';
+    if (window.$(filesToSend[i]).data('type') && '' !== window.$(filesToSend[i]).data('type')) {
+      type = window.$(filesToSend[i]).data('type');
+    }
+    var dataUriPrefix = 'data:' + type + ';base64,';
     var buf = fs.readFileSync(window.$(filesToSend[i]).data('path'));
     var messageDataUri = dataUriPrefix + buf.toString('base64');
 
-    this.sendMessage(messageDataUri, window.$(filesToSend[i]).data('type'));
+    this.sendMessage(messageDataUri, type);
     window.$(filesToSend[i]).remove();
   }
   window.$('#filesToSend').listview('refresh');
