@@ -31,7 +31,10 @@ function Server() {
         }
       }
       if (newClient) {
-        _this.clients.push(service.address);
+        _this.clients.push({
+          address: service.address,
+          hostname: service.hostname
+        });
         _this.emit('updateClients');
         _this.emit('newClient');
       }
@@ -43,7 +46,10 @@ function Server() {
       var i;
       for (i = 0; i < _this.clients.length; i++) {
         if (_this.clients[i] === service.address) {
-          _this.clients.pop(service.address);
+          _this.clients.pop({
+            address: service.address,
+            hostname: service.hostname
+          });
         }
       }
       _this.emit('updateClients');
@@ -65,8 +71,8 @@ Server.prototype.sendMessage = function (message, type) {
   var i = 0;
   for (i = 0; i < this.clients.length; i++) {
     options = {
-      hostname: this.clients[i].split(':')[0],
-      port: this.clients[i].split(':')[1],
+      hostname: this.clients[i].address.split(':')[0],
+      port: this.clients[i].address.split(':')[1],
       path: '/receive',
       method: 'POST',
       agent: false,
@@ -150,7 +156,7 @@ Server.prototype.applyServer = function () {
     var port = this.address().port;
     _this.polo.put({
       name: 'quickquestion',
-      host: os.hostname(),
+      hostname: os.hostname(),
       port: port
     });
   });

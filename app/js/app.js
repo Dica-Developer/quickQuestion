@@ -107,9 +107,10 @@ $(function () {
 server.on('updateClients', function () {
   'use strict';
   var content = '';
+  var i = 0;
   this.clients.sort();
-  for (var i = 0; i < this.clients.length; i++) {
-    content = content + '<li>' + this.clients[i] + '</li>';
+  for (i = 0; i < this.clients.length; i++) {
+    content = content + '<li>' + this.clients[i].hostname + '(' + this.clients[i].address + ')</li>';
   }
   var clientlist = $('#clientlist');
   clientlist.html(content);
