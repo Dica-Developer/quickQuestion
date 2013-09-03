@@ -45,11 +45,11 @@ Notifications.prototype.createNewWindow = function(){
 
   var _this = this;
 
-  var newMessageWindow = gui.Window.open('../templates/newMessage.html', {
+  var newMessageWindow = gui.Window.open('../views/notifications/newMessage.html', {
     frame: false,
     toolbar: false,
     width: 250,
-    height: 70,
+    height: 40,
     'always-on-top': true,
     show: false,
     resizable: false
