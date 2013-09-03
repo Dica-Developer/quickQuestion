@@ -15,13 +15,8 @@ function Notifications(){
       _this.messageWindow.show();
       _this.messageWindowOpen = true;
       messageHideTimeOutID = setTimeout(function(){
-        var winDocument = _this.messageWindow.window.document;
-        var messageCount = winDocument.getElementById('messageCount');
-        var messageTempus = winDocument.getElementById('messageTempus');
-        messageCount.innerText = '0';
-        messageTempus.innerText = 'message';
         _this.messageWindow.hide();
-        _this.messageWindowOpen = false;
+        _this.emit('windowHide');
       }, 4000);
     }
 
@@ -35,6 +30,14 @@ function Notifications(){
         messageTempus.innerText = 'messages';
       }
     }
+    _this.on('windowHide', function(){
+      var winDocument = _this.messageWindow.window.document;
+      var messageCount = winDocument.getElementById('messageCount');
+      var messageTempus = winDocument.getElementById('messageTempus');
+      messageCount.innerText = '0';
+      messageTempus.innerText = 'message';
+      _this.messageWindowOpen = false;
+    });
   };
 }
 
@@ -49,7 +52,7 @@ Notifications.prototype.createNewWindow = function(){
     frame: false,
     toolbar: false,
     width: 250,
-    height: 40,
+    height: 30,
     'always-on-top': true,
     show: false,
     resizable: false
