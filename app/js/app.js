@@ -65,7 +65,7 @@ $(function () {
     for (var i = 0; i < files.length; i++) {
       if (files[i].type.indexOf('image/') === 0) {
         var elementLi = document.getElementById('imagepreview');
-        var img = document.createElement("img");
+        var img = document.createElement('img');
         img.setAttribute('height', '50');
         img.file = files[i];
         elementLi.appendChild(img);
@@ -78,7 +78,7 @@ $(function () {
         })(img);
         reader.readAsDataURL(files[i]);
       } else {
-        $('#otherpreview').append('<div>Send file "' + files[i].path + '" of type "' + files[i].type + '" with size of ' + files[i].size + ' bytes.</div>'); 
+        $('#otherpreview').append('<div>Send file "' + files[i].path + '" of type "' + files[i].type + '" with size of ' + files[i].size + ' bytes.</div>');
       }
     }
   }, false);
