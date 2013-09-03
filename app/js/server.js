@@ -5,6 +5,7 @@ var polo = require('polo');
 var os = require('os');
 var sys = require('sys');
 var events = require('events');
+var fs = require('fs');
 
 var responseCallback = function (resp) {
   'use strict';
@@ -92,7 +93,11 @@ Server.prototype.sendMessageToAll = function (message) {
   var filesToSend = window.$('#filesToSend > li');
   for (i = 0; i < filesToSend.length; i++) {
     // TODO set application/octet-stream if type is empty
-    this.sendMessage(window.$(filesToSend[i]).data('path'), window.$(filesToSend[i]).data('type'));
+    var dataUriPrefix = 'data:' + window.$(filesToSend[i]).data('type') + ';base64,';
+    var buf = fs.readFileSync(window.$(filesToSend[i]).data('path'));
+    var messageDataUri = dataUriPrefix + buf.toString('base64');
+
+    this.sendMessage(messageDataUri, window.$(filesToSend[i]).data('type'));
     window.$(filesToSend[i]).remove();
   }
   window.$('#filesToSend').listview('refresh');
