@@ -1,11 +1,11 @@
 # Quick Question #
 
 
-# Requirements #
+## Requirements ##
 
 You must have [node.js](http://nodejs.org/ "Node.js") installed, to start working with QuickQuestion.
 
-# Install #
+## Install ##
 
 After installing [node.js](http://nodejs.org/ "Node.js"), you have to run the following commands:
 
@@ -14,7 +14,7 @@ After installing [node.js](http://nodejs.org/ "Node.js"), you have to run the fo
     npm install
     npm -g install grunt-cli
     
-# Build #
+## Build ##
 
 To build a distribution you have to run the following commands depending on your distribution:
 
