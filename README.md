@@ -1,11 +1,11 @@
 # Quick Question #
 
 
-## Requirements ##
+## Required Software ##
 
 You must have [node.js](http://nodejs.org/ "Node.js") installed, to start working with QuickQuestion.
 
-## Install ##
+## Installation ##
 
 After installing [node.js](http://nodejs.org/ "Node.js"), you have to run the following commands:
 
