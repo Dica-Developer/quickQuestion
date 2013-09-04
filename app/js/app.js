@@ -205,7 +205,7 @@ autoUpdate.on('updateDone', function () {
   'use strict';
 
   var confirmRestart = $('#confirmRestart');
-  confirmRestart.on('click', '#restart-yes', function () {
+  confirmRestart.on('popupafterclose', function () {
     gui.Window.get().reload(3);
   });
   confirmRestart.popup('open');
