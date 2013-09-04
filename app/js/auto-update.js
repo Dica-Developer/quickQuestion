@@ -86,21 +86,27 @@ AutoUpdate.prototype.performUpdate = function () {
   'use strict';
 
   var _this = this,
-    location, contentLength, downloadedLength = 0,
-    progress, message, zip, zipEntries;
+    downloadedLength = 0,
+    zip, zipEntries;
 
   /*jshint camelcase: false*/
   https.get(this.currentGitTags[0].zipball_url, function (res) {
-    location = res.headers.location;
+    var location = res.headers.location;
     _this.emit('progress', 'Start download');
     https.get(location, function (res) {
-      contentLength = res.headers['content-length'];
-      res.on('data', function (d) {
-        downloadedLength = downloadedLength + d.length;
-        progress = (100 * downloadedLength / contentLength).toFixed(2);
-        message = 'Download ' + progress + '% done.';
+      var contentLength = parseInt(res.headers['content-length'], 10);
+      if(isNaN(contentLength)){
+        _this.emit('log.warning', res.headers);
+      }
+      res.on('data', function (chunk) {
+        downloadedLength = downloadedLength + parseInt(chunk.length, 10);
+        var progress = (100 * downloadedLength / contentLength).toFixed(2);
+        var message = 'Download ' + progress + '% done.';
+        if(isNaN(progress)){
+          _this.emit('log.warning', res.headers);
+        }
         _this.emit('progress', message);
-        fs.appendFileSync(pathToApp + 'Resources/app.zip', d);
+        fs.appendFileSync(pathToApp + 'Resources/app.zip', chunk);
       }).on('end', function () {
         _this.emit('progress', 'Download done');
         zip = new AdmZip(pathToApp + 'Resources/app.zip');

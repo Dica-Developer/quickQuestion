@@ -210,6 +210,14 @@ autoUpdate.on('updateDone', function () {
   });
   confirmRestart.popup('open');
 });
+autoUpdate.on('log.warning', function (message) {
+  'use strict';
+  console.warn(JSON.stringify(message));
+  logDB.query.insert({
+    timestamp: new Date(),
+    message: message
+  });
+});
 
 gui.Window.get().on('close', function () {
   'use strict';
