@@ -67,7 +67,7 @@ AutoUpdate.prototype.compareWithCurrentVersion = function () {
     versionSplitLocal = localVersionString.split('.');
     loopLength = versionSplitLocal.length;
 
-    for (; index < loopLength; ++index) {
+    for (index = 0; index < loopLength; ++index) {
       var remoteVersion = parseInt(versionSplitRemote[index], 10);
       var localVersion = parseInt(versionSplitLocal[index], 10);
       if (localVersion < remoteVersion) {
@@ -87,7 +87,8 @@ AutoUpdate.prototype.performUpdate = function () {
 
   var _this = this,
     downloadedLength = 0,
-    zip, zipEntries;
+    zip;
+  var zipEntries;
 
   /*jshint camelcase: false*/
   https.get(this.currentGitTags[0].zipball_url, function (res) {
@@ -95,15 +96,17 @@ AutoUpdate.prototype.performUpdate = function () {
     _this.emit('progress', 'Start download');
     https.get(location, function (res) {
       var contentLength = parseInt(res.headers['content-length'], 10);
-      if(isNaN(contentLength)){
-        _this.emit('log.warning', res.headers);
-      }
       res.on('data', function (chunk) {
+        var progress = null;
         downloadedLength = downloadedLength + parseInt(chunk.length, 10);
-        var progress = (100 * downloadedLength / contentLength).toFixed(2);
-        var message = 'Download ' + progress + '% done.';
-        if(isNaN(progress)){
-          _this.emit('log.warning', res.headers);
+        if (contentLength) {
+          progress = (100 * downloadedLength / contentLength).toFixed(2);
+        }
+        var message = '';
+        if (!progress || isNaN(progress)) {
+          message = 'Downloading';
+        } else {
+          message = 'Download ' + progress + '% done.';
         }
         _this.emit('progress', message);
         fs.appendFileSync(pathToApp + 'Resources/app.zip', chunk);
