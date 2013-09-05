@@ -17,6 +17,13 @@ process.on('uncaughtException', function (exception) {
   console.error(JSON.stringify(exception));
 });
 
+process.on('exit', function () {
+  'use strict';
+
+  console.log('We\'re closing...');
+  logDB.save();
+});
+
 function sendMessage(val) {
   'use strict';
   server.emit('sendMessageToAll', val);
@@ -228,13 +235,4 @@ autoUpdate.on('log.warning', function (message) {
     timestamp: new Date(),
     message: message
   });
-});
-
-gui.Window.get().on('close', function () {
-  'use strict';
-
-  this.hide(); // Pretend to be closed already
-  console.log('We\'re closing...');
-  logDB.save();
-  this.close(true);
 });
