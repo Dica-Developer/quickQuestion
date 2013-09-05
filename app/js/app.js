@@ -105,11 +105,16 @@ $(function () {
   }, 100);
 });
 
+function sortByHostName(lhs, rhs) {
+  'use strict';
+  return lhs.hostname > rhs.hostname;
+}
+
 server.on('updateClients', function () {
   'use strict';
   var content = '';
   var i = 0;
-  this.clients.sort();
+  this.clients.sort(sortByHostName);
   for (i = 0; i < this.clients.length; i++) {
     content = content + '<li>' + this.clients[i].hostname + '(' + this.clients[i].address + ')</li>';
   }
