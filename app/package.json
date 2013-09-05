@@ -1,7 +1,7 @@
 {
   "name": "QuickQuestion",
   "main": "views/index.html",
-  "version": "0.9.6",
+  "version": "0.9.7",
   "description": "Collaboration tool for intranets without the need for a hard coded identity.",
   "keywords": ["collaboration", "chat", "P2P", "decentralized"],
   "repositories": [{
