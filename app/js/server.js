@@ -21,29 +21,27 @@ function Server() {
   this.clients = [];
   this.polo = polo();
   this.applyServer();
-  this.polo.on('up', function (name, service) {
-    if ('quickquestion' === name) {
-      var newClient = true;
-      var i;
-      for (i = 0; i < _this.clients.length; i++) {
-        if (_this.clients[i] === service.address) {
-          newClient = false;
-        }
+  this.polo.on('quickquestion/up', function (service) {
+    var newClient = true;
+    var i;
+    for (i = 0; i < _this.clients.length; i++) {
+      if (_this.clients[i] === service.address) {
+        newClient = false;
       }
-      if (newClient) {
-        if (service.hasOwnProperty('hostname') && service.hasOwnProperty('address') && service.address && service.hostname) {
-          _this.clients.push({
-            address: service.address,
-            hostname: service.hostname
-          });
-          _this.emit('updateClients');
-          _this.emit('newClient');
-        } else {
-          _this.emit('log.error', {
-            message: 'Invalid client up request.',
-            service: service
-          });
-        }
+    }
+    if (newClient) {
+      if (service.hasOwnProperty('hostname') && service.hasOwnProperty('address') && service.address && service.hostname) {
+        _this.clients.push({
+          address: service.address,
+          hostname: service.hostname
+        });
+        _this.emit('updateClients');
+        _this.emit('newClient');
+      } else {
+        _this.emit('log.error', {
+          message: 'Invalid client up request.',
+          service: service
+        });
       }
     }
   });
@@ -53,15 +51,13 @@ function Server() {
     for (i = 0; i < _this.clients.length; i++) {
       if (client && _this.clients[i].address === client.address) {
         _this.clients.splice(i, 1);
+        _this.emit('updateClients');
       }
     }
-    _this.emit('updateClients');
   });
 
-  this.polo.on('down', function (name, service) {
-    if ('quickquestion' === name) {
-      this.emit('removeClient', service);
-    }
+  this.polo.on('quickquestion/down', function (service) {
+    _this.emit('removeClient', service);
   });
 
   this.on('sendMessageToAll', this.sendMessageToAll);
