@@ -31,12 +31,19 @@ function Server() {
         }
       }
       if (newClient) {
-        _this.clients.push({
-          address: service.address,
-          hostname: service.hostname
-        });
-        _this.emit('updateClients');
-        _this.emit('newClient');
+        if (service.hasOwnProperty('hostname') && service.hasOwnProperty('address') && service.address && service.hostname) {
+          _this.clients.push({
+            address: service.address,
+            hostname: service.hostname
+          });
+          _this.emit('updateClients');
+          _this.emit('newClient');
+        } else {
+          _this.emit('log.error', {
+            message: 'Invalid client up request.',
+            service: service
+          });
+        }
       }
     }
   });
