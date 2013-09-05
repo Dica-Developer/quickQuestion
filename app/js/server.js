@@ -48,18 +48,19 @@ function Server() {
     }
   });
 
+  this.on('removeClient', function (client) {
+    var i;
+    for (i = 0; i < _this.clients.length; i++) {
+      if (client && _this.clients[i].address === client.address) {
+        _this.clients.splice(i, 1);
+      }
+    }
+    _this.emit('updateClients');
+  });
+
   this.polo.on('down', function (name, service) {
     if ('quickquestion' === name) {
-      var i;
-      for (i = 0; i < _this.clients.length; i++) {
-        if (_this.clients[i] === service.address) {
-          _this.clients.pop({
-            address: service.address,
-            hostname: service.hostname
-          });
-        }
-      }
-      _this.emit('updateClients');
+      this.emit('removeClient', service);
     }
   });
 
@@ -70,14 +71,15 @@ sys.inherits(Server, events.EventEmitter);
 
 Server.prototype.sendMessage = function (message, type) {
   'use strict';
+  var i = null;
   var _this = this;
-  var options = null;
-  var callErrorCallback = function (event) {
-    _this.errorCallback(event, message, options);
+  var onErrorCallback = function (message, options, client) {
+    return function (exception) {
+      _this.errorCallback(exception, message, options, client);
+    };
   };
-  var i = 0;
   for (i = 0; i < this.clients.length; i++) {
-    options = {
+    var options = {
       hostname: this.clients[i].address.split(':')[0],
       port: this.clients[i].address.split(':')[1],
       path: '/receive',
@@ -89,7 +91,7 @@ Server.prototype.sendMessage = function (message, type) {
     };
     var req = http.request(options, responseCallback);
     req.setTimeout(1000);
-    req.on('error', callErrorCallback);
+    req.on('error', onErrorCallback(message, options, _this.clients[i]));
     req.end(message);
   }
   this.emit('messageSendSuccess');
@@ -169,16 +171,21 @@ Server.prototype.applyServer = function () {
   });
 };
 
-Server.prototype.errorCallback = function (error, message, options) {
+Server.prototype.errorCallback = function (error, message, options, client) {
   'use strict';
 
-  if (error && 'ECONNRESET' === error.code) {
-    this.emit('log.warning', 'Connection reset on sending message to client');
+  if (error && 'ECONNREFUSED' === error.code) {
+    this.emit('removeClient', client);
+  } else if (error && 'ECONNRESET' === error.code) {
+    this.emit('log.warning', {
+      message: 'Connection reset on sending message to client',
+      sendOptions: options
+    });
   } else {
     this.emit('log.error', {
       message: error.message,
-      messageToSend: message,
-      sendOptions: options
+      sendOptions: options,
+      client: client
     });
   }
 };
