@@ -11,6 +11,12 @@ var resizeTimeout,
   messages = [],
   colors = ['rgba(128, 128, 128, 0.01)', 'rgba(255, 0, 0, 0.01)', 'rgba(0, 255, 0, 0.01)', 'rgba(255, 255, 0, 0.01)', 'rgba(0, 0, 255, 0.01)', 'rgba(255, 0, 255, 0.01)', 'rgba(0, 255, 255, 0.01)', 'rgba(255, 255, 255, 0.01)', 'rgba(192, 192, 192, 0.01)'];
 
+process.on('uncaughtException', function (exception) {
+  'use strict';
+
+  console.error(JSON.stringify(exception));
+});
+
 function sendMessage(val) {
   'use strict';
   server.emit('sendMessageToAll', val);
