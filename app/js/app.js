@@ -11,18 +11,19 @@ var resizeTimeout,
   messages = [],
   colors = ['rgba(128, 128, 128, 0.01)', 'rgba(255, 0, 0, 0.01)', 'rgba(0, 255, 0, 0.01)', 'rgba(255, 255, 0, 0.01)', 'rgba(0, 0, 255, 0.01)', 'rgba(255, 0, 255, 0.01)', 'rgba(0, 255, 255, 0.01)', 'rgba(255, 255, 255, 0.01)', 'rgba(192, 192, 192, 0.01)'];
 
-process.on('uncaughtException', function (exception) {
+function a(logDB) {
   'use strict';
 
-  console.error(JSON.stringify(exception));
-});
+  return function () {
+    var os = require('os');
+    process.stdout.write('We\'re closing...' + os.EOL);
+    logDB.save();
+  };
+}
 
-process.on('exit', function () {
-  'use strict';
-
-  console.log('We\'re closing...');
-  logDB.save();
-});
+process.on('exit', a(logDB));
+process.on('SIGINT', a(logDB));
+process.on('SIGTERM', a(logDB));
 
 function sendMessage(val) {
   'use strict';
