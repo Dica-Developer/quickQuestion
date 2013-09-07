@@ -29,6 +29,7 @@ function AutoUpdate() {
 
   this.on('getTagsReady', this.compareWithCurrentVersion);
   this.on('update', this.performUpdate);
+  this.on('checkForUpdates', this.getTagsFromGithub);
 
   this.getTagsFromGithub();
 }
