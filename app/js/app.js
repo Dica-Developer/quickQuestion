@@ -7,6 +7,9 @@ require('../js/guiHandling.js');
 var logDB = require('../js/db.js').logs;
 var messageDB = require('../js/db.js').messages;
 var notifications = require('../js/notification.js');
+var messageListCreated = false;
+var filesListCreated = false;
+var collaboratorListCreated = false;
 
 var resizeTimeout,
   messages = [],
@@ -43,6 +46,18 @@ function resize() {
 // startup on DOM ready
 $(function () {
   'use strict';
+
+  $('#messagelist').on('listviewcreate', function () {
+    messageListCreated = true;
+  });
+
+  $('#filesToSend').on('listviewcreate', function () {
+    filesListCreated = true;
+  });
+
+  $('#collaboratorlist').on('listviewcreate', function () {
+    collaboratorListCreated = true;
+  });
 
   var sendMessageButton = $('#sendMessage');
   sendMessageButton.bind('vclick', function () {
@@ -106,7 +121,9 @@ $(function () {
         liElement.text('file: "' + files[i].path + '" type: "' + files[i].type + '" size: ' + files[i].size);
       }
     }
-    $('#filesToSend').listview('refresh');
+    if (filesListCreated) {
+      $('#filesToSend').listview('refresh');
+    }
   }, false);
 
   window.onresize = function () {
@@ -133,10 +150,11 @@ server.on('updateClients', function () {
   this.clients.sort(sortByHostName);
   for (i = 0; i < this.clients.length; i++) {
     content = content + '<li>' + this.clients[i].hostname + '(' + this.clients[i].address + ')</li>';
+  var collaboratorList = $('#collaboratorlist');
+  collaboratorList.html(content);
+  if (collaboratorListCreated) {
+    collaboratorList.listview('refresh');
   }
-  var clientlist = $('#clientlist');
-  clientlist.html(content);
-  clientlist.listview('refresh');
 });
 
 function hashCode(text) {
@@ -171,7 +189,9 @@ server.on('newMessage', function (message) {
   }
   var messageList = $('#messagelist');
   messageList.html(content);
-  messageList.listview('refresh');
+  if (messageListCreated) {
+    messageList.listview('refresh');
+  }
   messageList.scrollTop(messageList[0].scrollHeight);
   clearTimeout(resizeTimeout);
   resizeTimeout = window.setTimeout(resize, 100);
