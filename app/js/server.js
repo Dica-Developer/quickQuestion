@@ -114,7 +114,7 @@ Server.prototype.sendMessageToAll = function (message) {
     this.sendMessage(messageDataUri, type);
     window.$(filesToSend[i]).remove();
   }
-  window.$('#filesToSend').listview('refresh');
+  this.emit('updateFilesList');
 };
 
 Server.prototype.applyServer = function () {

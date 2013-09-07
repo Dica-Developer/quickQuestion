@@ -145,6 +145,14 @@ function sortByHostName(lhs, rhs) {
   return lhs.hostname > rhs.hostname;
 }
 
+server.on('updateFilesList', function () {
+  'use strict';
+
+  if (filesListCreated) {
+    $('#filesToSend').listview('refresh');
+  }
+});
+
 server.on('updateClients', function () {
   'use strict';
   var content = '';
