@@ -95,15 +95,28 @@ server.on('newMessage_model/x-sketch', function (message) {
   sketchClient(JSON.parse(message.content));
 });
 
-server.on('newMessage', function (message) {
+function formatDate(timestamp) {
   'use strict';
 
-  notifications.newMessage();
-  messages.push(message);
+  return timestamp.getFullYear() + '-' +
+    ('0' + (timestamp.getMonth() + 1)).slice(-2) + '-' +
+    ('0' + timestamp.getDate()).slice(-2) + ' ' +
+    ('0' + timestamp.getHours()).slice(-2) + ':' +
+    ('0' + timestamp.getMinutes()).slice(-2) + ':' +
+    ('0' + timestamp.getSeconds()).slice(-2);
+}
+
+function displayMessage() {
+  'use strict';
+
   var content = '',
     i = 0;
   for (i = 0; i < messages.length; i++) {
-    var sendOn = messages[i].timestamp.getFullYear() + '-' + ('0' + (messages[i].timestamp.getMonth() + 1)).slice(-2) + '-' + ('0' + messages[i].timestamp.getDate()).slice(-2) + ' ' + ('0' + messages[i].timestamp.getHours()).slice(-2) + ':' + ('0' + messages[i].timestamp.getMinutes()).slice(-2) + ':' + ('0' + messages[i].timestamp.getSeconds()).slice(-2);
+    var timestamp = messages[i].timestamp;
+    if(typeof timestamp !== 'object'){
+      timestamp = new Date(timestamp);
+    }
+    var sendOn = formatDate(timestamp);
     content = content + '<li style="background-color: ' + colors[Math.abs(hashCode(messages[i].remoteAddress)) % 9] + ';"><p class="ui-li-aside">by <strong>' + messages[i].remoteAddress + ':' + messages[i].remotePort + '</strong> at <strong>' + sendOn + '</strong></p>';
     content = content + '<p>';
     if (messages[i].contentType.indexOf('text/plain') === 0) {
@@ -128,13 +141,15 @@ server.on('newMessage', function (message) {
   $('[data-name="link"]').on('click', function () {
     gui.Shell.openExternal($(this).data('href'));
   });
-  messageDB.query.insert({
-    timestamp: message.timestamp,
-    remoteAddress: message.remoteAddress,
-    remotePort: message.remotePort,
-    contentType: message.contentType,
-    content: message.content
-  });
+}
+
+server.on('newMessage', function (message) {
+  'use strict';
+
+  notifications.newMessage();
+  messages.push(message);
+  displayMessage();
+  messageDB.query.insert(message);
 });
 
 server.on('messageSendSuccess', function () {
@@ -339,6 +354,9 @@ $(function () {
       $('#filesToSend').listview('refresh');
     }
   }, false);
+
+  messages = messageDB.query().limit(10).get();
+  displayMessage();
 
   window.onresize = function () {
     clearTimeout(resizeTimeout);
