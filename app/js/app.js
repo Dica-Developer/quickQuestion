@@ -38,9 +38,11 @@ function sendMessage(val) {
 function resize() {
   'use strict';
 
+  var filesToSend = $('#filesToSend');
   var messageToSend = $('#messageToSend');
   var newHeight = $(window).innerHeight() + messageToSend.height() - ($('#content').height() + $('#footer').height() + 32);
   messageToSend.height(newHeight);
+  filesToSend.height(newHeight);
 }
 
 // startup on DOM ready
