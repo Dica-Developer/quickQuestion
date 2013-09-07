@@ -233,6 +233,7 @@ $(function () {
   var lastSketchPoints = [];
   var mousedown = false;
   var canvas = document.getElementById('sketchArea');
+  canvas.style.cursor = 'crosshair';
   var ctx = canvas.getContext('2d');
   ctx.strokeStyle = 'black';
   ctx.lineWidth = 1;
