@@ -5,25 +5,27 @@ var autoUpdate = require('../js/auto-update.js');
 var gui = require('nw.gui');
 require('../js/guiHandling.js');
 var logDB = require('../js/db.js').logs;
+var messageDB = require('../js/db.js').messages;
 var notifications = require('../js/notification.js');
 
 var resizeTimeout,
   messages = [],
   colors = ['rgba(128, 128, 128, 0.01)', 'rgba(255, 0, 0, 0.01)', 'rgba(0, 255, 0, 0.01)', 'rgba(255, 255, 0, 0.01)', 'rgba(0, 0, 255, 0.01)', 'rgba(255, 0, 255, 0.01)', 'rgba(0, 255, 255, 0.01)', 'rgba(255, 255, 255, 0.01)', 'rgba(192, 192, 192, 0.01)'];
 
-function a(logDB) {
+function a(logDB, messageDB) {
   'use strict';
 
   return function () {
     var os = require('os');
     process.stdout.write('We\'re closing...' + os.EOL);
     logDB.save();
+    messageDB.save();
   };
 }
 
-process.on('exit', a(logDB));
-process.on('SIGINT', a(logDB));
-process.on('SIGTERM', a(logDB));
+process.on('exit', a(logDB, messageDB));
+process.on('SIGINT', a(logDB, messageDB));
+process.on('SIGTERM', a(logDB, messageDB));
 
 function sendMessage(val) {
   'use strict';
@@ -177,7 +179,13 @@ server.on('newMessage', function (message) {
   $('[data-name="link"]').on('click', function () {
     gui.Shell.openExternal($(this).data('href'));
   });
-
+  messageDB.query.insert({
+    timestamp: message.timestamp,
+    remoteAddress: message.remoteAddress,
+    remotePort: message.remotePort,
+    contentType: message.contentType,
+    content: message.content
+  });
 });
 
 server.on('messageSendSuccess', function () {
