@@ -159,7 +159,8 @@ server.on('updateClients', function () {
   var i = 0;
   this.clients.sort(sortByHostName);
   for (i = 0; i < this.clients.length; i++) {
-    content = content + '<li>' + this.clients[i].hostname + '(' + this.clients[i].address + ')</li>';
+    content = content + '<li>' + this.clients[i].hostname + ' (' + this.clients[i].address + ')</li>';
+  }
   var collaboratorList = $('#collaboratorlist');
   collaboratorList.html(content);
   if (collaboratorListCreated) {
