@@ -214,21 +214,25 @@ server.on('log.warning', function (message) {
 
 autoUpdate.on('updateNeeded', function () {
   'use strict';
+
   var confirmUpdate = $('#confirmUpdate');
   confirmUpdate.on('click', '#update-yes', function () {
     autoUpdate.emit('update');
   });
+
   confirmUpdate.popup('open');
 });
+
 autoUpdate.on('updateDone', function () {
   'use strict';
 
   var confirmRestart = $('#confirmRestart');
-  confirmRestart.on('popupafterclose', function () {
+  confirmRestart.on('click', '#restart-yes', function () {
     gui.Window.get().reload(3);
   });
   confirmRestart.popup('open');
 });
+
 autoUpdate.on('log.warning', function (message) {
   'use strict';
   console.warn(JSON.stringify(message));
