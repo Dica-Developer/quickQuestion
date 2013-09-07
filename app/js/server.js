@@ -61,12 +61,14 @@ function Server() {
   });
 
   this.on('sendMessageToAll', this.sendMessageToAll);
+  this.on('sendSketchMessageToAll', this.sendSketchMessageToAll);
 }
 
 sys.inherits(Server, events.EventEmitter);
 
 Server.prototype.sendMessage = function (message, type) {
   'use strict';
+
   var i = null;
   var _this = this;
   var onErrorCallback = function (message, options, client) {
@@ -91,6 +93,15 @@ Server.prototype.sendMessage = function (message, type) {
     req.end(message);
   }
   this.emit('messageSendSuccess');
+};
+
+Server.prototype.sendSketchMessageToAll = function (positionArray) {
+  'use strict';
+  if (Array.isArray(positionArray)) {
+    this.sendMessage(JSON.stringify(positionArray), 'model/x-sketch');
+  } else {
+    this.emit('messageSendError', 'Invalid sketch message to send.');
+  }
 };
 
 Server.prototype.sendMessageToAll = function (message) {
@@ -138,6 +149,7 @@ Server.prototype.applyServer = function () {
             message.remotePort = request.socket.remotePort;
             message.contentType = request.headers['content-type'];
             message.timestamp = new Date();
+            _this.emit('newMessage_' + message.contentType, message);
             _this.emit('newMessage', message);
           } else {
             _this.emit('emptyMessage');

@@ -85,8 +85,34 @@ function hashCode(text) {
   return hash;
 }
 
+function sketchClient(positionArray) {
+  'use strict';
+  var i = 0;
+  var canvas = document.getElementById('sketchArea');
+  var ctx = canvas.getContext('2d');
+
+  ctx.lineWidth = 1;
+  for (i = 0; i < positionArray.length; i++) {
+    var pos = positionArray[i];
+    if (0 === i) {
+      ctx.beginPath();
+      ctx.moveTo(pos.x, pos.y);
+    } else {
+      ctx.lineTo(pos.x, pos.y);
+      ctx.stroke();
+    }
+  }
+}
+
+server.on('newMessage_model/x-sketch', function (message) {
+  'use strict';
+
+  sketchClient(JSON.parse(message.content));
+});
+
 server.on('newMessage', function (message) {
   'use strict';
+
   notifications.newMessage();
   messages.push(message);
   var content = '',
@@ -100,7 +126,7 @@ server.on('newMessage', function (message) {
     } else if (messages[i].contentType.indexOf('image/') === 0) {
       content = content + '<span data-name="link" style="cursor:pointer;" data-href="' + messages[i].content + '"><img src="' + messages[i].content + '" height="50"></img></span>';
     } else {
-      content = content + '<span data-name="link" style="cursor:pointer;" data-href="' + messages[i].content + '">file of type ' + messages[i].contentType + '</span>';
+      content = content + '<span data-name="link" style="cursor:pointer;" data-href="' + messages[i].content + '">message of type ' + messages[i].contentType + '</span>';
     }
     content = content + '<p>';
     content = content + '</li>';
@@ -219,22 +245,25 @@ function fixPosition(e, gCanvasElement) {
 $(function () {
   'use strict';
 
+  var lastSketchPoints = [];
   var mousedown = false;
   var canvas = document.getElementById('sketchArea');
   var ctx = canvas.getContext('2d');
   ctx.strokeStyle = 'black';
   ctx.lineWidth = 1;
   canvas.onmousedown = function (e) {
-    var pos = fixPosition(e, canvas);
     mousedown = true;
+    var pos = fixPosition(e, canvas);
+    lastSketchPoints.push(pos);
     ctx.beginPath();
     ctx.moveTo(pos.x, pos.y);
     return false;
   };
 
   canvas.onmousemove = function (e) {
-    var pos = fixPosition(e, canvas);
     if (mousedown) {
+      var pos = fixPosition(e, canvas);
+      lastSketchPoints.push(pos);
       ctx.lineTo(pos.x, pos.y);
       ctx.stroke();
     }
@@ -242,6 +271,8 @@ $(function () {
 
   canvas.onmouseup = function () {
     mousedown = false;
+    server.emit('sendSketchMessageToAll', lastSketchPoints);
+    lastSketchPoints = [];
   };
 
   $('#messagelist').on('listviewcreate', function () {
