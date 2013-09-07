@@ -3,12 +3,19 @@
   "main": "views/index.html",
   "version": "0.9.7",
   "description": "Collaboration tool for intranets without the need for a hard coded identity.",
-  "keywords": ["collaboration", "chat", "P2P", "decentralized"],
-  "repositories": [{
-    "type": "git",
-    "url": "https://github.com/Dica-Developer/quickQuestion",
-    "path": "/"
-  }],
+  "keywords": [
+    "collaboration",
+    "chat",
+    "P2P",
+    "decentralized"
+  ],
+  "repositories": [
+    {
+      "type": "git",
+      "url": "https://github.com/Dica-Developer/quickQuestion",
+      "path": "/"
+    }
+  ],
   "single-instance": true,
   "window": {
     "title": "Quick Question",
