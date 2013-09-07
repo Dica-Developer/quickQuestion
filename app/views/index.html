@@ -159,5 +159,54 @@
         </ul>
       </div>
     </div>
+
+  <div id="whiteboard" data-role="page">
+    <div data-role="header" data-position="fixed">
+      <h1>Quick Question | Whiteboard</h1>
+      <a href="#navigation-panel" data-icon="bars" data-iconpos="notext" data-corners="true" data-shadow="true" data-iconshadow="true" data-wrapperels="span" data-theme="a" title="Whiteboard" class="ui-btn-right"></a>
+    </div>
+    <div id="content" data-role="content">
+      <ul style="max-height: 300px; overflow:auto;" id="messagelist" data-role="listview" data-inset="true" data-filter="true"></ul>
+      <canvas id="sketchArea" width="600" height="600" style="border: 1px solid black;"></canvas>
+    </div>
+    <div id="footer" data-role="footer" data-position="fixed"> 
+      <h4 id="message"></h4> 
+    </div>
+      <div class="ui-popup-container ui-popup-hidden" id="confirmUpdate-popup">
+          <div data-role="popup" id="confirmUpdate" data-overlay-theme="a" data-theme="c" style="max-width:400px;" class="ui-corner-all ui-popup ui-body-c ui-overlay-shadow" aria-disabled="false" data-disabled="false" data-shadow="true" data-corners="true" data-transition="none" data-position-to="origin">
+              <div data-role="header" data-theme="a" class="ui-corner-top ui-header ui-bar-a" role="banner">
+                  <h1 class="ui-title" role="heading" aria-level="1">Update</h1>
+              </div>
+              <div data-role="content" data-theme="d" class="ui-corner-bottom ui-content ui-body-d" role="main">
+                  <h3 class="ui-title">An update is available.</h3>
+                  <p>Do you want to apply this update?</p>
+                  <a href="#" id="update-no" data-role="button" data-inline="true" data-rel="back" data-theme="c" data-corners="true" data-shadow="true" data-iconshadow="true" data-wrapperels="span" class="ui-btn ui-btn-up-c ui-shadow ui-btn-corner-all ui-btn-inline"><span class="ui-btn-inner ui-btn-corner-all"><span class="ui-btn-text">No</span></span></a>
+                  <a href="#" id="update-yes" data-role="button" data-inline="true" data-transition="flow" data-theme="b" data-corners="true" data-shadow="true" data-iconshadow="true" data-wrapperels="span" class="ui-btn ui-btn-up-b ui-shadow ui-btn-corner-all ui-btn-inline"><span class="ui-btn-inner ui-btn-corner-all"><span class="ui-btn-text">Update</span></span></a>
+              </div>
+          </div>
+      </div>
+      <div class="ui-popup-container ui-popup-hidden" id="confirmRestart-popup">
+          <div data-role="popup" id="confirmRestart" data-overlay-theme="a" data-theme="c" style="max-width:400px;" class="ui-corner-all ui-popup ui-body-c ui-overlay-shadow" aria-disabled="false" data-disabled="false" data-shadow="true" data-corners="true" data-transition="none" data-position-to="origin">
+              <div data-role="header" data-theme="a" class="ui-corner-top ui-header ui-bar-a" role="banner">
+                  <h1 class="ui-title" role="heading" aria-level="1">Restart</h1>
+              </div>
+              <div data-role="content" data-theme="d" class="ui-corner-bottom ui-content ui-body-d" role="main">
+                  <h3 class="ui-title">The app needs to restart, to apply changes.</h3>
+                  <p>Do you want to restart now?</p>
+                  <a href="#" id="restart-no" data-role="button" data-inline="true" data-rel="back" data-theme="c" data-corners="true" data-shadow="true" data-iconshadow="true" data-wrapperels="span" class="ui-btn ui-btn-up-c ui-shadow ui-btn-corner-all ui-btn-inline"><span class="ui-btn-inner ui-btn-corner-all"><span class="ui-btn-text">No</span></span></a>
+                  <a href="#" id="restart-yes" data-role="button" data-inline="true" data-transition="flow" data-theme="b" data-corners="true" data-shadow="true" data-iconshadow="true" data-wrapperels="span" class="ui-btn ui-btn-up-b ui-shadow ui-btn-corner-all ui-btn-inline"><span class="ui-btn-inner ui-btn-corner-all"><span class="ui-btn-text">Restart</span></span></a>
+              </div>
+          </div>
+      </div>
+      <div data-role="panel" id="navigation-panel" data-position="right" data-display="reveal">
+        <ul data-role="listview">
+          <li><a href="#text" data-transition="flow">Text</a></li>
+          <li><a href="#files" data-transition="flow">Files</a></li>
+          <li><a href="#whiteboard" data-transition="flow">Whiteboard</a></li>
+          <li data-role="list-divider" data-transition="flow"></li>
+          <li><a href="#collaborator" data-transition="flow">Collaborator</a></li>
+        </ul>
+      </div>
+    </div>
 </body>
 </html>

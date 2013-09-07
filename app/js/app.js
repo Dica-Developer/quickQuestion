@@ -45,101 +45,6 @@ function resize() {
   filesToSend.height(newHeight);
 }
 
-// startup on DOM ready
-$(function () {
-  'use strict';
-
-  $('#messagelist').on('listviewcreate', function () {
-    messageListCreated = true;
-  });
-
-  $('#filesToSend').on('listviewcreate', function () {
-    filesListCreated = true;
-  });
-
-  $('#collaboratorlist').on('listviewcreate', function () {
-    collaboratorListCreated = true;
-  });
-
-  var sendMessageButton = $('#sendMessage');
-  sendMessageButton.bind('vclick', function () {
-    sendMessage($('#messageToSend').val());
-  });
-
-  var messageToSend = $('#messageToSend');
-  messageToSend.bind('keyup', function (e) {
-    var isShiftPressed = e.shiftKey;
-    switch (e.which) {
-    case 13:
-      if (!isShiftPressed) {
-        e.preventDefault();
-        sendMessage($('#messageToSend').val());
-      }
-      break;
-    }
-  });
-
-  messageToSend.bind('keydown', function (e) {
-    var isShiftPressed = e.shiftKey;
-    switch (e.which) {
-    case 13:
-      if (!isShiftPressed) {
-        e.preventDefault();
-      }
-      break;
-    }
-  });
-
-  function addImage(img) {
-    return function (e) {
-      img.attr('src', e.target.result);
-    };
-  }
-
-  var dropbox = document.getElementById('messageToSend');
-  dropbox.addEventListener('drop', function (e) {
-    e.stopPropagation();
-    e.preventDefault();
-
-    var dt = e.dataTransfer;
-    var files = dt.files;
-    var i = 0;
-
-    for (i = 0; i < files.length; i++) {
-      var liElement = $('<li>');
-      liElement.data('path', files[i].path);
-      liElement.data('type', files[i].type);
-      $('#filesToSend').append(liElement);
-      if (files[i].type.indexOf('image/') === 0) {
-        var img = $('<img>');
-        img.attr('height', '50');
-        img.attr('src', files[i].path);
-        liElement.append(img);
-
-        var reader = new FileReader();
-        reader.onload = addImage(img);
-        reader.readAsDataURL(files[i]);
-      } else {
-        liElement.text('file: "' + files[i].path + '" type: "' + files[i].type + '" size: ' + files[i].size);
-      }
-    }
-    if (filesListCreated) {
-      $('#filesToSend').listview('refresh');
-    }
-  }, false);
-
-  window.onresize = function () {
-    clearTimeout(resizeTimeout);
-    resizeTimeout = window.setTimeout(resize, 100);
-  };
-  clearTimeout(resizeTimeout);
-  resizeTimeout = window.setTimeout(resize, 100);
-
-  window.setTimeout(function () {
-    gui.Window.get().show();
-  }, 100);
-});
-
 function sortByHostName(lhs, rhs) {
   'use strict';
   return lhs.hostname > rhs.hostname;
@@ -281,4 +186,151 @@ autoUpdate.on('log.warning', function (message) {
     timestamp: new Date(),
     message: message
   });
+});
+
+/*
+found on http://jsfiddle.net/ghostoy/wTmFE/1/
+Thanks to http://stackoverflow.com/questions/55677/how-do-i-get-the-coordinates-of-a-mouse-click-on-a-canvas-element/4430498#4430498
+*/
+
+function fixPosition(e, gCanvasElement) {
+  'use strict';
+
+  var x;
+  var y;
+  if (e.pageX || e.pageY) {
+    x = e.pageX;
+    y = e.pageY;
+  } else {
+    x = e.clientX + document.body.scrollLeft +
+      document.documentElement.scrollLeft;
+    y = e.clientY + document.body.scrollTop +
+      document.documentElement.scrollTop;
+  }
+  x -= gCanvasElement.offsetLeft;
+  y -= gCanvasElement.offsetTop;
+  return {
+    x: x,
+    y: y
+  };
+}
+
+// startup on DOM ready
+$(function () {
+  'use strict';
+
+  var mousedown = false;
+  var canvas = document.getElementById('sketchArea');
+  var ctx = canvas.getContext('2d');
+  ctx.strokeStyle = 'black';
+  ctx.lineWidth = 1;
+  canvas.onmousedown = function (e) {
+    var pos = fixPosition(e, canvas);
+    mousedown = true;
+    ctx.beginPath();
+    ctx.moveTo(pos.x, pos.y);
+    return false;
+  };
+
+  canvas.onmousemove = function (e) {
+    var pos = fixPosition(e, canvas);
+    if (mousedown) {
+      ctx.lineTo(pos.x, pos.y);
+      ctx.stroke();
+    }
+  };
+
+  canvas.onmouseup = function () {
+    mousedown = false;
+  };
+
+  $('#messagelist').on('listviewcreate', function () {
+    messageListCreated = true;
+  });
+
+  $('#filesToSend').on('listviewcreate', function () {
+    filesListCreated = true;
+  });
+
+  $('#collaboratorlist').on('listviewcreate', function () {
+    collaboratorListCreated = true;
+  });
+
+  var sendMessageButton = $('#sendMessage');
+  sendMessageButton.bind('vclick', function () {
+    sendMessage($('#messageToSend').val());
+  });
+
+  var messageToSend = $('#messageToSend');
+  messageToSend.bind('keyup', function (e) {
+    var isShiftPressed = e.shiftKey;
+    switch (e.which) {
+    case 13:
+      if (!isShiftPressed) {
+        e.preventDefault();
+        sendMessage($('#messageToSend').val());
+      }
+      break;
+    }
+  });
+
+  messageToSend.bind('keydown', function (e) {
+    var isShiftPressed = e.shiftKey;
+    switch (e.which) {
+    case 13:
+      if (!isShiftPressed) {
+        e.preventDefault();
+      }
+      break;
+    }
+  });
+
+  function addImage(img) {
+    return function (e) {
+      img.attr('src', e.target.result);
+    };
+  }
+
+  var dropbox = document.getElementById('messageToSend');
+  dropbox.addEventListener('drop', function (e) {
+    e.stopPropagation();
+    e.preventDefault();
+
+    var dt = e.dataTransfer;
+    var files = dt.files;
+    var i = 0;
+
+    for (i = 0; i < files.length; i++) {
+      var liElement = $('<li>');
+      liElement.data('path', files[i].path);
+      liElement.data('type', files[i].type);
+      $('#filesToSend').append(liElement);
+      if (files[i].type.indexOf('image/') === 0) {
+        var img = $('<img>');
+        img.attr('height', '50');
+        img.attr('src', files[i].path);
+        liElement.append(img);
+
+        var reader = new FileReader();
+        reader.onload = addImage(img);
+        reader.readAsDataURL(files[i]);
+      } else {
+        liElement.text('file: "' + files[i].path + '" type: "' + files[i].type + '" size: ' + files[i].size);
+      }
+    }
+    if (filesListCreated) {
+      $('#filesToSend').listview('refresh');
+    }
+  }, false);
+
+  window.onresize = function () {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = window.setTimeout(resize, 100);
+  };
+  clearTimeout(resizeTimeout);
+  resizeTimeout = window.setTimeout(resize, 100);
+
+  window.setTimeout(function () {
+    gui.Window.get().show();
+  }, 100);
 });
