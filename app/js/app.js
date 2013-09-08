@@ -147,12 +147,16 @@ function displayMessage() {
   });
 }
 
-server.on('newMessage', function (message) {
+server.on('newMessage', function () {
   'use strict';
 
   notifications.newMessage();
+});
+
+server.on('newMessage', function (message) {
+  'use strict';
+
   messageDB.query.insert(message);
-  displayMessage();
 });
 
 server.on('messageSendSuccess', function () {
