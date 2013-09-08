@@ -371,7 +371,7 @@ $(function () {
 });
 
 // Window close or CMD+Q
-process.on('exit', function() {
+process.on('exit', function () {
   'use strict';
 
   var os = require('os');
@@ -392,12 +392,12 @@ process.on('SIGINT', function () {
   process.stdout.write('We\'re closing without persisting databases ...' + os.EOL);
 });
 
-process.on('SIGTERM', function() {
+process.on('SIGTERM', function () {
   'use strict';
 
 });
 
-gui.Window.get().on('close', function(){
+gui.Window.get().on('close', function () {
   'use strict';
   /*
   Should be improved ASAP
