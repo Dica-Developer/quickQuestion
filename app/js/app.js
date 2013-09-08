@@ -113,7 +113,7 @@ function displayMessage() {
     i = 0;
   for (i = 0; i < messages.length; i++) {
     var timestamp = messages[i].timestamp;
-    if(typeof timestamp !== 'object'){
+    if (typeof timestamp !== 'object') {
       timestamp = new Date(timestamp);
     }
     var sendOn = formatDate(timestamp);
