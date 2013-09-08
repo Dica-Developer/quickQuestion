@@ -252,29 +252,29 @@ $(function () {
   var ctx = canvas.getContext('2d');
   ctx.strokeStyle = 'black';
   ctx.lineWidth = 1;
-  canvas.onmousedown = function (e) {
+  $(canvas).on('vmousedown', function (e) {
     mousedown = true;
     var pos = fixPosition(e, canvas);
     lastSketchPoints.push(pos);
     ctx.beginPath();
     ctx.moveTo(pos.x, pos.y);
     return false;
-  };
+  });
 
-  canvas.onmousemove = function (e) {
+  $(canvas).on('vmousemove', function (e) {
     if (mousedown) {
       var pos = fixPosition(e, canvas);
       lastSketchPoints.push(pos);
       ctx.lineTo(pos.x, pos.y);
       ctx.stroke();
     }
-  };
+  });
 
-  canvas.onmouseup = function () {
+  $(canvas).on('vmouseup', function () {
     mousedown = false;
     server.emit('sendSketchMessageToAll', lastSketchPoints);
     lastSketchPoints = [];
-  };
+  });
 
   $('#messagelist').on('listviewcreate', function () {
     messageListCreated = true;
