@@ -148,7 +148,7 @@ Server.prototype.applyServer = function () {
             message.remoteAddress = request.socket.remoteAddress;
             message.remotePort = request.socket.remotePort;
             message.contentType = request.headers['content-type'];
-            message.timestamp = new Date();
+            message.timestamp = Date.now();
             _this.emit('newMessage_' + message.contentType, message);
             _this.emit('newMessage', message);
           } else {

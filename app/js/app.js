@@ -112,10 +112,7 @@ function displayMessage() {
   var content = '',
     i = 0;
   for (i = 0; i < messages.length; i++) {
-    var timestamp = messages[i].timestamp;
-    if (typeof timestamp !== 'object') {
-      timestamp = new Date(timestamp);
-    }
+    var timestamp = new Date(messages[i].timestamp);
     var sendOn = formatDate(timestamp);
     content = content + '<li style="background-color: ' + colors[Math.abs(hashCode(messages[i].remoteAddress)) % 9] + ';"><p class="ui-li-aside">by <strong>' + messages[i].remoteAddress + ':' + messages[i].remotePort + '</strong> at <strong>' + sendOn + '</strong></p>';
     content = content + '<p>';
