@@ -108,7 +108,7 @@ function formatDate(timestamp) {
 function updateMessageList(content) {
   'use strict';
   var messageList = $('#messagelist');
-  messageList.html(content);
+  messageList.append(content);
   if (messageListCreated) {
     messageList.listview('refresh');
   }
@@ -117,13 +117,12 @@ function updateMessageList(content) {
   resizeTimeout = window.setTimeout(resize, 100);
 }
 
-server.on('newMessage_text/plain', function (message) {
+server.on('newMessage_text/plain; charset=utf-8', function (message) {
   'use strict';
 
-  var content = '';
   var timestamp = new Date(message.timestamp);
   var sendOn = formatDate(timestamp);
-  content = content + '<li style="background-color: ' + colors[Math.abs(hashCode(message.remoteAddress)) % 9] + ';"><p class="ui-li-aside">by <strong>' + message.remoteAddress + ':' + message.remotePort + '</strong> at <strong>' + sendOn + '</strong></p>';
+  var content = '<li style="background-color: ' + colors[Math.abs(hashCode(message.remoteAddress)) % 9] + ';"><p class="ui-li-aside">by <strong>' + message.remoteAddress + ':' + message.remotePort + '</strong> at <strong>' + sendOn + '</strong></p>';
   content = content + '<p>';
   content = content + message.content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/([a-zA-Z]+:\/\/[^ ]*)/gm, '<span data-name="link" style="cursor:pointer;" data-href="$1">$1</span>');
   content = content + '</p>';
@@ -136,13 +135,12 @@ server.on('newMessage_text/plain', function (message) {
   });
 });
 
-server.on('newMessage_image/png newMessage_image/jpeg newMessage_image/gif newMessage_image/svg+xml newMessage_image/xbm newMessage_image/bmp', function (message) {
+function addImageMessage(message) {
   'use strict';
 
-  var content = '';
   var timestamp = new Date(message.timestamp);
   var sendOn = formatDate(timestamp);
-  content = content + '<li style="background-color: ' + colors[Math.abs(hashCode(message.remoteAddress)) % 9] + ';"><p class="ui-li-aside">by <strong>' + message.remoteAddress + ':' + message.remotePort + '</strong> at <strong>' + sendOn + '</strong></p>';
+  var content = '<li style="background-color: ' + colors[Math.abs(hashCode(message.remoteAddress)) % 9] + ';"><p class="ui-li-aside">by <strong>' + message.remoteAddress + ':' + message.remotePort + '</strong> at <strong>' + sendOn + '</strong></p>';
   content = content + '<p>';
   content = content + '<span data-name="link" style="cursor:pointer;" data-href="' + message.content + '"><img src="' + message.content + '" height="50"></img></span>';
   content = content + '</p>';
@@ -153,7 +151,14 @@ server.on('newMessage_image/png newMessage_image/jpeg newMessage_image/gif newMe
   $('[data-name="link"]').on('click', function () {
     gui.Shell.openExternal($(this).data('href'));
   });
-});
+}
+
+server.on('newMessage_image/png', addImageMessage);
+server.on('newMessage_image/jpeg', addImageMessage);
+server.on('newMessage_image/gif', addImageMessage);
+server.on('newMessage_image/svg+xml', addImageMessage);
+server.on('newMessage_image/xbm', addImageMessage);
+server.on('newMessage_image/bmp', addImageMessage);
 
 function displayMessagesAfterRestart() {
   'use strict';
