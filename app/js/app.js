@@ -111,8 +111,12 @@ function displayMessage() {
   var i,
     content = '',
     now = new Date(),
-    nowMinus12Hours = now.setTime(now.getTime() - (12*60*60*1000)),
-    messages = messageDB.query({timestamp: {gte: nowMinus12Hours}}).get();
+    nowMinus12Hours = now.setTime(now.getTime() - (12 * 60 * 60 * 1000)),
+    messages = messageDB.query({
+      timestamp: {
+        gte: nowMinus12Hours
+      }
+    }).get();
 
   for (i = 0; i < messages.length; i++) {
     var timestamp = new Date(messages[i].timestamp);
