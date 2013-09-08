@@ -130,7 +130,7 @@ function displayMessage() {
     } else {
       content = content + '<span data-name="link" style="cursor:pointer;" data-href="' + messages[i].content + '">message of type ' + messages[i].contentType + '</span>';
     }
-    content = content + '<p>';
+    content = content + '</p>';
     content = content + '</li>';
   }
   var messageList = $('#messagelist');
