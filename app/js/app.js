@@ -12,7 +12,6 @@ var filesListCreated = false;
 var collaboratorListCreated = false;
 
 var resizeTimeout,
-  messages = [],
   colors = ['rgba(128, 128, 128, 0.01)', 'rgba(255, 0, 0, 0.01)', 'rgba(0, 255, 0, 0.01)', 'rgba(255, 255, 0, 0.01)', 'rgba(0, 0, 255, 0.01)', 'rgba(255, 0, 255, 0.01)', 'rgba(0, 255, 255, 0.01)', 'rgba(255, 255, 255, 0.01)', 'rgba(192, 192, 192, 0.01)'];
 
 function sendMessage(val) {
@@ -109,8 +108,12 @@ function formatDate(timestamp) {
 function displayMessage() {
   'use strict';
 
-  var content = '',
-    i = 0;
+  var i,
+    content = '',
+    now = new Date(),
+    nowMinus12Hours = now.setTime(now.getTime() - (12*60*60*1000)),
+    messages = messageDB.query({timestamp: {gte: nowMinus12Hours}}).get();
+
   for (i = 0; i < messages.length; i++) {
     var timestamp = new Date(messages[i].timestamp);
     var sendOn = formatDate(timestamp);
@@ -144,9 +147,8 @@ server.on('newMessage', function (message) {
   'use strict';
 
   notifications.newMessage();
-  messages.push(message);
-  displayMessage();
   messageDB.query.insert(message);
+  displayMessage();
 });
 
 server.on('messageSendSuccess', function () {
@@ -352,7 +354,6 @@ $(function () {
     }
   }, false);
 
-  messages = messageDB.query().limit(10).get();
   displayMessage();
 
   window.onresize = function () {
