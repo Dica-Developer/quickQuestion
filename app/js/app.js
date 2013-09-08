@@ -105,7 +105,57 @@ function formatDate(timestamp) {
     ('0' + timestamp.getSeconds()).slice(-2);
 }
 
-function displayMessageAfterRestart() {
+function updateMessageList(content) {
+  'use strict';
+  var messageList = $('#messagelist');
+  messageList.html(content);
+  if (messageListCreated) {
+    messageList.listview('refresh');
+  }
+  messageList.scrollTop(messageList[0].scrollHeight);
+  clearTimeout(resizeTimeout);
+  resizeTimeout = window.setTimeout(resize, 100);
+}
+
+server.on('newMessage_text/plain', function (message) {
+  'use strict';
+
+  var content = '';
+  var timestamp = new Date(message.timestamp);
+  var sendOn = formatDate(timestamp);
+  content = content + '<li style="background-color: ' + colors[Math.abs(hashCode(message.remoteAddress)) % 9] + ';"><p class="ui-li-aside">by <strong>' + message.remoteAddress + ':' + message.remotePort + '</strong> at <strong>' + sendOn + '</strong></p>';
+  content = content + '<p>';
+  content = content + message.content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/([a-zA-Z]+:\/\/[^ ]*)/gm, '<span data-name="link" style="cursor:pointer;" data-href="$1">$1</span>');
+  content = content + '</p>';
+  content = content + '</li>';
+
+  updateMessageList(content);
+
+  $('[data-name="link"]').on('click', function () {
+    gui.Shell.openExternal($(this).data('href'));
+  });
+});
+
+server.on('newMessage_image/png newMessage_image/jpeg newMessage_image/gif newMessage_image/svg+xml newMessage_image/xbm newMessage_image/bmp', function (message) {
+  'use strict';
+
+  var content = '';
+  var timestamp = new Date(message.timestamp);
+  var sendOn = formatDate(timestamp);
+  content = content + '<li style="background-color: ' + colors[Math.abs(hashCode(message.remoteAddress)) % 9] + ';"><p class="ui-li-aside">by <strong>' + message.remoteAddress + ':' + message.remotePort + '</strong> at <strong>' + sendOn + '</strong></p>';
+  content = content + '<p>';
+  content = content + '<span data-name="link" style="cursor:pointer;" data-href="' + message.content + '"><img src="' + message.content + '" height="50"></img></span>';
+  content = content + '</p>';
+  content = content + '</li>';
+
+  updateMessageList(content);
+
+  $('[data-name="link"]').on('click', function () {
+    gui.Shell.openExternal($(this).data('href'));
+  });
+});
+
+function displayMessagesAfterRestart() {
   'use strict';
 
   var i,
@@ -133,14 +183,8 @@ function displayMessageAfterRestart() {
     content = content + '</p>';
     content = content + '</li>';
   }
-  var messageList = $('#messagelist');
-  messageList.html(content);
-  if (messageListCreated) {
-    messageList.listview('refresh');
-  }
-  messageList.scrollTop(messageList[0].scrollHeight);
-  clearTimeout(resizeTimeout);
-  resizeTimeout = window.setTimeout(resize, 100);
+
+  updateMessageList(content);
 
   $('[data-name="link"]').on('click', function () {
     gui.Shell.openExternal($(this).data('href'));
@@ -362,7 +406,7 @@ $(function () {
     }
   }, false);
 
-  displayMessageAfterRestart();
+  displayMessagesAfterRestart();
 
   window.onresize = function () {
     clearTimeout(resizeTimeout);
