@@ -105,7 +105,7 @@ function formatDate(timestamp) {
     ('0' + timestamp.getSeconds()).slice(-2);
 }
 
-function displayMessage() {
+function displayMessageAfterRestart() {
   'use strict';
 
   var i,
@@ -362,7 +362,7 @@ $(function () {
     }
   }, false);
 
-  displayMessage();
+  displayMessageAfterRestart();
 
   window.onresize = function () {
     clearTimeout(resizeTimeout);
