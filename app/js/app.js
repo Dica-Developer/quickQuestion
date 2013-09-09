@@ -122,8 +122,8 @@ server.on('newMessage_text/plain; charset=utf-8', function (message) {
 
   var timestamp = new Date(message.timestamp);
   var sendOn = formatDate(timestamp);
-  var content = '<li style="background-color: ' + colors[Math.abs(hashCode(message.remoteAddress)) % 9] + ';"><p class="ui-li-aside">by <strong>' + message.remoteAddress + ':' + message.remotePort + '</strong> at <strong>' + sendOn + '</strong></p>';
-  content = content + '<p>';
+  var content = '<li style="background-color: ' + colors[Math.abs(hashCode(message.remoteAddress)) % 9] + ';"><p class="ui-li-aside">by <strong>' + message.remoteAddress + '</strong> at <strong>' + sendOn + '</strong></p>';
+  content = content + '<p style="white-space: pre-line;">';
   content = content + message.content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/([a-zA-Z]+:\/\/[^ ]*)/gm, '<span data-name="link" style="cursor:pointer;" data-href="$1">$1</span>');
   content = content + '</p>';
   content = content + '</li>';
@@ -140,8 +140,8 @@ function addImageMessage(message) {
 
   var timestamp = new Date(message.timestamp);
   var sendOn = formatDate(timestamp);
-  var content = '<li style="background-color: ' + colors[Math.abs(hashCode(message.remoteAddress)) % 9] + ';"><p class="ui-li-aside">by <strong>' + message.remoteAddress + ':' + message.remotePort + '</strong> at <strong>' + sendOn + '</strong></p>';
-  content = content + '<p>';
+  var content = '<li style="background-color: ' + colors[Math.abs(hashCode(message.remoteAddress)) % 9] + ';"><p class="ui-li-aside">by <strong>' + message.remoteAddress + '</strong> at <strong>' + sendOn + '</strong></p>';
+  content = content + '<p style="white-space: pre-line;">';
   content = content + '<span data-name="link" style="cursor:pointer;" data-href="' + message.content + '"><img src="' + message.content + '" height="50"></img></span>';
   content = content + '</p>';
   content = content + '</li>';
@@ -176,8 +176,8 @@ function displayMessagesAfterRestart() {
   for (i = 0; i < messages.length; i++) {
     var timestamp = new Date(messages[i].timestamp);
     var sendOn = formatDate(timestamp);
-    content = content + '<li style="background-color: ' + colors[Math.abs(hashCode(messages[i].remoteAddress)) % 9] + ';"><p class="ui-li-aside">by <strong>' + messages[i].remoteAddress + ':' + messages[i].remotePort + '</strong> at <strong>' + sendOn + '</strong></p>';
-    content = content + '<p>';
+    content = content + '<li style="background-color: ' + colors[Math.abs(hashCode(messages[i].remoteAddress)) % 9] + ';"><p class="ui-li-aside">by <strong>' + messages[i].remoteAddress + '</strong> at <strong>' + sendOn + '</strong></p>';
+    content = content + '<p style="white-space: pre-line;">';
     if (messages[i].contentType.indexOf('text/plain') === 0) {
       content = content + messages[i].content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/([a-zA-Z]+:\/\/[^ ]*)/gm, '<span data-name="link" style="cursor:pointer;" data-href="$1">$1</span>');
     } else if (messages[i].contentType.indexOf('image/') === 0) {
