@@ -212,7 +212,7 @@ server.on('messageSendSuccess', function () {
   'use strict';
 
   $('#messageToSend').val('');
-  $('#message').text('Message send.');
+  $('#message').text('Message was sent.');
 });
 
 server.on('messageSendError', function (errorMessage) {

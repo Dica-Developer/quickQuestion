@@ -100,7 +100,7 @@ Server.prototype.sendSketchMessageToAll = function (positionArray) {
   if (Array.isArray(positionArray)) {
     this.sendMessage(JSON.stringify(positionArray), 'model/x-sketch');
   } else {
-    this.emit('messageSendError', 'Invalid sketch message to send.');
+    this.emit('messageSendError', 'Invalid sketch message to sent.');
   }
 };
 
