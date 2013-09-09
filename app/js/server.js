@@ -25,7 +25,7 @@ function Server() {
     var newClient = true;
     var i;
     for (i = 0; i < _this.clients.length; i++) {
-      if (_this.clients[i] === service.address) {
+      if (service.hasOwnProperty('address') && _this.clients[i].address === service.address) {
         newClient = false;
       }
     }
