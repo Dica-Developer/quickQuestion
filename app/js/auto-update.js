@@ -57,12 +57,16 @@ AutoUpdate.prototype.compareWithCurrentVersion = function () {
   fs.readFile('./package.json', {
     encoding: 'utf8'
   }, function (error, data) {
-    var versionSplitLocal, versionSplitRemote,
-      localVersionString = JSON.parse(data).version,
-      remoteVersionString = _this.currentGitTags[0].name,
+    var versionSplitLocal, versionSplitRemote;
+    var localVersionString = JSON.parse(data).version;
+    var remoteVersionString = '0.0',
       isUpdateNeeded = false,
       index = 0,
       loopLength;
+
+    if (_this.currentGitTags && _this.currentGitTags.length > 0 && _this.currentGitTags[0].hasOwnProperty('name')) {
+      remoteVersionString = _this.currentGitTags[0].name;
+    }
 
     versionSplitRemote = remoteVersionString.split('.');
     versionSplitLocal = localVersionString.split('.');
