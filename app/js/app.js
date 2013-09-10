@@ -26,6 +26,7 @@ function resize() {
   var newHeight = $(window).innerHeight() + messageToSend.height() - ($('#content').height() + $('#footer').height() + 32);
   messageToSend.height(newHeight);
   filesToSend.height(newHeight);
+  $('#sketchArea').attr('width', $(window).innerWidth() - 30);
 }
 
 function sortByHostName(lhs, rhs) {
