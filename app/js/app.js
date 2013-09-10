@@ -424,33 +424,17 @@ $(function () {
 });
 
 // Window close or CMD+Q
-process.on('exit', function () {
+var teardown = function () {
   'use strict';
 
   var os = require('os');
   process.stdout.write('We\'re closing...' + os.EOL);
   logDB.save();
   messageDB.save();
-});
-
-// CTRL+C
-process.on('SIGINT', function () {
-  'use strict';
-
-  var os = require('os');
-  process.stdout.write('We\'re closing...' + os.EOL);
-  logDB.save();
-  messageDB.save();
-});
-
-process.on('SIGTERM', function () {
-  'use strict';
-
-  var os = require('os');
-  process.stdout.write('We\'re closing...' + os.EOL);
-  logDB.save();
-  messageDB.save();
-});
+};
+process.on('exit', teardown);
+process.on('SIGINT', teardown);
+process.on('SIGTERM', teardown);
 
 messageDB.on('ready', function(){
   'use strict';
