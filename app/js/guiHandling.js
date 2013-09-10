@@ -18,7 +18,6 @@ function GuiHandling() {
     icon: _this.ICON_PATHS.standard,
     menu: this.trayMenu
   });
-  this.currentWindow = this.gui.Window.get();
 
   this.handleUpdateProgress = function (updateMessage) {
     if (!_this.trayIsLocked) {
@@ -48,6 +47,7 @@ function GuiHandling() {
     _this.trayOnly = false;
   };
 
+  this.currentWindow = this.gui.Window.get();
   this.currentWindow.on('blur', this.setTrayOnly);
   this.currentWindow.on('focus', this.unsetTrayOnly);
   this.currentWindow.on('minimize', this.setTrayOnly);
