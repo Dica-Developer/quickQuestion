@@ -411,8 +411,6 @@ $(function () {
     }
   }, false);
 
-  displayMessagesAfterRestart();
-
   window.onresize = function () {
     clearTimeout(resizeTimeout);
     resizeTimeout = window.setTimeout(resize, 100);
@@ -431,45 +429,32 @@ process.on('exit', function () {
 
   var os = require('os');
   process.stdout.write('We\'re closing...' + os.EOL);
+  logDB.save();
+  messageDB.save();
 });
 
 // CTRL+C
 process.on('SIGINT', function () {
   'use strict';
 
-  /*
-  We can't and we don't need to persist the databases if this event is fired.
-  Usually the app will be closed by closing window or hitting cmd+Q and started
-  without any terminal open.
-   */
-
   var os = require('os');
-  process.stdout.write('We\'re closing without persisting databases ...' + os.EOL);
+  process.stdout.write('We\'re closing...' + os.EOL);
+  logDB.save();
+  messageDB.save();
 });
 
 process.on('SIGTERM', function () {
   'use strict';
 
-});
-
-gui.Window.get().on('close', function () {
-  'use strict';
-  /*
-  Should be improved ASAP
-  This will be fired twice because we have two windows open. Main and Notifications.
-  Notifications window will be get obsolete with the next release of node-webkit see:
-   https://github.com/rogerwang/node-webkit/issues/27
-  Furthermore window close is handled differently. Window close on mac does not mean app quit.
-  For this we have to until node-webkit will resolving this ticket:
-   https://github.com/rogerwang/node-webkit/issues/430
-  Until this issues are fixed we will need this event to do pre-quit actions like persisting
-  Databases. The process.exit event is unfortunately fired to late. If this event is fired
-  we don't have access to window objects like localStorage anymore.
-   */
   var os = require('os');
-  process.stdout.write('We\'re persisting databases.' + os.EOL);
+  process.stdout.write('We\'re closing...' + os.EOL);
   logDB.save();
   messageDB.save();
-  process.stdout.write('Databases stored.' + os.EOL);
-  gui.App.quit();
+});
+
+messageDB.on('ready', function(){
+  'use strict';
+  $(function(){
+    displayMessagesAfterRestart();
+  });
 });
