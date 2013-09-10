@@ -1,12 +1,11 @@
 /*global $, window, document, FileReader*/
 
+var gui = require('nw.gui');
 var server = require('../js/server.js');
 var autoUpdate = require('../js/auto-update.js');
-var gui = require('nw.gui');
 require('../js/guiHandling.js');
 var logDB = require('../js/db.js').logs;
 var messageDB = require('../js/db.js').messages;
-var notifications = require('../js/notification.js');
 var messageListCreated = false;
 var filesListCreated = false;
 var collaboratorListCreated = false;
@@ -195,12 +194,6 @@ function displayMessagesAfterRestart() {
     gui.Shell.openExternal($(this).data('href'));
   });
 }
-
-server.on('newMessage', function () {
-  'use strict';
-
-  notifications.newMessage();
-});
 
 server.on('newMessage', function (message) {
   'use strict';
