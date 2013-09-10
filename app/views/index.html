@@ -165,8 +165,24 @@
       <ul style="max-height: 300px; overflow:auto;" id="messagelist" data-role="listview" data-inset="true" data-filter="true"></ul>
       <canvas id="sketchArea" width="600" height="600" style="border: 1px solid black;"></canvas>
     </div>
-    <div id="footer" data-role="footer" data-position="fixed"> 
-      <h4 id="message"></h4> 
+    <div id="footer" data-role="footer" data-position="fixed">
+      <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
+        <a href="#" data-role="button" id="newSketchArea" data-icon="delete">New</a>
+        <a href="#" data-role="button" id="saveSketchArea" data-icon="check">Save</a>
+        <label for="pencilSizeSketchArea">Size</label>
+        <select name="pencilSizeSketchArea" id="pencilSizeSketchArea">
+          <option value="#">1</option>
+          <option value="#">2</option>
+          <option value="#">3</option>
+          <option value="#">4</option>
+          <option value="#">5</option>
+          <option value="#">6</option>
+          <option value="#">7</option>
+          <option value="#">8</option>
+          <option value="#">9</option>
+          <option value="#">10</option>
+        </select>
+      </fieldset>
     </div>
       <div class="ui-popup-container ui-popup-hidden" id="confirmUpdate-popup">
           <div data-role="popup" id="confirmUpdate" data-overlay-theme="a" data-theme="c" style="max-width:400px;" class="ui-corner-all ui-popup ui-body-c ui-overlay-shadow" aria-disabled="false" data-disabled="false" data-shadow="true" data-corners="true" data-transition="none" data-position-to="origin">

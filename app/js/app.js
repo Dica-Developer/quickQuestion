@@ -298,15 +298,15 @@ $(function () {
   var mousedown = false;
   var canvas = document.getElementById('sketchArea');
   canvas.style.cursor = 'crosshair';
-  var ctx = canvas.getContext('2d');
-  ctx.strokeStyle = 'black';
-  ctx.lineWidth = 1;
+  var context = canvas.getContext('2d');
+  context.strokeStyle = 'black';
+  context.lineWidth = 1;
   $(canvas).on('vmousedown', function (e) {
     mousedown = true;
     var pos = fixPosition(e, canvas);
     lastSketchPoints.push(pos);
-    ctx.beginPath();
-    ctx.moveTo(pos.x, pos.y);
+    context.beginPath();
+    context.moveTo(pos.x, pos.y);
     return false;
   });
 
@@ -314,8 +314,8 @@ $(function () {
     if (mousedown) {
       var pos = fixPosition(e, canvas);
       lastSketchPoints.push(pos);
-      ctx.lineTo(pos.x, pos.y);
-      ctx.stroke();
+      context.lineTo(pos.x, pos.y);
+      context.stroke();
     }
   });
 
@@ -323,6 +323,14 @@ $(function () {
     mousedown = false;
     server.emit('sendSketchMessageToAll', lastSketchPoints);
     lastSketchPoints = [];
+  });
+
+  $('#newSketchArea').on('click', function () {
+    context.clearRect(0, 0, canvas.width, canvas.height);
+  });
+
+  $('#pencilSizeSketchArea').on('change', function () {
+    context.lineWidth = $($('#pencilSizeSketchArea option:selected')[0]).text();
   });
 
   $('#messagelist').on('listviewcreate', function () {
@@ -429,9 +437,9 @@ process.on('exit', teardown);
 process.on('SIGINT', teardown);
 process.on('SIGTERM', teardown);
 
-messageDB.on('ready', function(){
+messageDB.on('ready', function () {
   'use strict';
-  $(function(){
+  $(function () {
     displayMessagesAfterRestart();
   });
 });
