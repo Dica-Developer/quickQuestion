@@ -112,12 +112,17 @@ function formatDate(timestamp) {
 
 function updateMessageList(content) {
   'use strict';
+
+  $('ul[name="messagelist"]').each(function () {
+    $(this).append(content);
+  });
+
   var messageList = $('#messagelist');
-  messageList.append(content);
   if (messageListCreated) {
     messageList.listview('refresh');
   }
   messageList.scrollTop(messageList[0].scrollHeight);
+
   clearTimeout(resizeTimeout);
   resizeTimeout = window.setTimeout(resize, 100);
 }
