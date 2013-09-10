@@ -1,7 +1,7 @@
 {
   "name": "QuickQuestion",
   "main": "views/index.html#text",
-  "version": "0.9.9",
+  "version": "0.9.10",
   "description": "Collaboration tool for intranets without the need for a hard coded identity.",
   "keywords": [
     "collaboration",
