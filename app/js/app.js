@@ -68,13 +68,15 @@ function hashCode(text) {
   return hash;
 }
 
-function sketchClient(positionArray) {
+function sketchClient(sketchMessage) {
   'use strict';
   var i = 0;
   var canvas = document.getElementById('sketchArea');
   var ctx = canvas.getContext('2d');
 
-  ctx.lineWidth = 1;
+  ctx.lineWidth = sketchMessage.pencileSize;
+  ctx.strokeStyle = sketchMessage.pencilColor;
+  var positionArray = sketchMessage.coordinates;
   for (i = 0; i < positionArray.length; i++) {
     var pos = positionArray[i];
     if (0 === i) {
@@ -321,7 +323,12 @@ $(function () {
 
   $(canvas).on('vmouseup', function () {
     mousedown = false;
-    server.emit('sendSketchMessageToAll', lastSketchPoints);
+    var sketchMessage = {
+      coordinates: lastSketchPoints,
+      pencilColor: $('#pencilColorSketchArea option:selected')[0].value,
+      pencilSize: $('#pencilSizeSketchArea option:selected')[0].value
+    };
+    server.emit('sendSketchMessageToAll', sketchMessage);
     lastSketchPoints = [];
   });
 
@@ -330,7 +337,11 @@ $(function () {
   });
 
   $('#pencilSizeSketchArea').on('change', function () {
-    context.lineWidth = $($('#pencilSizeSketchArea option:selected')[0]).text();
+    context.lineWidth = $('#pencilSizeSketchArea option:selected')[0].value;
+  });
+
+  $('#pencilColorSketchArea').on('change', function () {
+    context.strokeStyle = $('#pencilColorSketchArea option:selected')[0].value;
   });
 
   $('#messagelist').on('listviewcreate', function () {

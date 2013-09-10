@@ -95,13 +95,9 @@ Server.prototype.sendMessage = function (message, type) {
   this.emit('messageSendSuccess');
 };
 
-Server.prototype.sendSketchMessageToAll = function (positionArray) {
+Server.prototype.sendSketchMessageToAll = function (sketchMessage) {
   'use strict';
-  if (Array.isArray(positionArray)) {
-    this.sendMessage(JSON.stringify(positionArray), 'model/x-sketch');
-  } else {
-    this.emit('messageSendError', 'Invalid sketch message to sent.');
-  }
+  this.sendMessage(JSON.stringify(sketchMessage), 'model/x-sketch');
 };
 
 Server.prototype.sendMessageToAll = function (message) {
