@@ -47,10 +47,13 @@ server.on('updateClients', function () {
   var i = 0;
   this.clients.sort(sortByHostName);
   for (i = 0; i < this.clients.length; i++) {
-    content = content + '<li>' + this.clients[i].hostname + ' (' + this.clients[i].address + ')</li>';
+    content = content + '<li><a href="#">' + this.clients[i].hostname + ' (' + this.clients[i].address + ')</a></li>';
   }
-  var collaboratorList = $('#collaboratorlist');
-  collaboratorList.html(content);
+  $('ul[name="collaboratorListView"]').each(function () {
+    $(this).html(content);
+  });
+
+  var collaboratorList = $('#collaboratorListView');
   if (collaboratorListCreated) {
     collaboratorList.listview('refresh');
   }
@@ -352,7 +355,7 @@ $(function () {
     filesListCreated = true;
   });
 
-  $('#collaboratorlist').on('listviewcreate', function () {
+  $('#collaboratorListView').on('listviewcreate', function () {
     collaboratorListCreated = true;
   });
 
