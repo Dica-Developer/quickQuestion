@@ -1,36 +1,38 @@
+/*global window*/
+
 var sys = require('sys');
 var events = require('events');
-var gui = window.nwDispatcher.nwGui;
 
-function Notifications(){
+function Notifications() {
   'use strict';
   var _this = this;
   this.messageWindowLoaded = false;
   this.messageWindowOpen = false;
-  this.messageWindow = this.createNewWindow();
+  this.messageWindow = _this.createNewWindow();
   var messageHideTimeOutID = null;
-  this.newMessage = function(){
-    if(_this.messageWindowLoaded){
+
+  this.newMessage = function () {
+    if (_this.messageWindowLoaded) {
       clearTimeout(messageHideTimeOutID);
       _this.messageWindow.show();
       _this.messageWindowOpen = true;
-      messageHideTimeOutID = setTimeout(function(){
+      messageHideTimeOutID = setTimeout(function () {
         _this.messageWindow.hide();
         _this.emit('windowHide');
       }, 4000);
     }
 
-    if(_this.messageWindowOpen){
+    if (_this.messageWindowOpen) {
       var winDocument = _this.messageWindow.window.document;
       var messageCount = winDocument.getElementById('messageCount');
       var currentCount = parseInt(messageCount.innerText, 10);
       var messageTempus = winDocument.getElementById('messageTempus');
-      messageCount.innerText = '' + (currentCount + 1);
-      if(messageCount > 1){
+      messageCount.innerText = (currentCount + 1);
+      if (messageCount > 1) {
         messageTempus.innerText = 'messages';
       }
     }
-    _this.on('windowHide', function(){
+    _this.on('windowHide', function () {
       var winDocument = _this.messageWindow.window.document;
       var messageCount = winDocument.getElementById('messageCount');
       var messageTempus = winDocument.getElementById('messageTempus');
@@ -43,12 +45,12 @@ function Notifications(){
 
 sys.inherits(Notifications, events.EventEmitter);
 
-Notifications.prototype.createNewWindow = function(){
+Notifications.prototype.createNewWindow = function () {
   'use strict';
 
   var _this = this;
 
-  var newMessageWindow = gui.Window.open('../views/notifications/newMessage.html', {
+  var newMessageWindow = window.nwDispatcher.nwGui.Window.open('../views/notifications/newMessage.html', {
     frame: false,
     toolbar: false,
     width: 250,
@@ -58,7 +60,7 @@ Notifications.prototype.createNewWindow = function(){
     resizable: false
   });
 
-  newMessageWindow.on('loaded', function(){
+  newMessageWindow.on('loaded', function () {
     var windowWidth = window.screen.availWidth;
     var windowTop = window.screen.availTop;
     var x = windowWidth - newMessageWindow.width;
@@ -69,5 +71,6 @@ Notifications.prototype.createNewWindow = function(){
 
   return newMessageWindow;
 };
+
 var notifications = new Notifications();
 module.exports.newMessage = notifications.newMessage;
