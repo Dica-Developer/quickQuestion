@@ -1,6 +1,7 @@
 /*global $, window, document, FileReader, Image, Buffer*/
 
 var gui = require('nw.gui');
+var fs = require('fs');
 var server = require('../js/server.js');
 var autoUpdate = require('../js/auto-update.js');
 require('../js/guiHandling.js');
@@ -143,6 +144,7 @@ server.on('newMessage_text/plain; charset=utf-8', function (message) {
   $('[data-name="link"]').on('click', function () {
     gui.Shell.openExternal($(this).data('href'));
   });
+  $('[data-name="link"]').data('name', '');
 });
 
 function addImageMessage(message) {
@@ -159,8 +161,11 @@ function addImageMessage(message) {
   updateMessageList(content);
 
   $('[data-name="link"]').on('click', function () {
-    gui.Shell.openExternal($(this).data('href'));
+    var fileSaveAsDialog = $('#fileSaveAsDialog');
+    fileSaveAsDialog.data('content', $(this).data('href'));
+    fileSaveAsDialog.trigger('click');
   });
+  $('[data-name="link"]').data('name', '');
 }
 
 server.on('newMessage_image/png', addImageMessage);
@@ -169,6 +174,8 @@ server.on('newMessage_image/gif', addImageMessage);
 server.on('newMessage_image/svg+xml', addImageMessage);
 server.on('newMessage_image/xbm', addImageMessage);
 server.on('newMessage_image/bmp', addImageMessage);
+
+// TODO emit signals for every message type instead of duplicate code here
 
 function displayMessagesAfterRestart() {
   'use strict';
@@ -189,7 +196,7 @@ function displayMessagesAfterRestart() {
     content = content + '<li style="background-color: ' + colors[Math.abs(hashCode(messages[i].remoteAddress)) % 9] + ';"><p class="ui-li-aside">by <strong>' + messages[i].remoteAddress + '</strong> at <strong>' + sendOn + '</strong></p>';
     content = content + '<p style="white-space: pre-line;">';
     if (messages[i].contentType.indexOf('text/plain') === 0) {
-      content = content + messages[i].content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/([a-zA-Z]+:\/\/[^ ]*)/gm, '<span data-name="link" style="cursor:pointer;" data-href="$1">$1</span>');
+      content = content + messages[i].content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/([a-zA-Z]+:\/\/[^ ]*)/gm, '<span data-name="linkExt" style="cursor:pointer;" data-href="$1">$1</span>');
     } else if (messages[i].contentType.indexOf('image/') === 0) {
       content = content + '<span data-name="link" style="cursor:pointer;" data-href="' + messages[i].content + '"><img src="' + messages[i].content + '" height="50"></img></span>';
     } else {
@@ -201,9 +208,16 @@ function displayMessagesAfterRestart() {
 
   updateMessageList(content);
 
-  $('[data-name="link"]').on('click', function () {
+  $('[data-name="linkExt"]').on('click', function () {
     gui.Shell.openExternal($(this).data('href'));
   });
+  $('[data-name="linkExt"]').data('name', '');
+  $('[data-name="link"]').on('click', function () {
+    var fileSaveAsDialog = $('#fileSaveAsDialog');
+    fileSaveAsDialog.data('content', $(this).data('href'));
+    fileSaveAsDialog.trigger('click');
+  });
+  $('[data-name="link"]').data('name', '');
 }
 
 server.on('newMessage', function (message) {
@@ -301,6 +315,17 @@ function fixPosition(e, gCanvasElement) {
   };
 }
 
+function saveFile(path, content) {
+  'use strict';
+
+  var from = content.indexOf(';base64,') + ';base64,'.length;
+  content = content.substring(from);
+  var buffer = new Buffer(content, 'base64');
+  fs.writeFile(path, buffer, function () {
+    // TODO handle error
+  });
+}
+
 // startup on DOM ready
 $(function () {
   'use strict';
@@ -341,16 +366,21 @@ $(function () {
     lastSketchPoints = [];
   });
 
-  $('#saveAsDialog').change(function () {
-    var fs = require('fs');
+  $('#whiteboardSaveAsDialog').change(function () {
     var image = canvas.toDataURL('image/png');
     image = image.replace('data:image/png;base64,', '');
     var buffer = new Buffer(image, 'base64');
-    fs.writeFileSync($(this).val(), buffer);
+    fs.writeFile($(this).val(), buffer, function () {
+      // TODO handle error
+    });
   });
 
   $('#saveSketchArea').on('click', function () {
-    $('#saveAsDialog').trigger('click');
+    $('#whiteboardSaveAsDialog').trigger('click');
+  });
+
+  $('#fileSaveAsDialog').change(function () {
+    saveFile($(this).val(), $('#fileSaveAsDialog').data('content'));
   });
 
   $('#newSketchArea').on('click', function () {
