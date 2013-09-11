@@ -1,4 +1,4 @@
-/*global $, window, document, FileReader, Image*/
+/*global $, window, document, FileReader, Image, Buffer*/
 
 var gui = require('nw.gui');
 var server = require('../js/server.js');
@@ -339,6 +339,18 @@ $(function () {
     };
     server.emit('sendSketchMessageToAll', sketchMessage);
     lastSketchPoints = [];
+  });
+
+  $('#saveAsDialog').change(function () {
+    var fs = require('fs');
+    var image = canvas.toDataURL('image/png');
+    image = image.replace('data:image/png;base64,', '');
+    var buffer = new Buffer(image, 'base64');
+    fs.writeFileSync($(this).val(), buffer);
+  });
+
+  $('#saveSketchArea').on('click', function () {
+    $('#saveAsDialog').trigger('click');
   });
 
   $('#newSketchArea').on('click', function () {
