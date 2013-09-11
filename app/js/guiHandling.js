@@ -1,3 +1,4 @@
+/*global window*/
 var server = require('../js/server.js');
 var autoUpdate = require('../js/auto-update.js');
 
@@ -5,13 +6,12 @@ function GuiHandling() {
   'use strict';
 
   var _this = this;
-  this.trayOnly = false;
-  this.trayIsLocked = false;
+  this.applicationHidden = false;
   this.gui = window.nwDispatcher.nwGui;
   this.ICON_PATHS = {
     standard: 'img/tray.png',
     update: 'img/tray-update.png',
-    message: 'img/tray-nessage.png'
+    message: 'img/tray-message.png'
   };
   this.trayMenu = this.createTrayMenu();
   this.tray = new this.gui.Tray({
@@ -20,38 +20,33 @@ function GuiHandling() {
   });
 
   this.handleUpdateProgress = function (updateMessage) {
-    if (!_this.trayIsLocked) {
-      _this.trayIsLocked = true;
-      _this.tray.icon = _this.ICON_PATHS.update;
-    }
+    _this.tray.icon = _this.ICON_PATHS.update;
     _this.setWindowTitle(updateMessage);
   };
 
   this.handleUpdateDone = function () {
-    _this.trayIsLocked = false;
     _this.tray.icon = _this.ICON_PATHS.standard;
     _this.setWindowTitle();
   };
 
   this.handleIncomingMessage = function () {
-    if (_this.trayOnly && !_this.trayIsLocked) {
+    if (_this.applicationHidden) {
       _this.tray.icon = _this.ICON_PATHS.message;
     }
   };
 
-  this.setTrayOnly = function () {
-    _this.trayOnly = true;
+  this.setApplicationHidden = function () {
+    _this.applicationHidden = true;
   };
 
-  this.unsetTrayOnly = function () {
-    _this.trayOnly = false;
+  this.setApplicationNotHidden = function () {
+    _this.applicationHidden = false;
+    _this.tray.icon = _this.ICON_PATHS.standard;
   };
 
   this.currentWindow = this.gui.Window.get();
-  this.currentWindow.on('blur', this.setTrayOnly);
-  this.currentWindow.on('focus', this.unsetTrayOnly);
-  this.currentWindow.on('minimize', this.setTrayOnly);
-  this.currentWindow.on('maximize', this.unsetTrayOnly);
+  this.currentWindow.on('blur', this.setApplicationHidden);
+  this.currentWindow.on('focus', this.setApplicationNotHidden);
   server.on('newClient', this.newClientConnected);
   server.on('newMessage', this.handleIncomingMessage);
   autoUpdate.on('progress', this.handleUpdateProgress);
