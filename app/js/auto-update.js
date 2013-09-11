@@ -38,13 +38,20 @@ sys.inherits(AutoUpdate, events.EventEmitter);
 AutoUpdate.prototype.getTagsFromGithub = function () {
   'use strict';
   var _this = this;
+  var data = '';
 
   https.get('https://api.github.com/repos/Dica-Developer/quickQuestion/tags', function (res) {
     res.setEncoding('utf8');
     res.on('data', function (d) {
-      _this.currentGitTags = JSON.parse(d);
-      _this.emit('getTagsReady');
+      data = data + d;
     });
+  }).on('end', function () {
+    try {
+      _this.currentGitTags = JSON.parse(data);
+    } catch (error) {
+      _this.emit('error', error);
+    }
+    _this.emit('getTagsReady');
   }).on('error', function (e) {
     _this.emit('error', e);
   });
