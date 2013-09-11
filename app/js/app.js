@@ -1,4 +1,4 @@
-/*global $, window, document, FileReader*/
+/*global $, window, document, FileReader, Image*/
 
 var gui = require('nw.gui');
 var server = require('../js/server.js');
@@ -431,6 +431,32 @@ $(function () {
       $('#filesToSend').listview('refresh');
     }
   }, false);
+
+  canvas.ondragover = function (e) {
+    e.preventDefault();
+    return false;
+  };
+
+  canvas.ondrop = function (e) {
+    e.stopPropagation();
+    e.preventDefault();
+
+    var dt = e.dataTransfer;
+    var files = dt.files;
+
+    if (files.length > 0) {
+      var reader = new FileReader();
+      reader.onload = function (event) {
+        var img = new Image();
+        img.src = event.target.result;
+        img.onload = function () {
+          context.drawImage(this, 0, 0);
+        };
+      };
+      reader.readAsDataURL(files[0]);
+      context.drawImage(this, 0, 0);
+    }
+  };
 
   window.onresize = function () {
     clearTimeout(resizeTimeout);
