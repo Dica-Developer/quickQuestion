@@ -175,49 +175,19 @@ server.on('newMessage_image/svg+xml', addImageMessage);
 server.on('newMessage_image/xbm', addImageMessage);
 server.on('newMessage_image/bmp', addImageMessage);
 
-// TODO emit signals for every message type instead of duplicate code here
-
 function displayMessagesAfterRestart() {
   'use strict';
 
-  var i,
-    content = '',
-    now = new Date(),
-    nowMinus12Hours = now.setTime(now.getTime() - (12 * 60 * 60 * 1000)),
-    messages = messageDB.query({
-      timestamp: {
-        gte: nowMinus12Hours
-      }
-    }).get();
+  var i;
+  var messages = messageDB.query({
+    timestamp: {
+      gte: (new Date()).setTime((new Date()).getTime() - (3600 * 1000))
+    }
+  }).get();
 
   for (i = 0; i < messages.length; i++) {
-    var timestamp = new Date(messages[i].timestamp);
-    var sendOn = formatDate(timestamp);
-    content = content + '<li style="background-color: ' + colors[Math.abs(hashCode(messages[i].remoteAddress)) % 9] + ';"><p class="ui-li-aside">by <strong>' + messages[i].remoteAddress + '</strong> at <strong>' + sendOn + '</strong></p>';
-    content = content + '<p style="white-space: pre-line;">';
-    if (messages[i].contentType.indexOf('text/plain') === 0) {
-      content = content + messages[i].content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/([a-zA-Z]+:\/\/[^ ]*)/gm, '<span data-name="linkExt" style="cursor:pointer;" data-href="$1">$1</span>');
-    } else if (messages[i].contentType.indexOf('image/') === 0) {
-      content = content + '<span data-name="link" style="cursor:pointer;" data-href="' + messages[i].content + '"><img src="' + messages[i].content + '" height="50"></img></span>';
-    } else {
-      content = content + '<span data-name="link" style="cursor:pointer;" data-href="' + messages[i].content + '">message of type ' + messages[i].contentType + '</span>';
-    }
-    content = content + '</p>';
-    content = content + '</li>';
+    server.emit('newMessage_' + messages[i].contentType, messages[i]);
   }
-
-  updateMessageList(content);
-
-  $('[data-name="linkExt"]').on('click', function () {
-    gui.Shell.openExternal($(this).data('href'));
-  });
-  $('[data-name="linkExt"]').data('name', '');
-  $('[data-name="link"]').on('click', function () {
-    var fileSaveAsDialog = $('#fileSaveAsDialog');
-    fileSaveAsDialog.data('content', $(this).data('href'));
-    fileSaveAsDialog.trigger('click');
-  });
-  $('[data-name="link"]').data('name', '');
 }
 
 server.on('newMessage', function (message) {
