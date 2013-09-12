@@ -6,6 +6,7 @@ var os = require('os');
 var sys = require('sys');
 var events = require('events');
 var fs = require('fs');
+var handledMimeTypes = ['model/x-sketch', 'text/plain; charset=utf-8', 'image/png', 'image/jpeg', 'image/gif', 'image/svg+xml', 'image/xbm', 'image/bmp'];
 
 var responseCallback = function (resp) {
   'use strict';
@@ -145,7 +146,11 @@ Server.prototype.applyServer = function () {
             message.remotePort = request.socket.remotePort;
             message.contentType = request.headers['content-type'];
             message.timestamp = Date.now();
-            _this.emit('newMessage_' + message.contentType, message);
+            if (handledMimeTypes.indexOf(message.contentType) > -1) {
+              _this.emit('newMessage_' + message.contentType, message);
+            } else {
+              _this.emit('newMessageUnhandled', message);
+            }
             _this.emit('newMessage', message);
           } else {
             _this.emit('emptyMessage');

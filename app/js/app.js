@@ -10,9 +10,9 @@ var messageDB = require('../js/db.js').messages;
 var messageListCreated = false;
 var filesListCreated = false;
 var collaboratorListCreated = false;
-
-var resizeTimeout,
-  colors = ['rgba(128, 128, 128, 0.01)', 'rgba(255, 0, 0, 0.01)', 'rgba(0, 255, 0, 0.01)', 'rgba(255, 255, 0, 0.01)', 'rgba(0, 0, 255, 0.01)', 'rgba(255, 0, 255, 0.01)', 'rgba(0, 255, 255, 0.01)', 'rgba(255, 255, 255, 0.01)', 'rgba(192, 192, 192, 0.01)'];
+var resizeTimeout;
+var colors = ['rgba(128, 128, 128, 0.01)', 'rgba(255, 0, 0, 0.01)', 'rgba(0, 255, 0, 0.01)', 'rgba(255, 255, 0, 0.01)', 'rgba(0, 0, 255, 0.01)', 'rgba(255, 0, 255, 0.01)', 'rgba(0, 255, 255, 0.01)', 'rgba(255, 255, 255, 0.01)', 'rgba(192, 192, 192, 0.01)'];
+var handledMimeTypes = ['model/x-sketch', 'text/plain; charset=utf-8', 'image/png', 'image/jpeg', 'image/gif', 'image/svg+xml', 'image/xbm', 'image/bmp'];
 
 function sendMessage(val) {
   'use strict';
@@ -175,6 +175,27 @@ server.on('newMessage_image/svg+xml', addImageMessage);
 server.on('newMessage_image/xbm', addImageMessage);
 server.on('newMessage_image/bmp', addImageMessage);
 
+server.on('newMessageUnhandled', function (message) {
+  'use strict';
+
+  var timestamp = new Date(message.timestamp);
+  var sendOn = formatDate(timestamp);
+  var content = '<li style="background-color: ' + colors[Math.abs(hashCode(message.remoteAddress)) % 9] + ';"><p class="ui-li-aside">by <strong>' + message.remoteAddress + '</strong> at <strong>' + sendOn + '</strong></p>';
+  content = content + '<p style="white-space: pre-line;">';
+  content = content + '<span data-name="link" style="cursor:pointer;" data-href="' + message.content + '">message of type ' + message.contentType + '</span>';
+  content = content + '</p>';
+  content = content + '</li>';
+
+  updateMessageList(content);
+
+  $('[data-name="link"]').on('click', function () {
+    var fileSaveAsDialog = $('#fileSaveAsDialog');
+    fileSaveAsDialog.data('content', $(this).data('href'));
+    fileSaveAsDialog.trigger('click');
+  });
+  $('[data-name="link"]').data('name', '');
+});
+
 function displayMessagesAfterRestart() {
   'use strict';
 
@@ -186,7 +207,11 @@ function displayMessagesAfterRestart() {
   }).get();
 
   for (i = 0; i < messages.length; i++) {
-    server.emit('newMessage_' + messages[i].contentType, messages[i]);
+    if (handledMimeTypes.indexOf(messages[i].contentType) > -1) {
+      server.emit('newMessage_' + messages[i].contentType, messages[i]);
+    } else {
+      server.emit('newMessageUnhandled', messages[i]);
+    }
   }
 }
 
