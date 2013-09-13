@@ -19,6 +19,18 @@ function sendMessage(val) {
   server.emit('sendMessageToAll', val);
 }
 
+function handleWhiteboardResize() {
+  'use strict';
+
+  var canvas = document.getElementById('sketchArea');
+  var tempCanvas = document.createElement('canvas');
+  tempCanvas.width = canvas.width;
+  tempCanvas.height = canvas.height;
+  tempCanvas.getContext('2d').drawImage(canvas, 0, 0);
+  canvas.width = $(window).innerWidth() - 30;
+  canvas.getContext('2d').drawImage(tempCanvas, 0, 0, tempCanvas.width, tempCanvas.height, 0, 0, tempCanvas.width, tempCanvas.height);
+}
+
 function resize() {
   'use strict';
 
@@ -27,7 +39,8 @@ function resize() {
   var newHeight = $(window).innerHeight() + messageToSend.height() - ($('#content').height() + $('#footer').height() + 32);
   messageToSend.height(newHeight);
   filesToSend.height(newHeight);
-  $('#sketchArea').attr('width', $(window).innerWidth() - 30);
+
+  handleWhiteboardResize();
 }
 
 function sortByHostName(lhs, rhs) {
