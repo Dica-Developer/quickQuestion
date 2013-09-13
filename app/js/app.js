@@ -491,7 +491,6 @@ $(function () {
         };
       };
       reader.readAsDataURL(files[0]);
-      context.drawImage(this, 0, 0);
     }
   };
 
