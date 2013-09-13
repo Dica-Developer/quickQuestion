@@ -79,18 +79,32 @@ function sketchClient(sketchMessage) {
   var canvas = document.getElementById('sketchArea');
   var ctx = canvas.getContext('2d');
 
-  ctx.lineWidth = sketchMessage.pencileSize;
-  ctx.strokeStyle = sketchMessage.pencilColor;
-  var positionArray = sketchMessage.coordinates;
-  for (i = 0; i < positionArray.length; i++) {
-    var pos = positionArray[i];
-    if (0 === i) {
-      ctx.beginPath();
-      ctx.moveTo(pos.x, pos.y);
-    } else {
-      ctx.lineTo(pos.x, pos.y);
-      ctx.stroke();
+  if ('stroke' === sketchMessage.type) {
+    ctx.lineWidth = sketchMessage.pencileSize;
+    ctx.strokeStyle = sketchMessage.pencilColor;
+    var positionArray = sketchMessage.coordinates;
+    for (i = 0; i < positionArray.length; i++) {
+      var pos = positionArray[i];
+      if (0 === i) {
+        ctx.beginPath();
+        ctx.moveTo(pos.x, pos.y);
+      } else {
+        ctx.lineTo(pos.x, pos.y);
+        ctx.stroke();
+      }
     }
+  } else if ('image' === sketchMessage.type) {
+    if (typeof sketchMessage.image === 'string') {
+      var img = new Image();
+      img.src = sketchMessage.image;
+      img.onload = function () {
+        ctx.drawImage(this, 0, 0);
+      };
+    } else {
+      console.error('Invalid image sketch message.');
+    }
+  } else {
+    console.warn('Unknown sketch type ' + sketchMessage.type + '. Ignoring message.');
   }
 }
 
@@ -353,6 +367,7 @@ $(function () {
   $(canvas).on('vmouseup', function () {
     mousedown = false;
     var sketchMessage = {
+      type: 'stroke',
       coordinates: lastSketchPoints,
       pencilColor: $('#pencilColorSketchArea option:selected')[0].value,
       pencilSize: $('#pencilSizeSketchArea option:selected')[0].value
@@ -488,6 +503,11 @@ $(function () {
         img.src = event.target.result;
         img.onload = function () {
           context.drawImage(this, 0, 0);
+          var sketchMessage = {
+            type: 'image',
+            image: event.target.result
+          };
+          server.emit('sendSketchMessageToAll', sketchMessage);
         };
       };
       reader.readAsDataURL(files[0]);
