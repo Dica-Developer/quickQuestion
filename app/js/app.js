@@ -8,7 +8,7 @@ require('../js/guiHandling.js');
 var logDB = require('../js/db.js').logs;
 var messageDB = require('../js/db.js').messages;
 var messageListCreated = false;
-var filesListCreated = false;
+var attachmentListViewCreated = false;
 var collaboratorListCreated = false;
 var resizeTimeout;
 var colors = ['rgba(128, 128, 128, 0.01)', 'rgba(255, 0, 0, 0.01)', 'rgba(0, 255, 0, 0.01)', 'rgba(255, 255, 0, 0.01)', 'rgba(0, 0, 255, 0.01)', 'rgba(255, 0, 255, 0.01)', 'rgba(0, 255, 255, 0.01)', 'rgba(255, 255, 255, 0.01)', 'rgba(192, 192, 192, 0.01)'];
@@ -34,11 +34,9 @@ function handleWhiteboardResize() {
 function resize() {
   'use strict';
 
-  var filesToSend = $('#filesToSend');
   var messageToSend = $('#messageToSend');
   var newHeight = $(window).innerHeight() + messageToSend.height() - ($('#content').height() + $('#footer').height() + 32);
   messageToSend.height(newHeight);
-  filesToSend.height(newHeight);
 
   handleWhiteboardResize();
 }
@@ -51,8 +49,8 @@ function sortByHostName(lhs, rhs) {
 server.on('updateFilesList', function () {
   'use strict';
 
-  if (filesListCreated) {
-    $('#filesToSend').listview('refresh');
+  if (attachmentListViewCreated) {
+    $('#attachmentListView').listview('refresh');
   }
 });
 
@@ -348,6 +346,14 @@ function saveFile(path, content) {
   });
 }
 
+function removeAttachment(event) {
+  'use strict';
+
+  var attachmentEntry = $(event.target).closest('li');
+  attachmentEntry.remove();
+
+}
+
 // startup on DOM ready
 $(function () {
   'use strict';
@@ -422,8 +428,8 @@ $(function () {
     messageListCreated = true;
   });
 
-  $('#filesToSend').on('listviewcreate', function () {
-    filesListCreated = true;
+  $('#attachmentListView').on('listviewcreate', function () {
+    attachmentListViewCreated = true;
   });
 
   $('#collaboratorListView').on('listviewcreate', function () {
@@ -478,22 +484,33 @@ $(function () {
       var liElement = $('<li>');
       liElement.data('path', files[i].path);
       liElement.data('type', files[i].type);
-      $('#filesToSend').append(liElement);
+      var leftAElement = $('<a>');
+      liElement.append(leftAElement);
+      $('#attachmentListView').append(liElement);
       if (files[i].type.indexOf('image/') === 0) {
         var img = $('<img>');
         img.attr('height', '50');
         img.attr('src', files[i].path);
-        liElement.append(img);
+        leftAElement.append(img);
 
         var reader = new FileReader();
         reader.onload = addImage(img);
         reader.readAsDataURL(files[i]);
       } else {
-        liElement.text('file: "' + files[i].path + '" type: "' + files[i].type + '" size: ' + files[i].size);
+        var pElement = $('<p>');
+        pElement.css('white-space', 'pre-line');
+        pElement.text('File: "' + files[i].path + '" Type: "' + files[i].type + '" Size: ' + files[i].size);
+        leftAElement.append(pElement);
       }
+      var removeAttachmentLink = $('<a href="#removeAttachment" data-rel="popup" data-position-to="window" data-transition="pop">Remove Attachment</a>');
+      removeAttachmentLink.on('click', removeAttachment);
+      liElement.append(removeAttachmentLink);
     }
-    if (filesListCreated) {
-      $('#filesToSend').listview('refresh');
+    if (attachmentListViewCreated && (files.length > 0)) {
+      $('#attachmentListView').listview('refresh');
+    }
+    if ($('#attachmentButton').is(':hidden')) {
+      $('#attachmentButton').show();
     }
   }, false);
 
@@ -548,6 +565,7 @@ var teardown = function () {
   logDB.save();
   messageDB.save();
 };
+
 process.on('exit', teardown);
 process.on('SIGINT', teardown);
 process.on('SIGTERM', teardown);

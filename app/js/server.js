@@ -109,18 +109,18 @@ Server.prototype.sendMessageToAll = function (message) {
   } else {
     this.emit('messageSendError', 'We do not send empty messages.');
   }
-  var filesToSend = window.$('#filesToSend > li');
-  for (i = 0; i < filesToSend.length; i++) {
+  var attachmentsToSend = window.$('#attachmentListView > li');
+  for (i = 0; i < attachmentsToSend.length; i++) {
     var type = 'application/octet-stream';
-    if (window.$(filesToSend[i]).data('type') && '' !== window.$(filesToSend[i]).data('type')) {
-      type = window.$(filesToSend[i]).data('type');
+    if (window.$(attachmentsToSend[i]).data('type') && '' !== window.$(attachmentsToSend[i]).data('type')) {
+      type = window.$(attachmentsToSend[i]).data('type');
     }
     var dataUriPrefix = 'data:' + type + ';base64,';
-    var buf = fs.readFileSync(window.$(filesToSend[i]).data('path'));
+    var buf = fs.readFileSync(window.$(attachmentsToSend[i]).data('path'));
     var messageDataUri = dataUriPrefix + buf.toString('base64');
 
     this.sendMessage(messageDataUri, type);
-    window.$(filesToSend[i]).remove();
+    window.$(attachmentsToSend[i]).remove();
   }
   this.emit('updateFilesList');
 };
