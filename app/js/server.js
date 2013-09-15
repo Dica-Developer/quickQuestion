@@ -122,6 +122,9 @@ Server.prototype.sendMessageToAll = function (message) {
     this.sendMessage(messageDataUri, type);
     window.$(attachmentsToSend[i]).remove();
   }
+  if (0 === $('#attachmentListView > li').length) {
+    $('#attachmentButton').hide();
+  }
   this.emit('updateFilesList');
 };
 
