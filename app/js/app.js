@@ -351,6 +351,9 @@ function removeAttachment(event) {
 
   var attachmentEntry = $(event.target).closest('li');
   attachmentEntry.remove();
+  if (0 === $('#attachmentListView > li').length) {
+    $('#attachmentButton').hide();
+  }
 
 }
 
