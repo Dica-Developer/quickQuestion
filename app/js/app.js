@@ -513,7 +513,7 @@ $(function () {
       $('#attachmentListView').append(liElement);
       if (files[i].type.indexOf('image/') === 0) {
         var img = $('<img>');
-        img.attr('height', '50');
+        img.attr('height', '80');
         img.attr('src', files[i].path);
         leftAElement.append(img);
 
