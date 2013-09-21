@@ -172,6 +172,15 @@ server.on('newMessage_text/plain; charset=utf-8', function (message) {
   $('[data-name="link"]').data('name', '');
 });
 
+function handleFileClick(event) {
+  'use strict';
+
+  var fileSaveAsDialog = $('#fileSaveAsDialog');
+  fileSaveAsDialog.data('content', $(event.target).closest('span').data('href'));
+  // open dialog that allows to select between open or save
+  fileSaveAsDialog.trigger('click');
+}
+
 function addImageMessage(message) {
   'use strict';
 
@@ -185,11 +194,7 @@ function addImageMessage(message) {
 
   updateMessageList(content);
 
-  $('[data-name="link"]').on('click', function () {
-    var fileSaveAsDialog = $('#fileSaveAsDialog');
-    fileSaveAsDialog.data('content', $(this).data('href'));
-    fileSaveAsDialog.trigger('click');
-  });
+  $('[data-name="link"]').on('click', handleFileClick);
   $('[data-name="link"]').data('name', '');
 }
 
@@ -213,11 +218,7 @@ server.on('newMessageUnhandled', function (message) {
 
   updateMessageList(content);
 
-  $('[data-name="link"]').on('click', function () {
-    var fileSaveAsDialog = $('#fileSaveAsDialog');
-    fileSaveAsDialog.data('content', $(this).data('href'));
-    fileSaveAsDialog.trigger('click');
-  });
+  $('[data-name="link"]').on('click', handleFileClick);
   $('[data-name="link"]').data('name', '');
 });
 
