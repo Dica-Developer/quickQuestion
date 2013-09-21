@@ -44,16 +44,16 @@ AutoUpdate.prototype.getTagsFromGithub = function () {
     res.setEncoding('utf8');
     res.on('data', function (d) {
       data = data + d;
+    }).on('end', function () {
+      try {
+        _this.currentGitTags = JSON.parse(data);
+      } catch (error) {
+        _this.emit('error', error);
+      }
+      _this.emit('getTagsReady');
+    }).on('error', function (e) {
+      _this.emit('error', e);
     });
-  }).on('end', function () {
-    try {
-      _this.currentGitTags = JSON.parse(data);
-    } catch (error) {
-      _this.emit('error', error);
-    }
-    _this.emit('getTagsReady');
-  }).on('error', function (e) {
-    _this.emit('error', e);
   });
 };
 
