@@ -177,8 +177,12 @@ function handleFileClick(event) {
 
   var fileSaveAsDialog = $('#fileSaveAsDialog');
   fileSaveAsDialog.data('content', $(event.target).closest('span').data('href'));
-  // open dialog that allows to select between open or save
-  fileSaveAsDialog.trigger('click');
+  $('#fileHandlePopup').popup('open', {
+    positionTo: 'origin',
+    transition: 'pop',
+    x: event.clientX,
+    y: event.clientY
+  });
 }
 
 function addImageMessage(message) {
@@ -342,8 +346,10 @@ function saveFile(path, content) {
   var from = content.indexOf(';base64,') + ';base64,'.length;
   content = content.substring(from);
   var buffer = new Buffer(content, 'base64');
-  fs.writeFile(path, buffer, function () {
-    // TODO handle error
+  fs.writeFile(path, buffer, function (error) {
+    if (error) {
+      // TODO handle error
+    }
   });
 }
 
@@ -403,8 +409,10 @@ $(function () {
     var image = canvas.toDataURL('image/png');
     image = image.replace('data:image/png;base64,', '');
     var buffer = new Buffer(image, 'base64');
-    fs.writeFile($(this).val(), buffer, function () {
-      // TODO handle error
+    fs.writeFile($(this).val(), buffer, function (error) {
+      if (error) {
+        // TODO handle error
+      }
     });
   });
 
@@ -547,6 +555,29 @@ $(function () {
       reader.readAsDataURL(files[0]);
     }
   };
+
+  $('#saveAsFileButton').on('click', function () {
+    $('#fileSaveAsDialog').trigger('click');
+    $('#fileHandlePopup').popup('close');
+  });
+
+  $('#openFileButton').on('click', function () {
+    $('#fileHandlePopup').popup('close');
+    var path = require('path');
+    var os = require('os');
+    var filePath = path.join(os.tmpdir(), 'quickQuestionTempFile');
+    var content = $('#fileSaveAsDialog').data('content');
+    var from = content.indexOf(';base64,') + ';base64,'.length;
+    content = content.substring(from);
+    var buffer = new Buffer(content, 'base64');
+    fs.writeFile(filePath, buffer, function (error) {
+      if (error) {
+        // TODO handle error
+      } else {
+        gui.Shell.openExternal('file://' + filePath);
+      }
+    });
+  });
 
   window.onresize = function () {
     clearTimeout(resizeTimeout);
