@@ -465,11 +465,6 @@ $(function () {
     collaboratorListCreated = true;
   });
 
-  var sendMessageButton = $('#sendMessage');
-  sendMessageButton.bind('vclick', function () {
-    sendMessage($('#messageToSend').val());
-  });
-
   var messageToSend = $('#messageToSend');
   messageToSend.bind('keyup', function (e) {
     var isShiftPressed = e.shiftKey;
