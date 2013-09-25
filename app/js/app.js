@@ -51,9 +51,9 @@ function handleWhiteboardResize() {
 function resize() {
   'use strict';
 
-  var messageToSend = $('#messageToSend');
-  var newHeight = $(window).innerHeight() + messageToSend.height() - ($('#content').height() + $('#footer').height() + 32);
-  messageToSend.height(newHeight);
+  var messagelist = $('#messagelist');
+  var newHeight = $(window).innerHeight() + messagelist.height() - ($('#content').height() + $('#footer').height() + $('#header').height() + $('#navigationPanel').height() + 10);
+  messagelist.height(newHeight);
 
   handleWhiteboardResize();
 }
@@ -487,6 +487,10 @@ $(function () {
       }
       break;
     }
+  });
+
+  messageToSend.bind('keyup', function () {
+    resize();
   });
 
   function addImage(img) {
