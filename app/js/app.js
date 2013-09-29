@@ -475,6 +475,20 @@ $(function () {
         sendMessage($('#messageToSend').val());
       }
       break;
+    case 8:
+      var copy = $('<textarea>');
+      copy.addClass('ui-input-text ui-body-a ui-corner-all ui-shadow-inset ui-focus');
+      copy.text(messageToSend.val());
+      document.body.appendChild(copy[0]);
+      if (copy[0].scrollHeight < parseInt(messageToSend.css('height'), 10)) {
+        // FIXME this is not very accurate after line break removal
+        // 15 is a hardcoded value from jquery mobile
+        // 6 should be the padding and calculated
+        messageToSend.css('height', (copy[0].scrollHeight + 15 + 6));
+        resize();
+      }
+      document.body.removeChild(copy[0]);
+      break;
     }
   });
 
