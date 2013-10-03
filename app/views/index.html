@@ -14,9 +14,9 @@
 <body>
 
   <div id="text" id="page" data-role="page" data-theme="a">
-    <div id="header" data-role="header">
+    <div id="headerText" data-role="header">
       <h1></h1>
-      <a id="navigationPanel" href="#navigationPanel" data-icon="bars" data-iconpos="notext" data-corners="true" data-shadow="true" data-iconshadow="false" data-wrapperels="span" data-theme="a" title="Collaborators" class="ui-btn-right"></a>
+      <a href="#navigationPanelText" data-icon="bars" data-iconpos="notext" data-corners="true" data-shadow="true" data-iconshadow="false" data-wrapperels="span" data-theme="a" title="Collaborators" class="ui-btn-right"></a>
       <div data-role="navbar">
         <ul>
           <li><a href="#text" data-transition="flip" class="ui-btn-active ui-state-persist">Text</a></li>
@@ -24,12 +24,12 @@
         </ul>
       </div>
     </div>
-    <div id="content" data-role="content">
+    <div id="contentText" data-role="content">
       <a id="attachmentButton" href="#attachmentPanel" data-role="button" style="display:none; position: absolute; right: -41px; top: 235px; -webkit-transform: rotate(-90deg);" data-mini="true">Attachments</a>
       <ul style="overflow:auto;" id="messagelist" name="messagelist" data-role="listview" data-inset="true" data-filter="true"></ul>
       <textarea id="messageToSend" rows="2" style="max-height: 140px;" placeholder="Type a message or drop files for sending."></textarea>
     </div>
-    <div id="footer" data-role="footer"> 
+    <div id="footerText" data-role="footer"> 
       <h4 id="message"></h4> 
     </div>
     <div class="ui-popup-container ui-popup-hidden" id="confirmUpdate-popup">
@@ -52,7 +52,7 @@
           </div>
       </div>
     </div>
-    <div data-role="panel" id="navigationPanel" data-position="right" data-display="reveal">
+    <div data-role="panel" id="navigationPanelText" data-position="right" data-display="reveal">
       <ul data-role="listview" id="collaboratorListView" name="collaboratorListView">
       </ul>
     </div>
@@ -70,9 +70,9 @@
   </div>
 
   <div id="whiteboard" data-role="page" data-theme="a">
-    <div data-role="header">
+    <div id="header" data-role="header">
       <h1></h1>
-      <a href="#navigationPanel" data-icon="bars" data-iconpos="notext" data-corners="true" data-shadow="true" data-iconshadow="false" data-wrapperels="span" data-theme="a" title="Collaborators" class="ui-btn-right"></a>
+      <a href="#navigationPanelWhiteboard" data-icon="bars" data-iconpos="notext" data-corners="true" data-shadow="true" data-iconshadow="false" data-wrapperels="span" data-theme="a" title="Collaborators" class="ui-btn-right"></a>
       <div data-role="navbar">
         <ul>
           <li><a href="#text" data-transition="flip">Text</a></li>
@@ -80,12 +80,12 @@
         </ul>
       </div>
     </div>
-    <div id="content" data-role="content">
+    <div id="contentWhiteboard" data-role="content">
       <div style="background-image: url('../img/whiteboard_background.png');">
         <canvas id="sketchArea" width="600" height="600" style="border: 1px solid black;"></canvas>
       </div>
     </div>
-    <div id="footer" data-role="footer">
+    <div id="footerWhiteboard" data-role="footer">
       <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
         <a href="#" data-role="button" id="newSketchArea" data-icon="delete">New</a>
         <a href="#" data-role="button" id="saveSketchArea" data-icon="check">Save</a>
@@ -152,7 +152,7 @@
               </div>
           </div>
       </div>
-      <div data-role="panel" id="navigationPanel" data-position="right" data-display="reveal">
+      <div data-role="panel" id="navigationPanelWhiteboard" data-position="right" data-display="reveal">
         <ul data-role="listview" id="collaboratorListView" name="collaboratorListView">
         </ul>
       </div>
