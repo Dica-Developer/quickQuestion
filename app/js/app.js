@@ -620,6 +620,10 @@ $(function () {
   window.setTimeout(function () {
     gui.Window.get().show();
   }, 100);
+
+  $(window).on('pagechange', function () {
+    resize();
+  });
 });
 
 // Window close or CMD+Q
