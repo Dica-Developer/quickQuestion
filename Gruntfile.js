@@ -208,7 +208,7 @@ module.exports = function (grunt) {
 
   grunt.registerTask('dmg', 'Create dmg from previously create app folder in dist.', function () {
     var done = this.async();
-    var createDmgCommand = 'hdiutil create -srcfolder "dist/Quick Question.app" -volname "QuickQuestion" -fs HFS+ -fsargs "-c c=64,a=16,e=16" -format UDRW -size 82m dist/QuickQuestion.tmp.dmg';
+    var createDmgCommand = 'resources/macFiles/package.sh';
     require('child_process').exec(createDmgCommand, function (error, stdout, stderr) {
       if (stdout) {
         grunt.log.write(stdout);
@@ -219,29 +219,6 @@ module.exports = function (grunt) {
       if (error !== null) {
         grunt.log.error(error);
         done(false);
-      } else {
-        var compressDmgCommand = 'hdiutil convert "dist/QuickQuestion.tmp.dmg" -format UDZO -imagekey zlib-level=9 -o "dist/QuickQuestion.dmg" -puppetstrings';
-        require('child_process').exec(compressDmgCommand, function (error1, stdout1, stderr1) {
-          if (stdout) {
-            grunt.log.write(stdout1);
-          }
-          if (stderr) {
-            grunt.log.write(stderr1);
-          }
-          if (error1 !== null) {
-            grunt.log.error(error1);
-            done(false);
-          } else {
-            require('fs').unlink('dist/QuickQuestion.tmp.dmg', function (error2) {
-              if (error2 !== null) {
-                grunt.log.error(error2);
-                done(false);
-              } else {
-                done();
-              }
-            });
-          }
-        });
       }
     });
   });
