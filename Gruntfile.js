@@ -210,6 +210,7 @@ module.exports = function (grunt) {
     var done = this.async();
     var createDmgCommand = 'resources/macFiles/package.sh';
     require('child_process').exec(createDmgCommand, function (error, stdout, stderr) {
+      var result = true;
       if (stdout) {
         grunt.log.write(stdout);
       }
@@ -218,8 +219,9 @@ module.exports = function (grunt) {
       }
       if (error !== null) {
         grunt.log.error(error);
-        done(false);
+        result = false;
       }
+      done(result);
     });
   });
 };
