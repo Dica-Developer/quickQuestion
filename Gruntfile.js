@@ -206,9 +206,51 @@ module.exports = function (grunt) {
     'jshint'
   ]);
 
-  grunt.registerTask('dmg', 'Create dmg from previously create app folder in dist.', function () {
+  grunt.registerTask('dmg', 'Create dmg from previously created app folder in dist.', function () {
     var done = this.async();
     var createDmgCommand = 'resources/macFiles/package.sh';
+    require('child_process').exec(createDmgCommand, function (error, stdout, stderr) {
+      var result = true;
+      if (stdout) {
+        grunt.log.write(stdout);
+      }
+      if (stderr) {
+        grunt.log.write(stderr);
+      }
+      if (error !== null) {
+        grunt.log.error(error);
+        result = false;
+      }
+      done(result);
+    });
+  });
+
+  grunt.registerTask('deb', 'Create deb from previously created app folder in dist.', function () {
+    var done = this.async();
+    var appPath = config.app;
+    var appPackageJSON = grunt.file.readJSON(appPath + '/package.json');
+    var createDmgCommand = 'resources/linux/debPackage.sh ' + appPackageJSON.version;
+    require('child_process').exec(createDmgCommand, function (error, stdout, stderr) {
+      var result = true;
+      if (stdout) {
+        grunt.log.write(stdout);
+      }
+      if (stderr) {
+        grunt.log.write(stderr);
+      }
+      if (error !== null) {
+        grunt.log.error(error);
+        result = false;
+      }
+      done(result);
+    });
+  });
+
+  grunt.registerTask('rpm', 'Create rpm from previously created app folder in dist.', function () {
+    var done = this.async();
+    var appPath = config.app;
+    var appPackageJSON = grunt.file.readJSON(appPath + '/package.json');
+    var createDmgCommand = 'resources/linux/rpmPackage.sh ' + appPackageJSON.version;
     require('child_process').exec(createDmgCommand, function (error, stdout, stderr) {
       var result = true;
       if (stdout) {
