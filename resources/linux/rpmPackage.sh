@@ -9,3 +9,4 @@ checkinstall -y --install=no --fstrans=yes -R --pkgname QuickQuestion --pkgrelea
 --pkgsource http://dica-developer.github.io/quickQuestion/ --pkglicense GPLv3 --pkggroup Tool resources/linux/install.sh
 rm -r ./SOURCES
 rm description-pak
+rm -r ./doc-pak

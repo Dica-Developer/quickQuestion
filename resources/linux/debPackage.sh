@@ -5,3 +5,4 @@ checkinstall -y --install=no --fstrans=yes -D --pkgname QuickQuestion --pkgrelea
 --deldesc --maintainer dica-developer@mascha.me --pkgversion $1 --pkgarch amd64  --showinstall=no \
 --pkgsource http://dica-developer.github.io/quickQuestion/ --pkglicense GPLv3 --pkggroup Tool resources/linux/install.sh
 rm description-pak
+rm -r ./doc-pak
