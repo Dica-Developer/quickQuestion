@@ -126,27 +126,43 @@ module.exports = function (grunt) {
   });
 
   grunt.registerTask('createLinuxApp', 'Create linux distribution.', function () {
-    var fs = require('fs');
+    var done = this.async();
     var childProcess = require('child_process');
     var exec = childProcess.exec;
-    exec('mkdir dist; cp resources/node-webkit/linux_ia64/nw.pak dist/ && cp resources/node-webkit/linux_ia64/nw dist/node-webkit && cp resources/linux/qq dist/qq && chmod a+x dist/qq; touch dist/ready', function (error, stdout, stderr) {
-      console.log(stderr, stdout, error);
+    exec('mkdir -p ./dist; cp resources/node-webkit/linux_ia64/nw.pak dist/ && cp resources/node-webkit/linux_ia64/nw dist/node-webkit && cp resources/linux/qq dist/qq && chmod a+x dist/qq', function (error, stdout, stderr) {
+      var result = true;
+      if (stdout) {
+        grunt.log.write(stdout);
+      }
+      if (stderr) {
+        grunt.log.write(stderr);
+      }
+      if (error !== null) {
+        grunt.log.error(error);
+        result = false;
+      }
+      done(result);
     });
-    while (!fs.existsSync('dist/ready')) {
-      // there should be a better solution maybe it is not necessary
-    }
   });
 
   grunt.registerTask('createWindowsApp', 'Create windows distribution.', function () {
-    var fs = require('fs');
+    var done = this.async();
     var childProcess = require('child_process');
     var exec = childProcess.exec;
-    exec('copy /b tmp\\nw.exe+tmp\\app.nw tmp\\QuickQuestion.exe && del tmp\\app.nw tmp\\nw.exe && echo.>tmp\\ready', function (error, stdout, stderr) {
-      console.log(stderr, stdout, error);
+    exec('copy /b tmp\\nw.exe+tmp\\app.nw tmp\\QuickQuestion.exe && del tmp\\app.nw tmp\\nw.exe', function (error, stdout, stderr) {
+      var result = true;
+      if (stdout) {
+        grunt.log.write(stdout);
+      }
+      if (stderr) {
+        grunt.log.write(stderr);
+      }
+      if (error !== null) {
+        grunt.log.error(error);
+        result = false;
+      }
+      done(result);
     });
-    while (!fs.existsSync('tmp/ready')) {
-      // there should be a better solution maybe it is not necessary
-    }
   });
 
   grunt.registerTask('setVersion', 'Set version to all needed files', function (version) {
