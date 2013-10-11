@@ -1,7 +1,7 @@
 #!/bin/sh
 
 cp -f resources/linux/description-pak ./
-mkdir ./SOURCES
+mkdir -p ./SOURCES
 tar -cz app/ > ./SOURCES/QuickQuestion-$1.tgz
 RPMSOURCEDIR=.
 checkinstall -y --install=no --fstrans=yes -R --pkgname QuickQuestion --pkgrelease 1 --reset-uids --deldoc --delspec \
