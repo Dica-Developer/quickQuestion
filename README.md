@@ -3,7 +3,7 @@
 
 ## Required Software ##
 
-You must have [node.js](http://nodejs.org/ "Node.js") installed, to start working with QuickQuestion.
+You need to have [node.js](http://nodejs.org/ "Node.js") installed, to start working with QuickQuestion.
 
 ## Installation ##
 
@@ -16,7 +16,7 @@ After installing [node.js](http://nodejs.org/ "Node.js"), you have to run the fo
     
 ## Build ##
 
-To build a distribution you have to run the following commands depending on your distribution:
+To build a distribution run the following commands corresponding to your operating system:
 
 1. For Mac OS:
 
@@ -30,7 +30,7 @@ To build a distribution you have to run the following commands depending on your
 
         grunt dist-win
 
-The built app can then be found in the folder:
+The app can then be found under:
 
     ./dist/
 
