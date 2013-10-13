@@ -9,13 +9,12 @@
     "P2P",
     "decentralized"
   ],
-  "repositories": [
-    {
-      "type": "git",
-      "url": "https://github.com/Dica-Developer/quickQuestion",
-      "path": "/"
-    }
-  ],
+  "bugs": "https://github.com/Dica-Developer/quickQuestion/issues",
+  "repositories": [{
+    "type": "git",
+    "url": "https://github.com/Dica-Developer/quickQuestion",
+    "path": "/"
+  }],
   "single-instance": true,
   "window": {
     "title": "Quick Question",
@@ -27,5 +26,19 @@
     "min_height": 650,
     "show": false
   },
-  "chromium-args": "--child-clean-exit --hide-scrollbars"
+  "chromium-args": "--child-clean-exit --hide-scrollbars",
+  "licenses": [{
+    "type": "GPLv3",
+    "url": "http://www.gnu.org/licenses/gpl-3.0.html",
+  }],
+  "maintainers": [{
+    "name": "Dica-Developer",
+    "email": "dica-developer@mascha.me",
+    "web": "https://github.com/Dica-Developer"
+  }],
+  "contributors": [{
+    "name": "Dica-Developer",
+    "email": "dica-developer@mascha.me",
+    "web": "https://github.com/Dica-Developer"
+  }]
 }
