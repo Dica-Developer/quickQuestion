@@ -4,110 +4,94 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <title>Quickquestion by Dica-Developer</title>
-
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
   </head>
   <body>
-    <div class="wrapper">
-      <header>
-        <h1>Quickquestion</h1>
-        <p>Communication and Collaboration tool</p>
-
-        <p class="view"><a href="https://github.com/Dica-Developer/quickQuestion">View the Project on GitHub <small>Dica-Developer/quickQuestion</small></a></p>
-
-        <a href="https://github.com/Dica-Developer/quickQuestion/releases/tag/0.10.13"><strong>Release: 0.10.13</strong></a>
-        <ul>
-          <li><a href="https://github.com/Dica-Developer/quickQuestion/releases/download/0.10.13/quickquestion_0.10.13-1_amd64.deb">Download <strong>DEB</strong></a></li>
-          <li><a href="https://github.com/Dica-Developer/quickQuestion/releases/download/0.10.13/QuickQuestion-0.10.13-1.amd64.rpm">Download <strong>RPM</strong></a></li>
-          <li><a href="https://github.com/Dica-Developer/quickQuestion/releases/download/0.10.13/QuickQuestion-0.10.13.dmg">Download <strong>DMG</strong></a></li>
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#">Quick Question</a>
+      </div>
+      <div class="collapse navbar-collapse navbar-ex1-collapse">
+        <ul class="nav navbar-nav">
+          <li class="active"><a href="#">Home</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#download">Download</a></li>
+          <li><a href="#license">License</a></li>
+          <li><a href="https://github.com/Dica-Developer/quickQuestion/issues">Bug Tracking</a></li>
+          <li><a href="https://github.com/Dica-Developer/quickQuestion">Source</a></li>
         </ul>
-      </header>
-      <section>
-        <h1>
-<a name="quick-question" class="anchor" href="#quick-question"><span class="octicon octicon-link"></span></a>Quick Question</h1>
+      </div>
+    </nav>
+    <div class="jumbotron">
+      <div class="container">
+        <h1>1.0 pre-release</h1>
+        <p>Test our feature complete 1.0 pre-release.</p>
+        <p><a href="#download" class="btn btn-primary btn-lg">Download here »</a></p>
+      </div>
+    </div>
+    <div class="container">
+       <div>
+        <h1>Quickquestion</h1>
+        <p class="lead">Communication and Collaboration tool</p>
+        Quick Question is an easy-to-use collaboration tool. It helps you to share your ideas with other Quick Question users by just starting the application. You can ask questions and give answers, sketch on a whiteboard and share files.
+      <hr>
+      <div id="download">
+        <h2>Download</h2>
+        The current release is 0.10.13. It is the first pre-release that is feature complete for version 1.0. Quick Question runs on Linux, Mac and Windows. We currently can't provide a Windows package but work on it to have them available for version 1.0. But you can easily build a version from source. See the <a href="https://github.com/Dica-Developer/quickQuestion/blob/master/README.md">README.md</a> file on github for build instructions.
+        <br>
+        <br>
+        <div class="btn-group btn-group-justified hidden-xs">
+          <a class="btn btn-primary btn-lg" href="https://github.com/Dica-Developer/quickQuestion/releases/download/0.10.13/quickquestion_0.10.13-1_amd64.deb">Linux - DEB</a>
+          <a class="btn btn-primary btn-lg" href="https://github.com/Dica-Developer/quickQuestion/releases/download/0.10.13/QuickQuestion-0.10.13-1.amd64.rpm">Linux - RPM</a>
+          <a class="btn btn-primary btn-lg" href="https://github.com/Dica-Developer/quickQuestion/releases/download/0.10.13/QuickQuestion-0.10.13.dmg">Mac - DMG</a>
+          <a class="btn btn-default btn-lg" href="https://github.com/Dica-Developer/quickQuestion/releases/tag/0.10.13">Release notes</a>
+        </div>
+        <div class="btn-group btn-group-justified visible-xs">
+          <a class="btn btn-default btn-lg" href="https://github.com/Dica-Developer/quickQuestion/releases/tag/0.10.13">Release notes</a>
+        </div>
+      </div>
+      <hr>
+      <div id="license">
+        <h2><a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h2>
 
-<h2>
-<a name="required-software" class="anchor" href="#required-software"><span class="octicon octicon-link"></span></a>Required Software</h2>
+        <p>
+          Quick Question - Communication and Collaboration tool.
+          Copyright (C) 2013  Dica-Developer
+        </p>
 
-<p>You need to have <a href="http://nodejs.org/" title="Node.js">node.js</a> installed, to start working with QuickQuestion.</p>
+        <p>
+          This program is free software: you can redistribute it and/or modify
+          it under the terms of the GNU General Public License as published by
+          the Free Software Foundation, either version 3 of the License, or
+          (at your option) any later version.
+        </p>
 
-<h2>
-<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h2>
+        <p>
+          This program is distributed in the hope that it will be useful,
+          but WITHOUT ANY WARRANTY; without even the implied warranty of
+          MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+          GNU General Public License for more details.
+        </p>
 
-<p>After installing <a href="http://nodejs.org/" title="Node.js">node.js</a>, you have to run the following commands:</p>
-
-<pre><code>git clone git@github.com:Dica-Developer/quickQuestion.git
-cd quickQuestion
-npm install
-npm -g install grunt-cli
-</code></pre>
-
-<h2>
-<a name="build" class="anchor" href="#build"><span class="octicon octicon-link"></span></a>Build</h2>
-
-<p>To build a distribution run the following commands corresponding to your operating system:</p>
-
-<ol>
-<li>
-<p>For Mac OS:</p>
-
-<pre><code>grunt dist
-</code></pre>
-</li>
-<li>
-<p>For Linux:</p>
-
-<pre><code>grunt dist-linux
-</code></pre>
-</li>
-<li>
-<p>For Windows:</p>
-
-<pre><code>grunt dist-win
-</code></pre>
-</li>
-</ol><p>The app can then be found under:</p>
-
-<pre><code>./dist/
-</code></pre>
-
-<h2>
-<a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h2>
-
-<p>Quick Question - Communication and Collaboration tool.
-Copyright (C) 2013  Dica-Developer</p>
-
-<p>This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.</p>
-
-<p>This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.</p>
-
-<p>You should have received a copy of the GNU General Public License
-  along with this program.  If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>.</p>
-      </section>
+        <p>
+          You should have received a copy of the GNU General Public License
+          along with this program.  If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>.
+        </p>
+      </div>
+      <hr>
       <footer>
         <p>This project is maintained by <a href="https://github.com/Dica-Developer">Dica-Developer</a></p>
-        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+        <p><small>© Dica-Developer 2013 &mdash; Hosted on GitHub Pages</small></p>
       </footer>
     </div>
-    <script src="javascripts/scale.fix.js"></script>
-    <script>
-      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-      ga('create', 'UA-44801544-1', 'dica-developer.github.io');
-      ga('send', 'pageview');
-    </script>
+    <script src="js/jquery-1.10.2.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/google_analytics.js"></script>
   </body>
 </html>
