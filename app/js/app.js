@@ -178,7 +178,7 @@ server.on('newMessage_text/plain; charset=utf-8', function (message) {
   var sendOn = formatDate(timestamp);
   var content = '<li style="background-color: ' + colors[Math.abs(hashCode(message.remoteAddress)) % 9] + ';"><p class="ui-li-aside">by <strong>' + message.remoteAddress + '</strong> at <strong>' + sendOn + '</strong></p>';
   content = content + '<p style="white-space: pre-line;">';
-  content = content + message.content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/([a-zA-Z]+:\/\/[^ ]*)/gm, '<span data-name="link" style="cursor:pointer;" data-href="$1">$1</span>');
+  content = content + message.content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/([a-zA-Z]+:\/\/[^ ]*)/gm, '<a data-name="link" class="ui-link" data-href="$1">$1</a>');
   content = content + '</p>';
   content = content + '</li>';
 
@@ -194,7 +194,7 @@ function handleFileClick(event) {
   'use strict';
 
   var fileSaveAsDialog = $('#fileSaveAsDialog');
-  fileSaveAsDialog.data('content', $(event.target).closest('span').data('href'));
+  fileSaveAsDialog.data('content', $(event.target).closest('a').data('href'));
   $('#fileHandlePopup').popup('open', {
     positionTo: 'origin',
     transition: 'pop',
@@ -210,7 +210,7 @@ function addImageMessage(message) {
   var sendOn = formatDate(timestamp);
   var content = '<li style="background-color: ' + colors[Math.abs(hashCode(message.remoteAddress)) % 9] + ';"><p class="ui-li-aside">by <strong>' + message.remoteAddress + '</strong> at <strong>' + sendOn + '</strong></p>';
   content = content + '<p style="white-space: pre-line;">';
-  content = content + '<span data-name="link" style="cursor:pointer;" data-href="' + message.content + '"><img src="' + message.content + '" height="50"></img></span>';
+  content = content + '<a data-name="link" data-href="' + message.content + '"><img src="' + message.content + '" height="50"></img></a>';
   content = content + '</p>';
   content = content + '</li>';
 
@@ -234,7 +234,7 @@ server.on('newMessageUnhandled', function (message) {
   var sendOn = formatDate(timestamp);
   var content = '<li style="background-color: ' + colors[Math.abs(hashCode(message.remoteAddress)) % 9] + ';"><p class="ui-li-aside">by <strong>' + message.remoteAddress + '</strong> at <strong>' + sendOn + '</strong></p>';
   content = content + '<p style="white-space: pre-line;">';
-  content = content + '<span data-name="link" style="cursor:pointer;" data-href="' + message.content + '">message of type ' + message.contentType + '</span>';
+  content = content + '<a data-name="link" class="ui-link" data-href="' + message.content + '">message of type ' + message.contentType + '</a>';
   content = content + '</p>';
   content = content + '</li>';
 
