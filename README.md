@@ -36,7 +36,7 @@ The app can then be found under:
 
 ## License ##
 
-Quick Question - Communication and Collaboration tool.
+Quick Question - Communication and Collaboration Tool.
 Copyright (C) 2013  Dica-Developer
 
 This program is free software: you can redistribute it and/or modify
