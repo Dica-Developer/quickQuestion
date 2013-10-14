@@ -29,7 +29,7 @@
   "chromium-args": "--child-clean-exit --hide-scrollbars",
   "licenses": [{
     "type": "GPLv3",
-    "url": "http://www.gnu.org/licenses/gpl-3.0.html",
+    "url": "http://www.gnu.org/licenses/gpl-3.0.html"
   }],
   "maintainers": [{
     "name": "Dica-Developer",
