@@ -45,7 +45,7 @@ function handleWhiteboardResize() {
   tempCanvas.height = canvas.height;
   tempCanvas.getContext('2d').drawImage(canvas, 0, 0);
   canvas.width = $(window).innerWidth() - 30;
-  canvas.height = $(window).innerHeight() - ($('#footerWhiteboard').height() + $('#headerWhiteboard').height() + 102);
+  canvas.height = $(window).innerHeight() - ($('#footerWhiteboard').height() + $('#headerWhiteboard').height() + 113);
   canvas.getContext('2d').drawImage(tempCanvas, 0, 0, tempCanvas.width, tempCanvas.height, 0, 0, tempCanvas.width, tempCanvas.height);
 }
 
@@ -53,7 +53,7 @@ function resize() {
   'use strict';
 
   var messagelist = $('#messagelist');
-  var newHeight = $(window).innerHeight() + messagelist.height() - ($('#contentText').height() + $('#footerText').height() + $('#headerText').height() + 33);
+  var newHeight = $(window).innerHeight() + messagelist.height() - ($('#contentText').height() + $('#footerText').height() + $('#headerText').height() + 34);
   messagelist.height(newHeight);
 
   handleWhiteboardResize();
