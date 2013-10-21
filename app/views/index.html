@@ -22,6 +22,7 @@
         <ul>
           <li><a href="#text" data-transition="flip" class="ui-btn-active ui-state-persist">Text</a></li>
           <li><a href="#whiteboard" data-transition="flip">Whiteboard</a></li>
+          <!-- li><a href="#audiovideo" data-transition="flip">Audio/Video</a></li -->
         </ul>
       </div>
     </div>
@@ -79,6 +80,7 @@
         <ul>
           <li><a href="#text" data-transition="flip">Text</a></li>
           <li><a href="#whiteboard" data-transition="flip" class="ui-btn-active ui-state-persist">Whiteboard</a></li>
+          <!-- li><a href="#audiovideo" data-transition="flip">Audio/Video</a></li -->
         </ul>
       </div>
     </div>
@@ -156,6 +158,62 @@
       </div>
       <div data-role="panel" id="navigationPanelWhiteboard" data-position="right" data-display="reveal">
         <ul data-role="listview" id="collaboratorListViewWhiteboard" name="collaboratorListView">
+        </ul>
+      </div>
+    </div>
+
+    <div id="audiovideo" data-role="page" data-theme="a">
+    <div id="header" data-role="header">
+      <img src="../img/logoWhite.svg" style="float: left; padding-top: 5px; padding-left: 6px;" with="26" height="26" />
+      <h1></h1>
+      <a href="#navigationPanelAudiovideo" data-icon="bars" data-iconpos="notext" data-corners="true" data-shadow="true" data-iconshadow="false" data-wrapperels="span" data-theme="a" title="Collaborators" class="ui-btn-right"></a>
+      <div data-role="navbar">
+        <ul>
+          <li><a href="#text" data-transition="flip">Text</a></li>
+          <li><a href="#whiteboard" data-transition="flip">Whiteboard</a></li>
+          <li><a href="#audiovideo" data-transition="flip" class="ui-btn-active ui-state-persist">Audio/Video</a></li>
+        </ul>
+      </div>
+    </div>
+    <div id="contentAudiovideo" data-role="content">      
+      <video id="localVideoStream" class="localVideoStream" style="width: 80px; height: 80px; float: left;" autoplay="true"  muted="true"></video>
+      <video id="remoteVideoStream" autoplay="true"></video>
+      <audio id="remoteAudioStream" autoplay="true"></audio>
+    </div>
+    <div id="footerAudiovideo" data-role="footer">
+      <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
+        <a id="startVideoChat" href="#" data-role="button">Video</a>
+        <a id="startAudioChat" href="#" data-role="button">Audio</a>
+      </fieldset>
+    </div>
+      <div class="ui-popup-container ui-popup-hidden" id="confirmUpdate-popup">
+          <div data-role="popup" id="confirmUpdate" data-overlay-theme="a" data-theme="c" style="max-width:400px;" class="ui-corner-all ui-popup ui-body-c ui-overlay-shadow" aria-disabled="false" data-disabled="false" data-shadow="true" data-corners="true" data-transition="none" data-position-to="origin">
+              <div data-role="header" data-theme="a" class="ui-corner-top ui-header ui-bar-a" role="banner">
+                  <h1 class="ui-title" role="heading" aria-level="1">Update</h1>
+              </div>
+              <div data-role="content" data-theme="d" class="ui-corner-bottom ui-content ui-body-d" role="main">
+                <h3 class="ui-title">An update is available.</h3>
+                <p>Do you want to apply this update?</p>
+                <a href="#" id="update-no" data-role="button" data-inline="true" data-rel="back" data-theme="c" data-corners="true" data-shadow="true" data-iconshadow="true" data-wrapperels="span" class="ui-btn ui-btn-up-c ui-shadow ui-btn-corner-all ui-btn-inline"><span class="ui-btn-inner ui-btn-corner-all"><span class="ui-btn-text">No</span></span></a>
+                <a href="#" id="update-yes" data-role="button" data-inline="true" data-transition="flow" data-theme="b" data-corners="true" data-shadow="true" data-iconshadow="true" data-wrapperels="span" class="ui-btn ui-btn-up-b ui-shadow ui-btn-corner-all ui-btn-inline"><span class="ui-btn-inner ui-btn-corner-all"><span class="ui-btn-text">Update</span></span></a>
+              </div>
+          </div>
+      </div>
+      <div class="ui-popup-container ui-popup-hidden" id="confirmRestart-popup">
+          <div data-role="popup" id="confirmRestart" data-overlay-theme="a" data-theme="c" style="max-width:400px;" class="ui-corner-all ui-popup ui-body-c ui-overlay-shadow" aria-disabled="false" data-disabled="false" data-shadow="true" data-corners="true" data-transition="none" data-position-to="origin">
+              <div data-role="header" data-theme="a" class="ui-corner-top ui-header ui-bar-a" role="banner">
+                  <h1 class="ui-title" role="heading" aria-level="1">Restart</h1>
+              </div>
+              <div data-role="content" data-theme="d" class="ui-corner-bottom ui-content ui-body-d" role="main">
+                <h3 class="ui-title">The app needs to restart, to apply changes.</h3>
+                <p>Do you want to restart now?</p>
+                <a href="#" id="restart-no" data-role="button" data-inline="true" data-rel="back" data-theme="c" data-corners="true" data-shadow="true" data-iconshadow="true" data-wrapperels="span" class="ui-btn ui-btn-up-c ui-shadow ui-btn-corner-all ui-btn-inline"><span class="ui-btn-inner ui-btn-corner-all"><span class="ui-btn-text">No</span></span></a>
+                <a href="#" id="restart-yes" data-role="button" data-inline="true" data-transition="flow" data-theme="b" data-corners="true" data-shadow="true" data-iconshadow="true" data-wrapperels="span" class="ui-btn ui-btn-up-b ui-shadow ui-btn-corner-all ui-btn-inline"><span class="ui-btn-inner ui-btn-corner-all"><span class="ui-btn-text">Restart</span></span></a>
+              </div>
+          </div>
+      </div>
+      <div data-role="panel" id="navigationPanelAudiovideo" data-position="right" data-display="reveal">
+        <ul data-role="listview" id="collaboratorListViewAudiovideo" name="collaboratorListView">
         </ul>
       </div>
     </div>

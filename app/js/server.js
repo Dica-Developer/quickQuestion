@@ -23,7 +23,7 @@ var os = require('os');
 var sys = require('sys');
 var events = require('events');
 var fs = require('fs');
-var handledMimeTypes = ['model/x-sketch', 'text/plain; charset=utf-8', 'image/png', 'image/jpeg', 'image/gif', 'image/svg+xml', 'image/xbm', 'image/bmp'];
+var handledMimeTypes = ['x-event/x-video-chat-join', 'model/x-sketch', 'text/plain; charset=utf-8', 'image/png', 'image/jpeg', 'image/gif', 'image/svg+xml', 'image/xbm', 'image/bmp'];
 
 var responseCallback = function (resp) {
   'use strict';
@@ -80,6 +80,7 @@ function Server() {
 
   this.on('sendMessageToAll', this.sendMessageToAll);
   this.on('sendSketchMessageToAll', this.sendSketchMessageToAll);
+  this.on('sendVideoMessageToAll', this.sendVideoMessageToAll);
 }
 
 sys.inherits(Server, events.EventEmitter);
@@ -116,6 +117,11 @@ Server.prototype.sendMessage = function (message, type) {
 Server.prototype.sendSketchMessageToAll = function (sketchMessage) {
   'use strict';
   this.sendMessage(JSON.stringify(sketchMessage), 'model/x-sketch');
+};
+
+Server.prototype.sendVideoMessageToAll = function (message) {
+  'use strict';
+  this.sendMessage(JSON.stringify(message), message.type);
 };
 
 Server.prototype.sendMessageToAll = function (message) {

@@ -15,7 +15,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-/*global $, window, document, FileReader, Image, Buffer*/
+/*global $, window, document, FileReader, Image, Buffer, navigator, webkitRTCPeerConnection, URL, RTCIceCandidate*/
 
 var gui = require('nw.gui');
 var fs = require('fs');
@@ -29,7 +29,7 @@ var attachmentListViewCreated = false;
 var collaboratorListCreated = false;
 var resizeTimeout;
 var colors = ['rgba(128, 128, 128, 0.01)', 'rgba(255, 0, 0, 0.01)', 'rgba(0, 255, 0, 0.01)', 'rgba(255, 255, 0, 0.01)', 'rgba(0, 0, 255, 0.01)', 'rgba(255, 0, 255, 0.01)', 'rgba(0, 255, 255, 0.01)', 'rgba(255, 255, 255, 0.01)', 'rgba(192, 192, 192, 0.01)'];
-var handledMimeTypes = ['model/x-sketch', 'text/plain; charset=utf-8', 'image/png', 'image/jpeg', 'image/gif', 'image/svg+xml', 'image/xbm', 'image/bmp'];
+var handledMimeTypes = ['x-event/x-video-chat-join', 'model/x-sketch', 'text/plain; charset=utf-8', 'image/png', 'image/jpeg', 'image/gif', 'image/svg+xml', 'image/xbm', 'image/bmp'];
 
 function sendMessage(val) {
   'use strict';
@@ -141,6 +141,18 @@ server.on('newMessage_model/x-sketch', function (message) {
   'use strict';
 
   sketchClient(JSON.parse(message.content));
+});
+
+function startVideoChatWithClient(message) {
+  'use strict';
+
+  console.log(message);
+}
+
+server.on('newMessage_x-event/x-video-chat-join', function (message) {
+  'use strict';
+
+  startVideoChatWithClient(JSON.parse(message.content));
 });
 
 function formatDate(timestamp) {
@@ -382,6 +394,60 @@ function removeAttachment(event) {
 
 }
 
+function videoStreamSuccess(stream) {
+  'use strict';
+  var video = $('#localVideoStream')[0];
+  video.src = URL.createObjectURL(stream);
+  var pcR = new webkitRTCPeerConnection(null);
+  pcR.onaddstream = function (e) {
+    $('#remoteVideoStream')[0].src = URL.createObjectURL(e.stream);
+  };
+  var pcl = new webkitRTCPeerConnection(null);
+  pcl.onicecandidate = function (event) {
+    if (event.candidate) {
+      pcR.addIceCandidate(new RTCIceCandidate(event.candidate));
+    }
+  };
+  pcR.onicecandidate = function (event) {
+    if (event.candidate) {
+      pcl.addIceCandidate(new RTCIceCandidate(event.candidate));
+    }
+  };
+  pcl.addStream(stream);
+  pcl.createOffer(function (desc) {
+    pcl.setLocalDescription(desc);
+    pcR.setRemoteDescription(desc);
+    pcR.createAnswer(function (desc2) {
+      pcR.setLocalDescription(desc2);
+      pcl.setRemoteDescription(desc2);
+    }, null, {
+      'mandatory': {
+        'OfferToReceiveAudio': true,
+        'OfferToReceiveVideo': true
+      }
+    });
+  });
+  /*var message = {
+    type: 'x-event/x-video-chat-join'
+    // ip, port?
+  };
+  server.emit('sendVideoMessageToAll', message);*/
+}
+
+function videoStreamError(error) {
+  'use strict';
+  console.error('navigator.getUserMedia error: ', error);
+}
+
+function audioStreamSuccess() {
+  'use strict';
+}
+
+function audioStreamError(error) {
+  'use strict';
+  console.error('navigator.getUserMedia error: ', error);
+}
+
 // startup on DOM ready
 $(function () {
   'use strict';
@@ -608,6 +674,26 @@ $(function () {
         gui.Shell.openExternal('file://' + filePath);
       }
     });
+  });
+
+  $('#startVideoChat').on('click', function () {
+    navigator.webkitGetUserMedia({
+      audio: true,
+      video: {
+        mandatory: {
+          // chromeMediaSource: 'screen'
+          maxWidth: 320,
+          maxHeight: 180
+        }
+      }
+    }, videoStreamSuccess, videoStreamError);
+  });
+
+  $('#startAudioChat').on('click', function () {
+    navigator.webkitGetUserMedia({
+      audio: true,
+      video: false
+    }, audioStreamSuccess, audioStreamError);
   });
 
   window.onresize = function () {
