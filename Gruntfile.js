@@ -209,7 +209,7 @@ module.exports = function (grunt) {
     'compress:finalWindowsApp'
   ]);
 
-  grunt.registerTask('dist', [
+  grunt.registerTask('dist-macos', [
     'jshint',
     'clean:dist',
     'copy:webkit',

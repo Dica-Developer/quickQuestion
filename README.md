@@ -20,7 +20,7 @@ To build a distribution run the following commands corresponding to your operati
 
 1. For Mac OS:
 
-        grunt dist
+        grunt dist-macos
 
 2. For Linux:
 
