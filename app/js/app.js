@@ -260,13 +260,19 @@ function displayMessagesAfterRestart() {
   'use strict';
 
   var i;
-  var messages = messageDB.query({
-    timestamp: {
-      gte: (new Date()).setTime((new Date()).getTime() - (3600 * 1000))
-    }
-  }).get();
+  var messages = messageDB.query(
+    [{
+      contentType: {
+        left: 'text/'
+      }
+    }, {
+      contentType: {
+        left: 'image/'
+      }
+    }]
+  ).order('timestamp desc').limit(10).get();
 
-  for (i = 0; i < messages.length; i++) {
+  for (i = messages.length - 1; i > -1 ; i--) {
     if (handledMimeTypes.indexOf(messages[i].contentType) > -1) {
       server.emit('newMessage_' + messages[i].contentType, messages[i]);
     } else {
