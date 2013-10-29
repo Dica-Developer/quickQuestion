@@ -15,7 +15,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-/*global $, window, document, FileReader, Image, Buffer, navigator, webkitRTCPeerConnection, URL, RTCIceCandidate*/
+/*global $, window, document, FileReader, Image, Buffer, navigator, webkitRTCPeerConnection, URL, RTCSessionDescription, RTCIceCandidate*/
 
 var gui = require('nw.gui');
 var fs = require('fs');
@@ -29,7 +29,9 @@ var attachmentListViewCreated = false;
 var collaboratorListCreated = false;
 var resizeTimeout;
 var colors = ['rgba(128, 128, 128, 0.01)', 'rgba(255, 0, 0, 0.01)', 'rgba(0, 255, 0, 0.01)', 'rgba(255, 255, 0, 0.01)', 'rgba(0, 0, 255, 0.01)', 'rgba(255, 0, 255, 0.01)', 'rgba(0, 255, 255, 0.01)', 'rgba(255, 255, 255, 0.01)', 'rgba(192, 192, 192, 0.01)'];
-var handledMimeTypes = ['x-event/x-video-chat-join', 'model/x-sketch', 'text/plain; charset=utf-8', 'image/png', 'image/jpeg', 'image/gif', 'image/svg+xml', 'image/xbm', 'image/bmp'];
+var handledMimeTypes = ['x-event/x-video-chat-candidate', 'x-event/x-video-chat-answer', 'x-event/x-video-chat-offer', 'model/x-sketch', 'text/plain; charset=utf-8', 'image/png', 'image/jpeg', 'image/gif', 'image/svg+xml', 'image/xbm', 'image/bmp'];
+var pcL = null;
+var pcR = null;
 
 function sendMessage(val) {
   'use strict';
@@ -143,16 +145,64 @@ server.on('newMessage_model/x-sketch', function (message) {
   sketchClient(JSON.parse(message.content));
 });
 
-function startVideoChatWithClient(message) {
+server.on('newMessage_x-event/x-video-chat-candidate', function (message) {
   'use strict';
 
-  console.log(message);
-}
+  var candidate = JSON.parse(message.content).candidate;
+  if (pcR) {
+    pcR.addIceCandidate(new RTCIceCandidate(candidate));
+  }
+  if (pcL) {
+    pcL.addIceCandidate(new RTCIceCandidate(candidate));
+  }
+});
 
-server.on('newMessage_x-event/x-video-chat-join', function (message) {
+server.on('newMessage_x-event/x-video-chat-answer', function (message) {
   'use strict';
 
-  startVideoChatWithClient(JSON.parse(message.content));
+  var desc = JSON.parse(message.content).description;
+  if (pcL) {
+    pcL.setRemoteDescription(new RTCSessionDescription(desc));
+  } else {
+    console.warn('Received answer but have no offer send.');
+  }
+});
+
+server.on('newMessage_x-event/x-video-chat-offer', function (message) {
+  'use strict';
+
+  var desc = JSON.parse(message.content).description;
+  pcR = new webkitRTCPeerConnection(null);
+  pcR.onaddstream = function (e) {
+    var video = $('<video>');
+    video.attr('autoplay', true);
+    video.css('-webkit-transform', 'rotateY(180deg)');
+    video.attr('src', URL.createObjectURL(e.stream));
+    $('#contentAudiovideo').append(video);
+  };
+  pcR.onicecandidate = function (event) {
+    if (event.candidate) {
+      var message = {
+        type: 'x-event/x-video-chat-candidate',
+        candidate: event.candidate
+      };
+      server.emit('sendVideoMessageToAll', message);
+    }
+  };
+  pcR.setRemoteDescription(new RTCSessionDescription(desc));
+  pcR.createAnswer(function (desc2) {
+    pcR.setLocalDescription(desc2);
+    var message = {
+      type: 'x-event/x-video-chat-answer',
+      description: desc2
+    };
+    server.emit('sendVideoMessageToAll', message);
+  }, null, {
+    'mandatory': {
+      'OfferToReceiveAudio': true,
+      'OfferToReceiveVideo': true
+    }
+  });
 });
 
 function formatDate(timestamp) {
@@ -272,7 +322,7 @@ function displayMessagesAfterRestart() {
     }]
   ).order('timestamp desc').limit(10).get();
 
-  for (i = messages.length - 1; i > -1 ; i--) {
+  for (i = messages.length - 1; i > -1; i--) {
     if (handledMimeTypes.indexOf(messages[i].contentType) > -1) {
       server.emit('newMessage_' + messages[i].contentType, messages[i]);
     } else {
@@ -402,54 +452,38 @@ function removeAttachment(event) {
 
 function videoStreamSuccess(stream) {
   'use strict';
-  var video = $('#localVideoStream')[0];
-  video.src = URL.createObjectURL(stream);
-  var pcR = new webkitRTCPeerConnection(null);
-  pcR.onaddstream = function (e) {
-    $('#remoteVideoStream')[0].src = URL.createObjectURL(e.stream);
-  };
-  var pcl = new webkitRTCPeerConnection(null);
-  pcl.onicecandidate = function (event) {
+
+  pcL = new webkitRTCPeerConnection(null);
+  pcL.onicecandidate = function (event) {
     if (event.candidate) {
-      pcR.addIceCandidate(new RTCIceCandidate(event.candidate));
+      var message = {
+        type: 'x-event/x-video-chat-candidate',
+        candidate: event.candidate
+      };
+      server.emit('sendVideoMessageToAll', message);
     }
   };
-  pcR.onicecandidate = function (event) {
-    if (event.candidate) {
-      pcl.addIceCandidate(new RTCIceCandidate(event.candidate));
-    }
+  pcL.onaddstream = function (e) {
+    var video = $('<video>');
+    video.attr('autoplay', true);
+    video.css('-webkit-transform', 'rotateY(180deg)');
+    video.attr('src', URL.createObjectURL(e.stream));
+    $('#contentAudiovideo').append(video);
   };
-  pcl.addStream(stream);
-  pcl.createOffer(function (desc) {
-    pcl.setLocalDescription(desc);
-    pcR.setRemoteDescription(desc);
-    pcR.createAnswer(function (desc2) {
-      pcR.setLocalDescription(desc2);
-      pcl.setRemoteDescription(desc2);
-    }, null, {
-      'mandatory': {
-        'OfferToReceiveAudio': true,
-        'OfferToReceiveVideo': true
-      }
-    });
+
+  pcL.addStream(stream);
+
+  pcL.createOffer(function (desc) {
+    pcL.setLocalDescription(desc);
+    var message = {
+      type: 'x-event/x-video-chat-offer',
+      description: desc
+    };
+    server.emit('sendVideoMessageToAll', message);
   });
-  /*var message = {
-    type: 'x-event/x-video-chat-join'
-    // ip, port?
-  };
-  server.emit('sendVideoMessageToAll', message);*/
 }
 
 function videoStreamError(error) {
-  'use strict';
-  console.error('navigator.getUserMedia error: ', error);
-}
-
-function audioStreamSuccess() {
-  'use strict';
-}
-
-function audioStreamError(error) {
   'use strict';
   console.error('navigator.getUserMedia error: ', error);
 }
@@ -687,7 +721,6 @@ $(function () {
       audio: true,
       video: {
         mandatory: {
-          // chromeMediaSource: 'screen'
           maxWidth: 320,
           maxHeight: 180
         }
@@ -699,7 +732,18 @@ $(function () {
     navigator.webkitGetUserMedia({
       audio: true,
       video: false
-    }, audioStreamSuccess, audioStreamError);
+    }, videoStreamSuccess, videoStreamError);
+  });
+
+  $('#startScreenShare').on('click', function () {
+    navigator.webkitGetUserMedia({
+      audio: false,
+      video: {
+        mandatory: {
+          chromeMediaSource: 'screen'
+        }
+      }
+    }, videoStreamSuccess, videoStreamError);
   });
 
   window.onresize = function () {

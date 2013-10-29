@@ -23,7 +23,7 @@ var os = require('os');
 var sys = require('sys');
 var events = require('events');
 var fs = require('fs');
-var handledMimeTypes = ['x-event/x-video-chat-join', 'model/x-sketch', 'text/plain; charset=utf-8', 'image/png', 'image/jpeg', 'image/gif', 'image/svg+xml', 'image/xbm', 'image/bmp'];
+var handledMimeTypes = ['x-event/x-video-chat-candidate', 'x-event/x-video-chat-answer', 'x-event/x-video-chat-offer', 'model/x-sketch', 'text/plain; charset=utf-8', 'image/png', 'image/jpeg', 'image/gif', 'image/svg+xml', 'image/xbm', 'image/bmp'];
 
 var responseCallback = function (resp) {
   'use strict';
