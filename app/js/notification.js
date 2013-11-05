@@ -24,39 +24,21 @@ function Notifications() {
   'use strict';
   var _this = this;
   this.messageWindowLoaded = false;
-  this.messageWindowOpen = false;
   this.messageWindow = _this.createNewWindow();
   var messageHideTimeOutID = null;
 
-  this.newMessage = function () {
+  this.newMessage = function (message) {
     if (_this.messageWindowLoaded) {
       clearTimeout(messageHideTimeOutID);
-      _this.messageWindow.show();
-      _this.messageWindowOpen = true;
+      _this.messageWindow.window.document.getElementById('message').innerText = message;
+      var windowWidth = window.screen.availWidth;
+      var windowTop = window.screen.availTop;
+      _this.messageWindow.moveTo(windowWidth - 250, windowTop);
       messageHideTimeOutID = setTimeout(function () {
-        _this.messageWindow.hide();
+        _this.messageWindow.moveTo(windowWidth + 50, windowTop);
         _this.emit('windowHide');
       }, 4000);
     }
-
-    if (_this.messageWindowOpen) {
-      var winDocument = _this.messageWindow.window.document;
-      var messageCount = winDocument.getElementById('messageCount');
-      var currentCount = parseInt(messageCount.innerText, 10);
-      var messageTempus = winDocument.getElementById('messageTempus');
-      messageCount.innerText = (currentCount + 1);
-      if (messageCount > 1) {
-        messageTempus.innerText = 'messages';
-      }
-    }
-    _this.on('windowHide', function () {
-      var winDocument = _this.messageWindow.window.document;
-      var messageCount = winDocument.getElementById('messageCount');
-      var messageTempus = winDocument.getElementById('messageTempus');
-      messageCount.innerText = '0';
-      messageTempus.innerText = 'message';
-      _this.messageWindowOpen = false;
-    });
   };
 }
 
@@ -80,14 +62,12 @@ Notifications.prototype.createNewWindow = function () {
   newMessageWindow.on('loaded', function () {
     var windowWidth = window.screen.availWidth;
     var windowTop = window.screen.availTop;
-    var x = windowWidth - newMessageWindow.width;
-    var y = windowTop;
-    newMessageWindow.moveTo(x, y);
+    newMessageWindow.moveTo(windowWidth + 50, windowTop);
+    newMessageWindow.show();
     _this.messageWindowLoaded = true;
   });
 
   return newMessageWindow;
 };
 
-var notifications = new Notifications();
-module.exports.newMessage = notifications.newMessage;
+module.exports = new Notifications();

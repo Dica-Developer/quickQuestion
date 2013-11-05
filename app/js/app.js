@@ -24,6 +24,7 @@ var autoUpdate = require('../js/auto-update.js');
 require('../js/guiHandling.js');
 var logDB = require('../js/db.js').logs;
 var messageDB = require('../js/db.js').messages;
+var notifications = require('../js/notification.js');
 var messageListCreated = false;
 var attachmentListViewCreated = false;
 var collaboratorListCreated = false;
@@ -203,6 +204,26 @@ server.on('newMessage_x-event/x-video-chat-offer', function (message) {
       'OfferToReceiveVideo': true
     }
   });
+});
+
+server.on('newMessage', function () {
+  'use strict';
+
+  var currentCount = 1;
+  var messageCount = $('#messageCount').val();
+  if (messageCount) {
+    currentCount = parseInt(messageCount, 10);
+  } else {
+    $('body').append('<input id="messageCount"></input>');
+  }
+  $('#messageCount').val(currentCount + 1);
+  notifications.newMessage('You received ' + currentCount + ' new ' + (messageCount > 1 ? 'messages' : 'message') + '!');
+});
+
+notifications.on('windowHide', function () {
+  'use strict';
+
+  $('#messageCount').remove();
 });
 
 function formatDate(timestamp) {
