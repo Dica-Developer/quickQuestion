@@ -58,6 +58,7 @@ function resize() {
   var messagelist = $('#messagelist');
   var newHeight = $(window).innerHeight() + messagelist.height() - ($('#contentText').height() + $('#footerText').height() + $('#headerText').height() + 34);
   messagelist.height(newHeight);
+  messagelist.scrollTop(messagelist[0].scrollHeight);
 
   handleWhiteboardResize();
 }
