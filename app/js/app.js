@@ -395,7 +395,7 @@ autoUpdate.on('updateNeeded', function () {
 
   var confirmUpdate = $('#confirmUpdate');
   confirmUpdate.on('click', '#update-yes', function () {
-    autoUpdate.emit('update');
+    gui.Shell.openExternal('http://dica-developer.github.io/quickQuestion/');
   });
 
   confirmUpdate.popup('open');
