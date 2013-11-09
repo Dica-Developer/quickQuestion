@@ -9,4 +9,3 @@ checkinstall -y --install=no --fstrans=yes -R --pkgname QuickQuestion --pkgrelea
 mv ~/rpmbuild/RPMS/amd64/QuickQuestion-$1-1.amd64.rpm ./
 rm -r ./SOURCES
 rm description-pak
-rm -r ./doc-pak
