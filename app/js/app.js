@@ -420,11 +420,6 @@ autoUpdate.on('log.warning', function (message) {
   });
 });
 
-/*
-found on http://jsfiddle.net/ghostoy/wTmFE/1/
-Thanks to http://stackoverflow.com/questions/55677/how-do-i-get-the-coordinates-of-a-mouse-click-on-a-canvas-element/4430498#4430498
-*/
-
 function fixPosition(e, gCanvasElement) {
   'use strict';
 
