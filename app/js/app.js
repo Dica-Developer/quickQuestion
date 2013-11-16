@@ -34,6 +34,14 @@ var handledMimeTypes = ['x-event/x-video-chat-candidate', 'x-event/x-video-chat-
 var pcL = null;
 var pcR = null;
 
+function encodeHtml(value) {
+  'use strict';
+  if (value) {
+    return $('<div/>').text(value).html();
+  }
+  return value;
+}
+
 function sendMessage(val) {
   'use strict';
   server.emit('sendMessageToAll', val);
@@ -83,7 +91,7 @@ server.on('updateClients', function () {
   this.clients.sort(sortByHostName);
   for (i = 0; i < this.clients.length; i++) {
     // TODO encode hostname and address
-    content = content + '<li data-icon="check"><a href="#">' + this.clients[i].nickname + ':' + this.clients[i].hostname + ' (' + this.clients[i].address + ')</a></li>';
+    content = content + '<li data-icon="check"><a href="#">' + encodeHtml(this.clients[i].nickname + ':' + this.clients[i].hostname + ' (' + this.clients[i].address + ')') + '</a></li>';
   }
   $('ul[name="collaboratorListView"]').each(function () {
     $(this).html(content);
@@ -259,9 +267,9 @@ server.on('newMessage_text/plain; charset=utf-8', function (message) {
 
   var timestamp = new Date(message.timestamp);
   var sendOn = formatDate(timestamp);
-  var content = '<li style="background-color: ' + colors[Math.abs(hashCode(message.remoteAddress)) % 9] + ';"><p class="ui-li-aside">by <strong>' + (message.nickname || message.remoteAddress) + '</strong> at <strong>' + sendOn + '</strong></p>';
+  var content = '<li style="background-color: ' + colors[Math.abs(hashCode(message.remoteAddress)) % 9] + ';"><p class="ui-li-aside">by <strong>' + encodeHtml((message.nickname || message.remoteAddress)) + '</strong> at <strong>' + sendOn + '</strong></p>';
   content = content + '<p style="white-space: pre-line;">';
-  content = content + message.content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/([a-zA-Z]+:\/\/[^ ]*)/gm, '<a data-name="link" class="ui-link" data-href="$1">$1</a>');
+  content = content + encodeHtml(message.content).replace(/([a-zA-Z]+:\/\/[^ ]*)/gm, '<a data-name="link" class="ui-link" data-href="$1">$1</a>');
   content = content + '</p>';
   content = content + '</li>';
 
@@ -291,7 +299,7 @@ function addImageMessage(message) {
 
   var timestamp = new Date(message.timestamp);
   var sendOn = formatDate(timestamp);
-  var content = '<li style="background-color: ' + colors[Math.abs(hashCode(message.remoteAddress)) % 9] + ';"><p class="ui-li-aside">by <strong>' + (message.nickname || message.remoteAddress) + '</strong> at <strong>' + sendOn + '</strong></p>';
+  var content = '<li style="background-color: ' + colors[Math.abs(hashCode(message.remoteAddress)) % 9] + ';"><p class="ui-li-aside">by <strong>' + encodeHtml((message.nickname || message.remoteAddress)) + '</strong> at <strong>' + sendOn + '</strong></p>';
   content = content + '<p style="white-space: pre-line;">';
   content = content + '<a data-name="link" data-href="' + message.content + '"><img src="' + message.content + '" height="50"></img></a>';
   content = content + '</p>';
@@ -315,9 +323,9 @@ server.on('newMessageUnhandled', function (message) {
 
   var timestamp = new Date(message.timestamp);
   var sendOn = formatDate(timestamp);
-  var content = '<li style="background-color: ' + colors[Math.abs(hashCode(message.remoteAddress)) % 9] + ';"><p class="ui-li-aside">by <strong>' + (message.nickname || message.remoteAddress) + '</strong> at <strong>' + sendOn + '</strong></p>';
+  var content = '<li style="background-color: ' + colors[Math.abs(hashCode(message.remoteAddress)) % 9] + ';"><p class="ui-li-aside">by <strong>' + encodeHtml((message.nickname || message.remoteAddress)) + '</strong> at <strong>' + sendOn + '</strong></p>';
   content = content + '<p style="white-space: pre-line;">';
-  content = content + '<a data-name="link" class="ui-link" data-href="' + message.content + '">message of type ' + message.contentType + '</a>';
+  content = content + '<a data-name="link" class="ui-link" data-href="' + message.content + '">message of type ' + encodeHtml(message.contentType) + '</a>';
   content = content + '</p>';
   content = content + '</li>';
 
