@@ -40,6 +40,10 @@ function Notifications() {
       }, 4000);
     }
   };
+
+  this.close = function () {
+    _this.messageWindow.close();
+  };
 }
 
 sys.inherits(Notifications, events.EventEmitter);

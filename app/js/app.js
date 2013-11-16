@@ -772,6 +772,10 @@ $(function () {
 
   window.setTimeout(function () {
     gui.Window.get().show();
+    gui.Window.get().on('close', function () {
+      notifications.close();
+      gui.Window.get().close(true);
+    });
   }, 100);
 
   $(window).on('pagechange', function () {
