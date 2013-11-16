@@ -47,9 +47,14 @@ function Server() {
     }
     if (newClient) {
       if (service.hasOwnProperty('hostname') && service.hasOwnProperty('address') && service.address && service.hostname) {
+        var nickname = service.hostname || service.address;
+        if (service.hasOwnProperty('nickname') && service.nickname) {
+          nickname = service.nickname;
+        }
         _this.clients.push({
           address: service.address,
-          hostname: service.hostname
+          hostname: service.hostname,
+          nickname: nickname
         });
         _this.emit('updateClients');
         _this.emit('newClient');
@@ -149,6 +154,22 @@ Server.prototype.sendMessageToAll = function (message) {
   this.emit('updateFilesList');
 };
 
+Server.prototype.findClientNickNameByAddress = function (address) {
+  'use strict';
+  var nickname = null;
+  var _this = this;
+  var i = 0;
+
+  if (address) {
+    for (i = 0; i < _this.clients.length; i++) {
+      if (_this.clients[i].address.indexOf(address + ':') !== -1) {
+        nickname = _this.clients[i].nickname;
+      }
+    }
+  }
+  return nickname;
+};
+
 Server.prototype.applyServer = function () {
   'use strict';
   var _this = this;
@@ -165,6 +186,7 @@ Server.prototype.applyServer = function () {
         request.on('end', function () {
           if (body && body.length > 0) {
             var message = {};
+            message.nickname = _this.findClientNickNameByAddress(request.socket.remoteAddress) || request.socket.remoteAddress;
             message.content = body;
             message.remoteAddress = request.socket.remoteAddress;
             message.remotePort = request.socket.remotePort;
@@ -199,7 +221,8 @@ Server.prototype.applyServer = function () {
     _this.polo.put({
       name: 'quickquestion',
       hostname: os.hostname(),
-      port: port
+      port: port,
+      nickname: null
     });
   });
 };
