@@ -27,7 +27,7 @@ var messageDB = require('../js/db.js').messages;
 var notifications = require('../js/notification.js');
 var messageListCreated = false;
 var attachmentListViewCreated = false;
-var collaboratorListCreated = false;
+var collaboratorListCreated = [];
 var resizeTimeout;
 var colors = ['rgba(128, 128, 128, 0.01)', 'rgba(255, 0, 0, 0.01)', 'rgba(0, 255, 0, 0.01)', 'rgba(255, 255, 0, 0.01)', 'rgba(0, 0, 255, 0.01)', 'rgba(255, 0, 255, 0.01)', 'rgba(0, 255, 255, 0.01)', 'rgba(255, 255, 255, 0.01)', 'rgba(192, 192, 192, 0.01)'];
 var handledMimeTypes = ['x-event/x-video-chat-candidate', 'x-event/x-video-chat-answer', 'x-event/x-video-chat-offer', 'model/x-sketch', 'text/plain; charset=utf-8', 'image/png', 'image/jpeg', 'image/gif', 'image/svg+xml', 'image/xbm', 'image/bmp'];
@@ -87,12 +87,10 @@ server.on('updateClients', function () {
   }
   $('ul[name="collaboratorListView"]').each(function () {
     $(this).html(content);
+    if (collaboratorListCreated[$(this).attr('id')]) {
+      $(this).listview('refresh');
+    }
   });
-
-  var collaboratorList = $('#collaboratorListView');
-  if (collaboratorListCreated) {
-    collaboratorList.listview('refresh');
-  }
 });
 
 function hashCode(text) {
@@ -586,8 +584,8 @@ $(function () {
     attachmentListViewCreated = true;
   });
 
-  $('#collaboratorListView').on('listviewcreate', function () {
-    collaboratorListCreated = true;
+  $('ul[name="collaboratorListView"]').on('listviewcreate', function () {
+    collaboratorListCreated[$(this).attr('id')] = true;
   });
 
   var messageToSend = $('#messageToSend');
