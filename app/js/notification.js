@@ -34,8 +34,12 @@ function Notifications() {
       var windowWidth = window.screen.availWidth;
       var windowTop = window.screen.availTop;
       _this.messageWindow.moveTo(windowWidth - 250, windowTop);
+      _this.messageWindow.width = 250;
+      _this.messageWindow.height = 30;
       messageHideTimeOutID = setTimeout(function () {
-        _this.messageWindow.moveTo(windowWidth + 50, windowTop);
+        _this.messageWindow.width = 1;
+        _this.messageWindow.height = 1;
+        _this.messageWindow.moveTo(windowWidth, windowTop);
         _this.emit('windowHide');
       }, 4000);
     }
@@ -56,17 +60,19 @@ Notifications.prototype.createNewWindow = function () {
   var newMessageWindow = window.nwDispatcher.nwGui.Window.open('../views/notifications/newMessage.html', {
     frame: false,
     toolbar: false,
-    width: 250,
-    height: 30,
+    width: 1,
+    height: 1,
     'always-on-top': true,
     show: false,
-    resizable: false
+    resizable: true
   });
 
   newMessageWindow.on('loaded', function () {
     var windowWidth = window.screen.availWidth;
     var windowTop = window.screen.availTop;
-    newMessageWindow.moveTo(windowWidth + 50, windowTop);
+    newMessageWindow.width = 1;
+    newMessageWindow.height = 1;
+    newMessageWindow.moveTo(windowWidth, windowTop);
     newMessageWindow.show();
     _this.messageWindowLoaded = true;
   });
