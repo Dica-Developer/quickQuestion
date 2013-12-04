@@ -65,11 +65,11 @@ AutoUpdate.prototype.getTagsFromGithub = function () {
       try {
         _this.currentGitTags = JSON.parse(data);
       } catch (error) {
-        _this.emit('error', error);
+        _this.emit('log.error', error);
       }
       _this.emit('getTagsReady');
     }).on('error', function (e) {
-      _this.emit('error', e);
+      _this.emit('log.error', e);
     });
   });
 };
