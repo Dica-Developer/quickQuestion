@@ -35,7 +35,11 @@ function Server() {
   var _this = this;
 
   this.clients = [];
-  this.polo = polo();
+  this.polo = polo({
+    multicast: true,
+    monitor: false,
+    heartbeat: 60000
+  });
   this.applyServer();
   this.polo.on('quickquestion/up', function (service) {
     var newClient = true;
