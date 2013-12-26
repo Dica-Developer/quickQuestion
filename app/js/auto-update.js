@@ -15,6 +15,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+/*global window*/
 var https = require('https');
 var fs = require('fs');
 var events = require('events');
@@ -44,25 +45,29 @@ AutoUpdate.prototype.getTagsFromGithub = function () {
     },
     agent: false
   };
-  https.get(options, function (res) {
-    res.setEncoding('utf8');
-    res.on('data', function (d) {
-      data = data + d;
-    }).on('end', function () {
-      if (200 === this.statusCode) {
-        try {
-          _this.currentGitTags = JSON.parse(data);
-          _this.emit('getTagsReady');
-        } catch (error) {
-          _this.emit('log.error', error);
+  if (window.navigator.onLine) {
+    https.get(options, function (res) {
+      res.setEncoding('utf8');
+      res.on('data', function (d) {
+        data = data + d;
+      }).on('end', function () {
+        if (200 === this.statusCode) {
+          try {
+            _this.currentGitTags = JSON.parse(data);
+            _this.emit('getTagsReady');
+          } catch (error) {
+            _this.emit('log.error', error);
+          }
+        } else {
+          _this.emit('log.error', 'Failure on getting tags from github.');
         }
-      } else {
-        _this.emit('log.error', 'Failure on getting tags from github.');
-      }
-    }).on('error', function (e) {
-      _this.emit('log.error', e);
+      }).on('error', function (e) {
+        _this.emit('log.error', e);
+      });
     });
-  });
+  } else {
+    _this.emit('log.warning', 'Cannot check for updates because there is no network connection.');
+  }
 };
 
 AutoUpdate.prototype.compareWithCurrentVersion = function () {
