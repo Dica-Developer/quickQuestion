@@ -70,8 +70,6 @@ Notifications.prototype.createNewWindow = function () {
   newMessageWindow.on('loaded', function () {
     var windowWidth = window.screen.availWidth;
     var windowTop = window.screen.availTop;
-    newMessageWindow.width = 1;
-    newMessageWindow.height = 1;
     newMessageWindow.moveTo(windowWidth, windowTop);
     newMessageWindow.show();
     _this.messageWindowLoaded = true;
