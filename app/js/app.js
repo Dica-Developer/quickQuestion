@@ -15,7 +15,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-/*global $, window, document, FileReader, Image, Buffer, navigator, webkitRTCPeerConnection, URL, RTCSessionDescription, RTCIceCandidate*/
+/*global $, window, document, FileReader, Image, Buffer, navigator, webkitRTCPeerConnection, URL, RTCSessionDescription, RTCIceCandidate, WebKitMediaSource*/
 
 var gui = require('nw.gui');
 var fs = require('fs');
@@ -104,9 +104,10 @@ server.on('updateClients', function () {
 function hashCode(text) {
   'use strict';
   var hash = 0,
-    i = 0;
+    i = 0,
+    code;
   for (i = 0; i < text.length; i++) {
-    var code = text.charCodeAt(i);
+    code = text.charCodeAt(i);
     hash = ((hash << 5) - hash) + code;
     hash = hash & hash; // Convert to 32bit integer
   }
@@ -115,7 +116,8 @@ function hashCode(text) {
 
 function sketchClient(sketchMessage) {
   'use strict';
-  var i = 0;
+  var i = 0,
+    pos;
   var canvas = document.getElementById('sketchArea');
   var ctx = canvas.getContext('2d');
 
@@ -124,7 +126,7 @@ function sketchClient(sketchMessage) {
     ctx.strokeStyle = sketchMessage.pencilColor;
     var positionArray = sketchMessage.coordinates;
     for (i = 0; i < positionArray.length; i++) {
-      var pos = positionArray[i];
+      pos = positionArray[i];
       if (0 === i) {
         ctx.beginPath();
         ctx.moveTo(pos.x, pos.y);
@@ -191,21 +193,21 @@ server.on('newMessage_x-event/x-video-chat-offer', function (message) {
   };
   pcR.onicecandidate = function (event) {
     if (event.candidate) {
-      var message = {
+      var messageToSend = {
         type: 'x-event/x-video-chat-candidate',
         candidate: event.candidate
       };
-      server.emit('sendVideoMessageToAll', message);
+      server.emit('sendVideoMessageToAll', messageToSend);
     }
   };
   pcR.setRemoteDescription(new RTCSessionDescription(desc));
   pcR.createAnswer(function (desc2) {
     pcR.setLocalDescription(desc2);
-    var message = {
+    var messageToSend = {
       type: 'x-event/x-video-chat-answer',
       description: desc2
     };
-    server.emit('sendVideoMessageToAll', message);
+    server.emit('sendVideoMessageToAll', messageToSend);
   }, null, {
     'mandatory': {
       'OfferToReceiveAudio': true,
@@ -474,6 +476,49 @@ function removeAttachment(event) {
 
 }
 
+function screenCastVideoStreamSuccess(stream) {
+  'use strict';
+  var ms = new WebKitMediaSource();
+  var video = $('<video>');
+  video.attr('autoplay', true);
+  video.attr('controls', true);
+  video.attr('src', window.URL.createObjectURL(ms));
+  video.attr('src', URL.createObjectURL(stream));
+
+  $('#contentAudiovideo').append(video);
+  ms.onprogress = function (e) {
+    console.log(e);
+  };
+  ms.addEventListener('sourceopen', function () {
+    var sourceBuffer = ms.addSourceBuffer('video/webm; codecs="vorbis,vp8"');
+    sourceBuffer.appendStream(stream);
+  }, false);
+
+  /*
+  function onInitFs(fs) {
+    fs.root.getFile('video.mp4', {
+      create: true
+    }, function (fileEntry) {
+      fileEntry.createWriter(function (fileWriter) {
+        fileWriter.onwriteend = function () {
+          console.log('Write completed.');
+        };
+        fileWriter.onerror = function (e) {
+          console.log('Write failed: ' + e.toString());
+        };
+        fileWriter.write(URL.createObjectURL(stream));
+      }, function (e) {
+        console.log(e);
+      });
+    }, function (e) {
+      console.log(e);
+    });
+  }
+  window.webkitRequestFileSystem(window.TEMPORARY, 1024 * 1024, onInitFs, function (e) {
+    console.log(e);
+  });*/
+}
+
 function videoStreamSuccess(stream) {
   'use strict';
 
@@ -493,6 +538,8 @@ function videoStreamSuccess(stream) {
     video.css('-webkit-transform', 'rotateY(180deg)');
     video.attr('src', URL.createObjectURL(e.stream));
     $('#contentAudiovideo').append(video);
+
+    fs.createWriteStream('/tmp/test.video');
   };
 
   pcL.addStream(stream);
@@ -652,30 +699,31 @@ $(function () {
     var dt = e.dataTransfer;
     var files = dt.files;
     var i = 0;
+    var liElement, leftAElement, img, reader, pElement, removeAttachmentLink;
 
     for (i = 0; i < files.length; i++) {
-      var liElement = $('<li>');
+      liElement = $('<li>');
       liElement.data('path', files[i].path);
       liElement.data('type', files[i].type);
-      var leftAElement = $('<a>');
+      leftAElement = $('<a>');
       liElement.append(leftAElement);
       $('#attachmentListView').append(liElement);
       if (files[i].type.indexOf('image/') === 0) {
-        var img = $('<img>');
+        img = $('<img>');
         img.attr('height', '80');
         img.attr('src', files[i].path);
         leftAElement.append(img);
 
-        var reader = new FileReader();
+        reader = new FileReader();
         reader.onload = addImage(img);
         reader.readAsDataURL(files[i]);
       } else {
-        var pElement = $('<p>');
+        pElement = $('<p>');
         pElement.css('white-space', 'pre-line');
         pElement.text('File: "' + files[i].path + '" Type: "' + files[i].type + '" Size: ' + files[i].size);
         leftAElement.append(pElement);
       }
-      var removeAttachmentLink = $('<a href="#removeAttachment" data-rel="popup" data-position-to="window" data-transition="pop">Remove Attachment</a>');
+      removeAttachmentLink = $('<a href="#removeAttachment" data-rel="popup" data-position-to="window" data-transition="pop">Remove Attachment</a>');
       removeAttachmentLink.on('click', removeAttachment);
       liElement.append(removeAttachmentLink);
     }
@@ -768,6 +816,17 @@ $(function () {
         }
       }
     }, videoStreamSuccess, videoStreamError);
+  });
+
+  $('#startScreenCast').on('click', function () {
+    navigator.webkitGetUserMedia({
+      audio: false,
+      video: {
+        mandatory: {
+          chromeMediaSource: 'screen'
+        }
+      }
+    }, screenCastVideoStreamSuccess, videoStreamError);
   });
 
   window.onresize = function () {
