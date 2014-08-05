@@ -15,7 +15,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-/*global $, window, document, FileReader, Image, Buffer, navigator, webkitRTCPeerConnection, URL, RTCSessionDescription, RTCIceCandidate, WebKitMediaSource*/
+/*global $, window, document, FileReader, Image, Buffer, navigator, webkitRTCPeerConnection, URL, RTCSessionDescription, RTCIceCandidate, WebKitMediaSource, Notification*/
 
 var gui = require('nw.gui');
 var fs = require('fs');
@@ -24,7 +24,7 @@ var autoUpdate = require('../js/auto-update.js');
 require('../js/guiHandling.js');
 var logDB = require('../js/db.js').logs;
 var messageDB = require('../js/db.js').messages;
-var notifications = require('../js/notification.js');
+//var Notify = require('notifyjs');
 var messageListCreated = false;
 var attachmentListViewCreated = false;
 var collaboratorListCreated = [];
@@ -216,6 +216,12 @@ server.on('newMessage_x-event/x-video-chat-offer', function (message) {
   });
 });
 
+/*function resetMessageCount() {
+  'use strict';
+
+  $('#messageCount').remove();
+}*/
+
 server.on('newMessage', function () {
   'use strict';
 
@@ -227,13 +233,17 @@ server.on('newMessage', function () {
     $('body').append('<input id="messageCount"></input>');
   }
   $('#messageCount').val(currentCount + 1);
-  notifications.newMessage('You received ' + currentCount + ' new ' + (messageCount > 1 ? 'messages' : 'message') + '!');
-});
-
-notifications.on('windowHide', function () {
-  'use strict';
-
-  $('#messageCount').remove();
+  /*var myNotification = new Notify('New messages', {
+    body: 'You received ' + currentCount + ' new ' + (messageCount > 1 ? 'messages' : 'message') + '!',
+    tag: 'qq.message.received',
+    notifyShow: resetMessageCount
+  });
+  myNotification.show();*/
+  new Notification('test', {
+    body: 'body',
+    icon: '',
+    tag: 'tag'
+  });
 });
 
 function formatDate(timestamp) {
@@ -839,7 +849,6 @@ $(function () {
   window.setTimeout(function () {
     gui.Window.get().show();
     gui.Window.get().on('close', function () {
-      notifications.close();
       gui.Window.get().close(true);
     });
   }, 100);
