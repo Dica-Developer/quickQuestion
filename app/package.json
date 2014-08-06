@@ -10,11 +10,11 @@
     "decentralized"
   ],
   "bugs": "https://github.com/Dica-Developer/quickQuestion/issues",
-  "repositories": [{
+  "repository": {
     "type": "git",
     "url": "https://github.com/Dica-Developer/quickQuestion",
     "path": "/"
-  }],
+  },
   "single-instance": true,
   "window": {
     "title": "Quick Question",
