@@ -1,5 +1,5 @@
 # Quick Question #
-
+[![Stories in Ready](https://badge.waffle.io/dica-developer/quickquestion.svg?label=ready&title=Ready)](http://waffle.io/dica-developer/quickquestion)
 
 ## Required Software ##
 
