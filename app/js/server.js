@@ -23,9 +23,8 @@ var os = require('os');
 var sys = require('sys');
 var events = require('events');
 var fs = require('fs');
-var handledMimeTypes = ['x-event/x-video-chat-candidate', 'x-event/x-video-chat-answer', 'x-event/x-video-chat-offer', 'model/x-sketch', 'text/plain; charset=utf-8', 'image/png', 'image/jpeg', 'image/gif', 'image/svg+xml', 'image/xbm', 'image/bmp'];
 
-var responseCallback = function () {
+var responseCallback = function() {
   'use strict';
 };
 
@@ -41,7 +40,7 @@ function Server() {
     heartbeat: 60000
   });
   this.applyServer();
-  this.polo.on('quickquestion/up', function (service) {
+  this.polo.on('quickquestion/up', function(service) {
     var newClient = true;
     var i;
     for (i = 0; i < _this.clients.length; i++) {
@@ -71,7 +70,7 @@ function Server() {
     }
   });
 
-  this.on('removeClient', function (client) {
+  this.on('removeClient', function(client) {
     var i;
     for (i = 0; i < _this.clients.length; i++) {
       if (client && _this.clients[i].address === client.address) {
@@ -81,7 +80,7 @@ function Server() {
     }
   });
 
-  this.polo.on('quickquestion/down', function (service) {
+  this.polo.on('quickquestion/down', function(service) {
     _this.emit('removeClient', service);
   });
 
@@ -92,13 +91,13 @@ function Server() {
 
 sys.inherits(Server, events.EventEmitter);
 
-Server.prototype.sendMessage = function (message, type) {
+Server.prototype.sendMessage = function(message, type) {
   'use strict';
 
   var i = null;
   var _this = this;
-  var onErrorCallback = function (message, options, client) {
-    return function (exception) {
+  var onErrorCallback = function(message, options, client) {
+    return function(exception) {
       _this.errorCallback(exception, message, options, client);
     };
   };
@@ -121,17 +120,17 @@ Server.prototype.sendMessage = function (message, type) {
   this.emit('messageSendSuccess');
 };
 
-Server.prototype.sendSketchMessageToAll = function (sketchMessage) {
+Server.prototype.sendSketchMessageToAll = function(sketchMessage) {
   'use strict';
   this.sendMessage(JSON.stringify(sketchMessage), 'model/x-sketch');
 };
 
-Server.prototype.sendVideoMessageToAll = function (message) {
+Server.prototype.sendVideoMessageToAll = function(message) {
   'use strict';
   this.sendMessage(JSON.stringify(message), message.type);
 };
 
-Server.prototype.sendMessageToAll = function (message) {
+Server.prototype.sendMessageToAll = function(message) {
   'use strict';
   var i = 0;
   if (message && message.length > 0) {
@@ -158,7 +157,7 @@ Server.prototype.sendMessageToAll = function (message) {
   this.emit('updateFilesList');
 };
 
-Server.prototype.findClientNickNameByAddress = function (address) {
+Server.prototype.findClientNickNameByAddress = function(address) {
   'use strict';
   var nickname = null;
   var _this = this;
@@ -174,20 +173,20 @@ Server.prototype.findClientNickNameByAddress = function (address) {
   return nickname;
 };
 
-Server.prototype.applyServer = function () {
+Server.prototype.applyServer = function() {
   'use strict';
   var _this = this;
 
-  this.externalServer = http.createServer(function (request, response) {
+  this.externalServer = http.createServer(function(request, response) {
 
     var requestUrl = url.parse(request.url, true);
     if ('POST' === request.method) {
       if ('/receive' === requestUrl.pathname) {
         var body = '';
-        request.on('data', function (chunk) {
+        request.on('data', function(chunk) {
           body += chunk;
         });
-        request.on('end', function () {
+        request.on('end', function() {
           if (body && body.length > 0) {
             var message = {};
             message.nickname = _this.findClientNickNameByAddress(request.socket.remoteAddress) || request.socket.remoteAddress;
@@ -196,11 +195,6 @@ Server.prototype.applyServer = function () {
             message.remotePort = request.socket.remotePort;
             message.contentType = request.headers['content-type'];
             message.timestamp = Date.now();
-            if (handledMimeTypes.indexOf(message.contentType) > -1) {
-              _this.emit('newMessage_' + message.contentType, message);
-            } else {
-              _this.emit('newMessageUnhandled', message);
-            }
             _this.emit('newMessage', message);
           } else {
             _this.emit('emptyMessage');
@@ -220,7 +214,7 @@ Server.prototype.applyServer = function () {
     }
   });
 
-  this.externalServer.listen(0, function () {
+  this.externalServer.listen(0, function() {
     var port = this.address().port;
     _this.polo.put({
       name: 'quickquestion',
@@ -231,7 +225,7 @@ Server.prototype.applyServer = function () {
   });
 };
 
-Server.prototype.errorCallback = function (error, message, options, client) {
+Server.prototype.errorCallback = function(error, message, options, client) {
   'use strict';
 
   if (error && 'ECONNREFUSED' === error.code) {
