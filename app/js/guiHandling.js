@@ -36,27 +36,73 @@ function GuiHandling() {
     menu: this.trayMenu
   });
 
-  this.handleUpdateProgress = function (updateMessage) {
+  function Menu(cutLabel, copyLabel, pasteLabel) {
+    var menu = new this.gui.Menu({
+      type: 'menubar'
+    });
+    var cut = new this.gui.MenuItem({
+      label: cutLabel || 'Cut',
+      click: function() {
+        document.execCommand('cut');
+        console.log('Menu:', 'cutted to clipboard');
+      }
+    });
+
+    var copy = new this.gui.MenuItem({
+      label: copyLabel || 'Copy',
+      click: function() {
+        document.execCommand('copy');
+        console.log('Menu:', 'copied to clipboard');
+      }
+    });
+
+    var paste = new this.gui.MenuItem({
+      label: pasteLabel || 'Paste',
+      click: function() {
+        document.execCommand('paste');
+        console.log('Menu:', 'pasted to textarea');
+      }
+    });
+
+    menu.append(cut);
+    menu.append(copy);
+    menu.append(paste);
+
+    return menu;
+  }
+
+  if (process.platform === 'darwin') {
+    var menu = new this.gui.Menu({
+      type: 'menubar'
+    });
+    menu.createMacBuiltin('Quick Question');
+    this.gui.Window.get().menu = menu;
+
+  } else {
+    this.gui.Window.get().menu = new Menu();
+  }
+
+  this.handleUpdateProgress = function(updateMessage) {
     _this.tray.icon = _this.ICON_PATHS.update;
     _this.setWindowTitle(updateMessage);
   };
 
-  this.handleUpdateDone = function () {
+  this.handleUpdateDone = function() {
     _this.tray.icon = _this.ICON_PATHS.standard;
     _this.setWindowTitle();
   };
 
-  this.handleIncomingMessage = function () {
+  this.handleIncomingMessage = function() {
     if (_this.applicationHidden) {
       _this.tray.icon = _this.ICON_PATHS.message;
     }
   };
 
-  this.setApplicationHidden = function () {
+  this.setApplicationHidden = function() {
     _this.applicationHidden = true;
   };
 
-  this.setApplicationNotHidden = function () {
+  this.setApplicationNotHidden = function() {
     _this.applicationHidden = false;
     _this.tray.icon = _this.ICON_PATHS.standard;
   };
@@ -71,32 +117,32 @@ function GuiHandling() {
 
 }
 
-GuiHandling.prototype.newClientConnected = function () {
+GuiHandling.prototype.newClientConnected = function() {
   'use strict';
 
 };
 
-GuiHandling.prototype.setWindowTitle = function (message) {
+GuiHandling.prototype.setWindowTitle = function(message) {
   'use strict';
 
   message = message || 'Quick Question';
   this.currentWindow.title = message;
 };
 
-GuiHandling.prototype.createTrayMenu = function () {
+GuiHandling.prototype.createTrayMenu = function() {
   'use strict';
 
   var _this = this;
   var menu = new this.gui.Menu();
   var updateItem = new this.gui.MenuItem({
     label: 'Check for updates',
-    click: function () {
+    click: function() {
       autoUpdate.emit('checkForUpdates');
     }
   });
   var devTools = new this.gui.MenuItem({
     label: 'Debug Quick Question',
-    click: function () {
+    click: function() {
       _this.currentWindow.showDevTools();
     }
   });
@@ -105,7 +151,7 @@ GuiHandling.prototype.createTrayMenu = function () {
   });
   var quitItem = new this.gui.MenuItem({
     label: 'Quit Quick Question',
-    click: function () {
+    click: function() {
       _this.currentWindow.close();
     }
   });
