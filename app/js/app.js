@@ -15,7 +15,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-/*global $, window, document, FileReader, Image, Buffer, navigator, webkitRTCPeerConnection, URL, RTCSessionDescription, RTCIceCandidate, WebKitMediaSource, Notification*/
+/*global $, window, document, FileReader, Image, Buffer, navigator, webkitRTCPeerConnection, URL, RTCSessionDescription, RTCIceCandidate, WebKitMediaSource*/
 
 var gui = require('nw.gui');
 var fs = require('fs');
@@ -24,7 +24,7 @@ var autoUpdate = require('../js/auto-update.js');
 require('../js/guiHandling.js');
 var logDB = require('../js/db.js').logs;
 var messageDB = require('../js/db.js').messages;
-//var Notify = require('notifyjs');
+var Notify = require('notifyjs');
 var messageListCreated = false;
 var attachmentListViewCreated = false;
 var collaboratorListCreated = [];
@@ -216,13 +216,13 @@ server.on('newMessage_x-event/x-video-chat-offer', function (message) {
   });
 });
 
-/*function resetMessageCount() {
+function resetMessageCount() {
   'use strict';
 
   $('#messageCount').remove();
-}*/
+}
 
-server.on('newMessage', function () {
+server.on('newMessage', function() {
   'use strict';
 
   var currentCount = 1;
@@ -233,17 +233,12 @@ server.on('newMessage', function () {
     $('body').append('<input id="messageCount"></input>');
   }
   $('#messageCount').val(currentCount + 1);
-  /*var myNotification = new Notify('New messages', {
+  var myNotification = new Notify('New messages', {
     body: 'You received ' + currentCount + ' new ' + (messageCount > 1 ? 'messages' : 'message') + '!',
     tag: 'qq.message.received',
     notifyShow: resetMessageCount
   });
-  myNotification.show();*/
-  new Notification('test', {
-    body: 'body',
-    icon: '',
-    tag: 'tag'
-  });
+  myNotification.show();
 });
 
 function formatDate(timestamp) {
