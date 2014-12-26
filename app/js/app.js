@@ -17,6 +17,9 @@ You should have received a copy of the GNU General Public License
 */
 /*global $, window, document, FileReader, Image, Buffer, navigator, webkitRTCPeerConnection, URL, RTCSessionDescription, RTCIceCandidate, WebKitMediaSource*/
 
+/* jshint -W097 */
+'use strict';
+
 var gui = require('nw.gui');
 var fs = require('fs');
 var server = require('../js/server.js');
@@ -35,7 +38,6 @@ var pcL = null;
 var pcR = null;
 
 function encodeHtml(value) {
-  'use strict';
   if (value) {
     return $('<div/>').text(value).html();
   }
@@ -43,13 +45,10 @@ function encodeHtml(value) {
 }
 
 function sendMessage(val) {
-  'use strict';
   server.emit('sendMessageToAll', val);
 }
 
 function handleWhiteboardResize() {
-  'use strict';
-
   var canvas = document.getElementById('sketchArea');
   var tempCanvas = document.createElement('canvas');
   tempCanvas.width = canvas.width;
@@ -61,8 +60,6 @@ function handleWhiteboardResize() {
 }
 
 function resize() {
-  'use strict';
-
   var messagelist = $('#messagelist');
   var newHeight = $(window).innerHeight() + messagelist.height() - ($('#contentText').height() + $('#footerText').height() + $('#headerText').height() + 34);
   messagelist.height(newHeight);
@@ -72,20 +69,16 @@ function resize() {
 }
 
 function sortByHostName(lhs, rhs) {
-  'use strict';
   return lhs.hostname > rhs.hostname;
 }
 
-server.on('updateFilesList', function() {
-  'use strict';
-
+server.on('updateFilesList', function () {
   if (attachmentListViewCreated) {
     $('#attachmentListView').listview('refresh');
   }
 });
 
-server.on('updateClients', function() {
-  'use strict';
+server.on('updateClients', function () {
   var content = '';
   var i = 0;
   this.clients.sort(sortByHostName);
@@ -93,7 +86,7 @@ server.on('updateClients', function() {
     // TODO encode hostname and address
     content = content + '<li data-icon="check"><a href="#">' + encodeHtml(this.clients[i].nickname + ':' + this.clients[i].hostname + ' (' + this.clients[i].address + ')') + '</a></li>';
   }
-  $('ul[name="collaboratorListView"]').each(function() {
+  $('ul[name="collaboratorListView"]').each(function () {
     $(this).html(content);
     if (collaboratorListCreated[$(this).attr('id')]) {
       $(this).listview('refresh');
@@ -102,7 +95,6 @@ server.on('updateClients', function() {
 });
 
 function hashCode(text) {
-  'use strict';
   var hash = 0,
     i = 0,
     code;
@@ -115,7 +107,6 @@ function hashCode(text) {
 }
 
 function sketchClient(sketchMessage) {
-  'use strict';
   var i = 0,
     pos;
   var canvas = document.getElementById('sketchArea');
@@ -139,7 +130,7 @@ function sketchClient(sketchMessage) {
     if (typeof sketchMessage.image === 'string') {
       var img = new Image();
       img.src = sketchMessage.image;
-      img.onload = function() {
+      img.onload = function () {
         ctx.drawImage(this, 0, 0);
       };
     } else {
@@ -150,15 +141,11 @@ function sketchClient(sketchMessage) {
   }
 }
 
-server.on('newMessage_model/x-sketch', function(message) {
-  'use strict';
-
+server.on('newMessage_model/x-sketch', function (message) {
   sketchClient(JSON.parse(message.content));
 });
 
-server.on('newMessage_x-event/x-video-chat-candidate', function(message) {
-  'use strict';
-
+server.on('newMessage_x-event/x-video-chat-candidate', function (message) {
   var candidate = JSON.parse(message.content).candidate;
   if (pcR) {
     pcR.addIceCandidate(new RTCIceCandidate(candidate));
@@ -168,9 +155,7 @@ server.on('newMessage_x-event/x-video-chat-candidate', function(message) {
   }
 });
 
-server.on('newMessage_x-event/x-video-chat-answer', function(message) {
-  'use strict';
-
+server.on('newMessage_x-event/x-video-chat-answer', function (message) {
   var desc = JSON.parse(message.content).description;
   if (pcL) {
     pcL.setRemoteDescription(new RTCSessionDescription(desc));
@@ -179,19 +164,17 @@ server.on('newMessage_x-event/x-video-chat-answer', function(message) {
   }
 });
 
-server.on('newMessage_x-event/x-video-chat-offer', function(message) {
-  'use strict';
-
+server.on('newMessage_x-event/x-video-chat-offer', function (message) {
   var desc = JSON.parse(message.content).description;
   pcR = new webkitRTCPeerConnection(null);
-  pcR.onaddstream = function(e) {
+  pcR.onaddstream = function (e) {
     var video = $('<video>');
     video.attr('autoplay', true);
     video.css('-webkit-transform', 'rotateY(180deg)');
     video.attr('src', URL.createObjectURL(e.stream));
     $('#contentAudiovideo').append(video);
   };
-  pcR.onicecandidate = function(event) {
+  pcR.onicecandidate = function (event) {
     if (event.candidate) {
       var messageToSend = {
         type: 'x-event/x-video-chat-candidate',
@@ -201,7 +184,7 @@ server.on('newMessage_x-event/x-video-chat-offer', function(message) {
     }
   };
   pcR.setRemoteDescription(new RTCSessionDescription(desc));
-  pcR.createAnswer(function(desc2) {
+  pcR.createAnswer(function (desc2) {
     pcR.setLocalDescription(desc2);
     var messageToSend = {
       type: 'x-event/x-video-chat-answer',
@@ -217,14 +200,10 @@ server.on('newMessage_x-event/x-video-chat-offer', function(message) {
 });
 
 function resetMessageCount() {
-  'use strict';
-
   $('#messageCount').remove();
 }
 
-server.on('newMessage', function() {
-  'use strict';
-
+server.on('newMessage', function () {
   var currentCount = 1;
   var messageCount = $('#messageCount').val();
   if (messageCount) {
@@ -242,8 +221,6 @@ server.on('newMessage', function() {
 });
 
 function formatDate(timestamp) {
-  'use strict';
-
   return timestamp.getFullYear() + '-' +
     ('0' + (timestamp.getMonth() + 1)).slice(-2) + '-' +
     ('0' + timestamp.getDate()).slice(-2) + ' ' +
@@ -253,9 +230,7 @@ function formatDate(timestamp) {
 }
 
 function updateMessageList(content) {
-  'use strict';
-
-  $('ul[name="messagelist"]').each(function() {
+  $('ul[name="messagelist"]').each(function () {
     $(this).append(content);
   });
 
@@ -269,9 +244,7 @@ function updateMessageList(content) {
   resizeTimeout = window.setTimeout(resize, 100);
 }
 
-server.on('newMessage_text/plain; charset=utf-8', function(message) {
-  'use strict';
-
+server.on('newMessage_text/plain; charset=utf-8', function (message) {
   var timestamp = new Date(message.timestamp);
   var sendOn = formatDate(timestamp);
   var content = '<li style="background-color: ' + colors[Math.abs(hashCode(message.remoteAddress)) % 9] + ';"><p class="ui-li-aside">by <strong>' + encodeHtml((message.nickname || message.remoteAddress)) + '</strong> at <strong>' + sendOn + '</strong></p>';
@@ -282,15 +255,13 @@ server.on('newMessage_text/plain; charset=utf-8', function(message) {
 
   updateMessageList(content);
 
-  $('[data-name="link"]').on('click', function() {
+  $('[data-name="link"]').on('click', function () {
     gui.Shell.openExternal($(this).data('dbid'));
   });
   $('[data-name="link"]').data('name', '');
 });
 
 function handleFileClick(event) {
-  'use strict';
-
   var fileSaveAsDialog = $('#fileSaveAsDialog');
   fileSaveAsDialog.data('dbid', $(event.target).closest('a').data('dbid'));
   $('#fileHandlePopup').popup('open', {
@@ -302,8 +273,6 @@ function handleFileClick(event) {
 }
 
 function addImageMessage(message) {
-  'use strict';
-
   var timestamp = new Date(message.timestamp);
   var sendOn = formatDate(timestamp);
   var content = '<li style="background-color: ' + colors[Math.abs(hashCode(message.remoteAddress)) % 9] + ';"><p class="ui-li-aside">by <strong>' + encodeHtml((message.nickname || message.remoteAddress)) + '</strong> at <strong>' + sendOn + '</strong></p>';
@@ -325,9 +294,7 @@ server.on('newMessage_image/svg+xml', addImageMessage);
 server.on('newMessage_image/xbm', addImageMessage);
 server.on('newMessage_image/bmp', addImageMessage);
 
-server.on('newMessageUnhandled', function(message) {
-  'use strict';
-
+server.on('newMessageUnhandled', function (message) {
   var timestamp = new Date(message.timestamp);
   var sendOn = formatDate(timestamp);
   var content = '<li style="background-color: ' + colors[Math.abs(hashCode(message.remoteAddress)) % 9] + ';"><p class="ui-li-aside">by <strong>' + encodeHtml((message.nickname || message.remoteAddress)) + '</strong> at <strong>' + sendOn + '</strong></p>';
@@ -343,8 +310,6 @@ server.on('newMessageUnhandled', function(message) {
 });
 
 function displayMessagesAfterRestart() {
-  'use strict';
-
   var i;
   var messages = messageDB.query(
     [{
@@ -367,27 +332,20 @@ function displayMessagesAfterRestart() {
   }
 }
 
-server.on('newMessage', function(message) {
-  'use strict';
-
+server.on('newMessage', function (message) {
   messageDB.query.insert(message);
 });
 
-server.on('messageSendSuccess', function() {
-  'use strict';
-
+server.on('messageSendSuccess', function () {
   $('#messageToSend').val('');
   $('#message').text('Message was sent.');
 });
 
-server.on('messageSendError', function(errorMessage) {
-  'use strict';
-
+server.on('messageSendError', function (errorMessage) {
   $('#message').text(errorMessage);
 });
 
-server.on('log.error', function(message) {
-  'use strict';
+server.on('log.error', function (message) {
   console.error(JSON.stringify(message));
   logDB.query.insert({
     timestamp: new Date(),
@@ -395,39 +353,32 @@ server.on('log.error', function(message) {
   });
 });
 
-server.on('log.info', function(message) {
-  'use strict';
+server.on('log.info', function (message) {
   console.info(JSON.stringify(message));
 });
 
-server.on('log.warning', function(message) {
-  'use strict';
+server.on('log.warning', function (message) {
   console.warn(JSON.stringify(message));
 });
 
-autoUpdate.on('updateNeeded', function() {
-  'use strict';
-
+autoUpdate.on('updateNeeded', function () {
   var confirmUpdate = $('#confirmUpdate');
-  confirmUpdate.on('click', '#update-yes', function() {
+  confirmUpdate.on('click', '#update-yes', function () {
     gui.Shell.openExternal('http://dica-developer.github.io/quickQuestion/');
   });
 
   confirmUpdate.popup('open');
 });
 
-autoUpdate.on('updateDone', function() {
-  'use strict';
-
+autoUpdate.on('updateDone', function () {
   var confirmRestart = $('#confirmRestart');
-  confirmRestart.on('click', '#restart-yes', function() {
+  confirmRestart.on('click', '#restart-yes', function () {
     gui.Window.get().reload(3);
   });
   confirmRestart.popup('open');
 });
 
-autoUpdate.on('log.warning', function(message) {
-  'use strict';
+autoUpdate.on('log.warning', function (message) {
   console.warn(JSON.stringify(message));
   logDB.query.insert({
     timestamp: new Date(),
@@ -436,8 +387,6 @@ autoUpdate.on('log.warning', function(message) {
 });
 
 function fixPosition(e, gCanvasElement) {
-  'use strict';
-
   var x;
   var y;
   if (e.pageX || e.pageY) {
@@ -457,16 +406,21 @@ function fixPosition(e, gCanvasElement) {
   };
 }
 
-function saveFile(path, dbId) {
-  'use strict';
+function teardown() {
+  var os = require('os');
+  process.stdout.write('We\'re closing...' + os.EOL);
+  logDB.save();
+  messageDB.save();
+}
 
+function saveFile(path, dbId) {
   var message = messageDB.query(dbId).first();
   if (message && message.content) {
     var content = message.content;
     var from = content.indexOf(';base64,') + ';base64,'.length;
     content = content.substring(from);
     var buffer = new Buffer(content, 'base64');
-    fs.writeFile(path, buffer, function(error) {
+    fs.writeFile(path, buffer, function (error) {
       if (error) {
         // TODO handle error
       }
@@ -477,8 +431,6 @@ function saveFile(path, dbId) {
 }
 
 function removeAttachment(event) {
-  'use strict';
-
   var attachmentEntry = $(event.target).closest('li');
   attachmentEntry.remove();
   if (0 === $('#attachmentListView > li').length) {
@@ -488,7 +440,6 @@ function removeAttachment(event) {
 }
 
 function screenCastVideoStreamSuccess(stream) {
-  'use strict';
   var ms = new WebKitMediaSource();
   var video = $('<video>');
   video.attr('autoplay', true);
@@ -497,10 +448,10 @@ function screenCastVideoStreamSuccess(stream) {
   video.attr('src', URL.createObjectURL(stream));
 
   $('#contentAudiovideo').append(video);
-  ms.onprogress = function(e) {
+  ms.onprogress = function (e) {
     console.log(e);
   };
-  ms.addEventListener('sourceopen', function() {
+  ms.addEventListener('sourceopen', function () {
     var sourceBuffer = ms.addSourceBuffer('video/webm; codecs="vorbis,vp8"');
     sourceBuffer.appendStream(stream);
   }, false);
@@ -531,10 +482,8 @@ function screenCastVideoStreamSuccess(stream) {
 }
 
 function videoStreamSuccess(stream) {
-  'use strict';
-
   pcL = new webkitRTCPeerConnection(null);
-  pcL.onicecandidate = function(event) {
+  pcL.onicecandidate = function (event) {
     if (event.candidate) {
       var message = {
         type: 'x-event/x-video-chat-candidate',
@@ -543,7 +492,7 @@ function videoStreamSuccess(stream) {
       server.emit('sendVideoMessageToAll', message);
     }
   };
-  pcL.onaddstream = function(e) {
+  pcL.onaddstream = function (e) {
     var video = $('<video>');
     video.attr('autoplay', true);
     video.css('-webkit-transform', 'rotateY(180deg)');
@@ -555,7 +504,7 @@ function videoStreamSuccess(stream) {
 
   pcL.addStream(stream);
 
-  pcL.createOffer(function(desc) {
+  pcL.createOffer(function (desc) {
     pcL.setLocalDescription(desc);
     var message = {
       type: 'x-event/x-video-chat-offer',
@@ -566,14 +515,11 @@ function videoStreamSuccess(stream) {
 }
 
 function videoStreamError(error) {
-  'use strict';
   console.error('navigator.getUserMedia error: ', error);
 }
 
 // startup on DOM ready
-$(function() {
-  'use strict';
-
+$(function () {
   var lastSketchPoints = [];
   var mousedown = false;
   var canvas = document.getElementById('sketchArea');
@@ -581,7 +527,7 @@ $(function() {
   var context = canvas.getContext('2d');
   context.strokeStyle = 'black';
   context.lineWidth = 1;
-  $(canvas).on('vmousedown', function(e) {
+  $(canvas).on('vmousedown', function (e) {
     mousedown = true;
     var pos = fixPosition(e, canvas);
     lastSketchPoints.push(pos);
@@ -590,7 +536,7 @@ $(function() {
     return false;
   });
 
-  $(canvas).on('vmousemove', function(e) {
+  $(canvas).on('vmousemove', function (e) {
     if (mousedown) {
       var pos = fixPosition(e, canvas);
       lastSketchPoints.push(pos);
@@ -599,7 +545,7 @@ $(function() {
     }
   });
 
-  $(canvas).on('vmouseup', function() {
+  $(canvas).on('vmouseup', function () {
     mousedown = false;
     var sketchMessage = {
       type: 'stroke',
@@ -611,99 +557,99 @@ $(function() {
     lastSketchPoints = [];
   });
 
-  $('#whiteboardSaveAsDialog').change(function() {
+  $('#whiteboardSaveAsDialog').change(function () {
     var image = canvas.toDataURL('image/png');
     image = image.replace('data:image/png;base64,', '');
     var buffer = new Buffer(image, 'base64');
-    fs.writeFile($(this).val(), buffer, function(error) {
+    fs.writeFile($(this).val(), buffer, function (error) {
       if (error) {
         // TODO handle error
       }
     });
   });
 
-  $('#saveSketchArea').on('click', function() {
+  $('#saveSketchArea').on('click', function () {
     $('#whiteboardSaveAsDialog').trigger('click');
   });
 
-  $('#fileSaveAsDialog').change(function() {
+  $('#fileSaveAsDialog').change(function () {
     saveFile($(this).val(), $('#fileSaveAsDialog').data('dbid'));
   });
 
-  $('#newSketchArea').on('click', function() {
+  $('#newSketchArea').on('click', function () {
     context.clearRect(0, 0, canvas.width, canvas.height);
   });
 
-  $('#pencilSizeSketchArea').on('change', function() {
+  $('#pencilSizeSketchArea').on('change', function () {
     context.lineWidth = $('#pencilSizeSketchArea option:selected')[0].value;
   });
 
-  $('#pencilColorSketchArea').on('change', function() {
+  $('#pencilColorSketchArea').on('change', function () {
     context.strokeStyle = $('#pencilColorSketchArea option:selected')[0].value;
   });
 
-  $('#messagelist').on('listviewcreate', function() {
+  $('#messagelist').on('listviewcreate', function () {
     messageListCreated = true;
   });
 
-  $('#attachmentListView').on('listviewcreate', function() {
+  $('#attachmentListView').on('listviewcreate', function () {
     attachmentListViewCreated = true;
   });
 
-  $('ul[name="collaboratorListView"]').on('listviewcreate', function() {
+  $('ul[name="collaboratorListView"]').on('listviewcreate', function () {
     collaboratorListCreated[$(this).attr('id')] = true;
   });
 
   var messageToSend = $('#messageToSend');
-  messageToSend.bind('keyup', function(e) {
+  messageToSend.bind('keyup', function (e) {
     var isShiftPressed = e.shiftKey;
     switch (e.which) {
-      case 13:
-        if (!isShiftPressed) {
-          e.preventDefault();
-          sendMessage($('#messageToSend').val());
-        }
-        break;
-      case 8:
-        var copy = $('<textarea>');
-        copy.addClass('ui-input-text ui-body-a ui-corner-all ui-shadow-inset ui-focus');
-        copy.text(messageToSend.val());
-        document.body.appendChild(copy[0]);
-        if (copy[0].scrollHeight < parseInt(messageToSend.css('height'), 10)) {
-          // FIXME this is not very accurate after line break removal
-          // 15 is a hardcoded value from jquery mobile
-          // 6 should be the padding and calculated
-          messageToSend.css('height', (copy[0].scrollHeight + 15 + 6));
-          resize();
-        }
-        document.body.removeChild(copy[0]);
-        break;
+    case 13:
+      if (!isShiftPressed) {
+        e.preventDefault();
+        sendMessage($('#messageToSend').val());
+      }
+      break;
+    case 8:
+      var copy = $('<textarea>');
+      copy.addClass('ui-input-text ui-body-a ui-corner-all ui-shadow-inset ui-focus');
+      copy.text(messageToSend.val());
+      document.body.appendChild(copy[0]);
+      if (copy[0].scrollHeight < parseInt(messageToSend.css('height'), 10)) {
+        // FIXME this is not very accurate after line break removal
+        // 15 is a hardcoded value from jquery mobile
+        // 6 should be the padding and calculated
+        messageToSend.css('height', (copy[0].scrollHeight + 15 + 6));
+        resize();
+      }
+      document.body.removeChild(copy[0]);
+      break;
     }
   });
 
-  messageToSend.bind('keydown', function(e) {
+  messageToSend.bind('keydown', function (e) {
     var isShiftPressed = e.shiftKey;
     switch (e.which) {
-      case 13:
-        if (!isShiftPressed) {
-          e.preventDefault();
-        }
-        break;
+    case 13:
+      if (!isShiftPressed) {
+        e.preventDefault();
+      }
+      break;
     }
   });
 
-  messageToSend.bind('keyup', function() {
+  messageToSend.bind('keyup', function () {
     resize();
   });
 
   function addImage(img) {
-    return function(e) {
+    return function (e) {
       img.attr('src', e.target.result);
     };
   }
 
   var dropbox = document.getElementById('messageToSend');
-  dropbox.addEventListener('drop', function(e) {
+  dropbox.addEventListener('drop', function (e) {
     e.stopPropagation();
     e.preventDefault();
 
@@ -746,12 +692,12 @@ $(function() {
     }
   }, false);
 
-  canvas.ondragover = function(e) {
+  canvas.ondragover = function (e) {
     e.preventDefault();
     return false;
   };
 
-  canvas.ondrop = function(e) {
+  canvas.ondrop = function (e) {
     e.stopPropagation();
     e.preventDefault();
 
@@ -760,10 +706,10 @@ $(function() {
 
     if (files.length > 0) {
       var reader = new FileReader();
-      reader.onload = function(event) {
+      reader.onload = function (event) {
         var img = new Image();
         img.src = event.target.result;
-        img.onload = function() {
+        img.onload = function () {
           context.drawImage(this, 0, 0);
           var sketchMessage = {
             type: 'image',
@@ -776,12 +722,12 @@ $(function() {
     }
   };
 
-  $('#saveAsFileButton').on('click', function() {
+  $('#saveAsFileButton').on('click', function () {
     $('#fileSaveAsDialog').trigger('click');
     $('#fileHandlePopup').popup('close');
   });
 
-  $('#openFileButton').on('click', function() {
+  $('#openFileButton').on('click', function () {
     $('#fileHandlePopup').popup('close');
     var path = require('path');
     var os = require('os');
@@ -796,7 +742,7 @@ $(function() {
       if (message.contentType.indexOf('image/') === 0 || message.contentType.indexOf('video/') === 0) {
         filePath = filePath + '.' + message.contentType.split('/')[1];
       }
-      fs.writeFile(filePath, buffer, function(error) {
+      fs.writeFile(filePath, buffer, function (error) {
         if (error) {
           // TODO handle error
         } else {
@@ -808,7 +754,7 @@ $(function() {
     }
   });
 
-  $('#startVideoChat').on('click', function() {
+  $('#startVideoChat').on('click', function () {
     navigator.webkitGetUserMedia({
       audio: true,
       video: {
@@ -820,14 +766,14 @@ $(function() {
     }, videoStreamSuccess, videoStreamError);
   });
 
-  $('#startAudioChat').on('click', function() {
+  $('#startAudioChat').on('click', function () {
     navigator.webkitGetUserMedia({
       audio: true,
       video: false
     }, videoStreamSuccess, videoStreamError);
   });
 
-  $('#startScreenShare').on('click', function() {
+  $('#startScreenShare').on('click', function () {
     navigator.webkitGetUserMedia({
       audio: false,
       video: {
@@ -838,7 +784,7 @@ $(function() {
     }, videoStreamSuccess, videoStreamError);
   });
 
-  $('#startScreenCast').on('click', function() {
+  $('#startScreenCast').on('click', function () {
     navigator.webkitGetUserMedia({
       audio: false,
       video: {
@@ -849,16 +795,16 @@ $(function() {
     }, screenCastVideoStreamSuccess, videoStreamError);
   });
 
-  window.onresize = function() {
+  window.onresize = function () {
     clearTimeout(resizeTimeout);
     resizeTimeout = window.setTimeout(resize, 100);
   };
   clearTimeout(resizeTimeout);
   resizeTimeout = window.setTimeout(resize, 100);
 
-  window.setTimeout(function() {
+  window.setTimeout(function () {
     gui.Window.get().show();
-    gui.Window.get().on('close', function(reallyQuitOnMacOs) {
+    gui.Window.get().on('close', function (reallyQuitOnMacOs) {
       teardown();
       if (undefined === reallyQuitOnMacOs || null === reallyQuitOnMacOs || 'quit' === reallyQuitOnMacOs) {
         gui.Window.get().close(true);
@@ -866,28 +812,17 @@ $(function() {
     });
   }, 100);
 
-  $(window).on('pagechange', function() {
+  $(window).on('pagechange', function () {
     resize();
   });
 });
 
-var teardown = function() {
-  'use strict';
-
-  var os = require('os');
-  process.stdout.write('We\'re closing...' + os.EOL);
-  logDB.save();
-  messageDB.save();
-};
-
-process.on('exit', teardown);
 process.on('SIGINT', teardown);
 process.on('SIGTERM', teardown);
 
-messageDB.on('ready', function() {
-  'use strict';
+messageDB.on('ready', function () {
   messageDB.query.settings({
-    onInsert: function() {
+    onInsert: function () {
       var message = this;
       if (handledMimeTypes.indexOf(message.contentType) > -1) {
         server.emit('newMessage_' + message.contentType, message);
@@ -896,7 +831,7 @@ messageDB.on('ready', function() {
       }
     }
   });
-  $(function() {
+  $(function () {
     displayMessagesAfterRestart();
   });
 });
