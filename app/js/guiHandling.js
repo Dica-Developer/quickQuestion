@@ -36,50 +36,12 @@ function GuiHandling() {
     menu: this.trayMenu
   });
 
-  function Menu(cutLabel, copyLabel, pasteLabel) {
-    var menu = new this.gui.Menu({
-      type: 'menubar'
-    });
-    var cut = new this.gui.MenuItem({
-      label: cutLabel || 'Cut',
-      click: function() {
-        document.execCommand('cut');
-        console.log('Menu:', 'cutted to clipboard');
-      }
-    });
-
-    var copy = new this.gui.MenuItem({
-      label: copyLabel || 'Copy',
-      click: function() {
-        document.execCommand('copy');
-        console.log('Menu:', 'copied to clipboard');
-      }
-    });
-
-    var paste = new this.gui.MenuItem({
-      label: pasteLabel || 'Paste',
-      click: function() {
-        document.execCommand('paste');
-        console.log('Menu:', 'pasted to textarea');
-      }
-    });
-
-    menu.append(cut);
-    menu.append(copy);
-    menu.append(paste);
-
-    return menu;
-  }
-
   if (process.platform === 'darwin') {
     var menu = new this.gui.Menu({
       type: 'menubar'
     });
     menu.createMacBuiltin('Quick Question');
     this.gui.Window.get().menu = menu;
-
-  } else {
-    this.gui.Window.get().menu = new Menu();
   }
 
   this.handleUpdateProgress = function(updateMessage) {
