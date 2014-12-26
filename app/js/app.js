@@ -858,8 +858,11 @@ $(function() {
 
   window.setTimeout(function() {
     gui.Window.get().show();
-    gui.Window.get().on('close', function() {
-      gui.Window.get().close(true);
+    gui.Window.get().on('close', function(reallyQuitOnMacOs) {
+      teardown();
+      if (undefined === reallyQuitOnMacOs || null === reallyQuitOnMacOs || 'quit' === reallyQuitOnMacOs) {
+        gui.Window.get().close(true);
+      }
     });
   }, 100);
 
