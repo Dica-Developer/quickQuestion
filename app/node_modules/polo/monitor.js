@@ -43,7 +43,7 @@ var server = net.createServer(function(socket) {
 		sockets--;
 
 		Object.keys(hosts).forEach(function(host) {
-			request.post(host+'/gc', noop);
+			request.post(host + '/gc', noop);
 		});
 
 		gc();

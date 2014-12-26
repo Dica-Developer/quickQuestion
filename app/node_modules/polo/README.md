@@ -1,6 +1,6 @@
 # Polo
 
-Polo is a zero configuration service discovery module written completely in Javascript.
+Polo is a zero configuration (zeroconf, mdns or dns-sd) service discovery module written completely in Javascript. Unlike some other tools (https://github.com/agnat/node_mdns) it does not require the installation of Apple's Bonjour SDK.
 It's available through npm:
 
 	npm install polo
@@ -37,10 +37,8 @@ Now spin up another node process and polo will automatically distribute informat
 var polo = require('polo');
 var apps = polo();
 
-apps.once('up', function(name, service) {           // up fires everytime some service joins
-	console.log(apps.get('hello-world'));           // should print out the joining service
-	console.log(apps.get('http://{hello-world}/')); // shorthand for formatting the address
-	                                                // of a service into a string
+apps.once('up', function(name, service) {                   // up fires everytime some service joins
+	console.log(apps.get(name));                        // should print out the joining service, e.g. hello-world
 });
 ```
 
