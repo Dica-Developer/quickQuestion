@@ -1,0 +1,8 @@
+{
+  "jslint_happy": true,
+  "max_preserve_newlines": 2,
+  "format_on_save": true,
+  "indent_size": 2,
+  "indent_char": " ",
+  "indent_level": 0
+}
