@@ -1,6 +1,6 @@
 /*jshint camelcase: false*/
 
-module.exports = function (grunt) {
+module.exports = function(grunt) {
   'use strict';
 
   // load all grunt tasks
@@ -46,18 +46,18 @@ module.exports = function (grunt) {
         files: [{
           expand: true,
           cwd: '<%= config.app %>',
-          dest: '<%= config.dist %>/node-webkit.app/Contents/Resources/app.nw',
+          dest: '<%= config.dist %>/nwjs.app/Contents/Resources/app.nw',
           src: '**'
         }, {
           expand: true,
           cwd: '<%= config.resources %>/macFiles/',
-          dest: '<%= config.dist %>/node-webkit.app/Contents/',
+          dest: '<%= config.dist %>/nwjs.app/Contents/',
           filter: 'isFile',
           src: '*.plist'
         }, {
           expand: true,
           cwd: '<%= config.resources %>/macFiles/',
-          dest: '<%= config.dist %>/node-webkit.app/Contents/Resources/',
+          dest: '<%= config.dist %>/nwjs.app/Contents/Resources/',
           filter: 'isFile',
           src: '*.icns'
         }]
@@ -104,7 +104,7 @@ module.exports = function (grunt) {
     rename: {
       app: {
         files: [{
-          src: '<%= config.dist %>/node-webkit.app',
+          src: '<%= config.dist %>/nwjs.app',
           dest: '<%= config.dist %>/Quick Question.app'
         }]
       },
@@ -117,19 +117,19 @@ module.exports = function (grunt) {
     }
   });
 
-  grunt.registerTask('chmod', 'Add lost Permissions.', function () {
+  grunt.registerTask('chmod', 'Add lost Permissions.', function() {
     var fs = require('fs');
-    fs.chmodSync('dist/Quick Question.app/Contents/Frameworks/node-webkit Helper EH.app/Contents/MacOS/node-webkit Helper EH', '555');
-    fs.chmodSync('dist/Quick Question.app/Contents/Frameworks/node-webkit Helper NP.app/Contents/MacOS/node-webkit Helper NP', '555');
-    fs.chmodSync('dist/Quick Question.app/Contents/Frameworks/node-webkit Helper.app/Contents/MacOS/node-webkit Helper', '555');
-    fs.chmodSync('dist/Quick Question.app/Contents/MacOS/node-webkit', '555');
+    fs.chmodSync('dist/Quick Question.app/Contents/Frameworks/nwjs Helper EH.app/Contents/MacOS/nwjs Helper EH', '555');
+    fs.chmodSync('dist/Quick Question.app/Contents/Frameworks/nwjs Helper NP.app/Contents/MacOS/nwjs Helper NP', '555');
+    fs.chmodSync('dist/Quick Question.app/Contents/Frameworks/nwjs Helper.app/Contents/MacOS/nwjs Helper', '555');
+    fs.chmodSync('dist/Quick Question.app/Contents/MacOS/nwjs', '555');
   });
 
-  grunt.registerTask('createLinuxApp', 'Create linux distribution.', function () {
+  grunt.registerTask('createLinuxApp', 'Create linux distribution.', function() {
     var done = this.async();
     var childProcess = require('child_process');
     var exec = childProcess.exec;
-    exec('mkdir -p ./dist; cp resources/node-webkit/linux_ia64/icudtl.dat dist/ && cp resources/node-webkit/linux_ia64/nw.pak dist/ && cp resources/node-webkit/linux_ia64/nw dist/node-webkit && cp resources/linux/qq dist/qq && chmod a+x dist/qq', function (error, stdout, stderr) {
+    exec('mkdir -p ./dist; cp resources/node-webkit/linux_ia64/icudtl.dat dist/ && cp resources/node-webkit/linux_ia64/nw.pak dist/ && cp resources/node-webkit/linux_ia64/nw dist/node-webkit && cp resources/linux/qq dist/qq && chmod a+x dist/qq', function(error, stdout, stderr) {
       var result = true;
       if (stdout) {
         grunt.log.write(stdout);
@@ -145,11 +145,11 @@ module.exports = function (grunt) {
     });
   });
 
-  grunt.registerTask('createWindowsApp', 'Create windows distribution.', function () {
+  grunt.registerTask('createWindowsApp', 'Create windows distribution.', function() {
     var done = this.async();
     var childProcess = require('child_process');
     var exec = childProcess.exec;
-    exec('copy /b tmp\\nw.exe+tmp\\app.nw tmp\\QuickQuestion.exe && del tmp\\app.nw tmp\\nw.exe', function (error, stdout, stderr) {
+    exec('copy /b tmp\\nw.exe+tmp\\app.nw tmp\\QuickQuestion.exe && del tmp\\app.nw tmp\\nw.exe', function(error, stdout, stderr) {
       var result = true;
       if (stdout) {
         grunt.log.write(stdout);
@@ -165,7 +165,7 @@ module.exports = function (grunt) {
     });
   });
 
-  grunt.registerTask('setVersion', 'Set version to all needed files', function (version) {
+  grunt.registerTask('setVersion', 'Set version to all needed files', function(version) {
     var config = grunt.config.get(['config']);
     var appPath = config.app;
     var resourcesPath = config.resources;
@@ -222,10 +222,10 @@ module.exports = function (grunt) {
     'jshint'
   ]);
 
-  grunt.registerTask('dmg', 'Create dmg from previously created app folder in dist.', function () {
+  grunt.registerTask('dmg', 'Create dmg from previously created app folder in dist.', function() {
     var done = this.async();
     var createDmgCommand = 'resources/macFiles/package.sh';
-    require('child_process').exec(createDmgCommand, function (error, stdout, stderr) {
+    require('child_process').exec(createDmgCommand, function(error, stdout, stderr) {
       var result = true;
       if (stdout) {
         grunt.log.write(stdout);
@@ -241,12 +241,12 @@ module.exports = function (grunt) {
     });
   });
 
-  grunt.registerTask('deb', 'Create deb from previously created app folder in dist.', function () {
+  grunt.registerTask('deb', 'Create deb from previously created app folder in dist.', function() {
     var done = this.async();
     var appPath = config.app;
     var appPackageJSON = grunt.file.readJSON(appPath + '/package.json');
     var createDmgCommand = 'resources/linux/debPackage.sh ' + appPackageJSON.version;
-    require('child_process').exec(createDmgCommand, function (error, stdout, stderr) {
+    require('child_process').exec(createDmgCommand, function(error, stdout, stderr) {
       var result = true;
       if (stdout) {
         grunt.log.write(stdout);
@@ -262,12 +262,12 @@ module.exports = function (grunt) {
     });
   });
 
-  grunt.registerTask('rpm', 'Create rpm from previously created app folder in dist.', function () {
+  grunt.registerTask('rpm', 'Create rpm from previously created app folder in dist.', function() {
     var done = this.async();
     var appPath = config.app;
     var appPackageJSON = grunt.file.readJSON(appPath + '/package.json');
     var createDmgCommand = 'resources/linux/rpmPackage.sh ' + appPackageJSON.version;
-    require('child_process').exec(createDmgCommand, function (error, stdout, stderr) {
+    require('child_process').exec(createDmgCommand, function(error, stdout, stderr) {
       var result = true;
       if (stdout) {
         grunt.log.write(stdout);

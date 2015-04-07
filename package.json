@@ -1,6 +1,6 @@
 {
   "name": "QuickQuestion",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "author": "Dica-Developer",
   "description": "Collaboration tool for intranets without the need for a hard coded identity.",
   "keywords": [
@@ -9,13 +9,11 @@
     "P2P",
     "decentralized"
   ],
-  "repository": [
-    {
-      "type": "git",
-      "url": "https://github.com/Dica-Developer/quickQuestion",
-      "path": "/"
-    }
-  ],
+  "repository": [{
+    "type": "git",
+    "url": "https://github.com/Dica-Developer/quickQuestion",
+    "path": "/"
+  }],
   "bugs": {
     "url": "https://github.com/Dica-Developer/quickQuestion/issues"
   },
@@ -41,6 +39,6 @@
     "grunt-contrib-compress": "~0.5.2"
   },
   "engines": {
-    "node": ">=0.8.0"
+    "node": ">=0.12.0"
   }
 }
