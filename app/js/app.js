@@ -83,7 +83,6 @@ server.on('updateClients', function () {
   var i = 0;
   this.clients.sort(sortByHostName);
   for (i = 0; i < this.clients.length; i++) {
-    // TODO encode hostname and address
     content = content + '<li data-icon="check"><a href="#">' + encodeHtml(this.clients[i].nickname + ':' + this.clients[i].hostname + ' (' + this.clients[i].address + ')') + '</a></li>';
   }
   $('ul[name="collaboratorListView"]').each(function () {
