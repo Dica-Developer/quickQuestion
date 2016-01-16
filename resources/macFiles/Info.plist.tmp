@@ -25,15 +25,14 @@
 	<key>CFBundleVersion</key>
 	<string><%= version %></string>
 	<key>LSFileQuarantineEnabled</key>
-	<true/>
+	<false/>
 	<key>LSMinimumSystemVersion</key>
 	<string>10.6.0</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 	<key>NSSupportsAutomaticGraphicsSwitching</key>
 	<true/>
-	<key>SCMRevision</key>
-	<string>175484</string>
+	<key>CFBundleDocumentTypes</key>
 	<array>
 		<dict>
 			<key>CFBundleTypeIconFile</key>
