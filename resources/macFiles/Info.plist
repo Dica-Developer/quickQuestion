@@ -34,5 +34,61 @@
 	<true/>
 	<key>SCMRevision</key>
 	<string>175484</string>
+	<array>
+		<dict>
+			<key>CFBundleTypeIconFile</key>
+			<string>nw.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>nwjs App</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Owner</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>io.nwjs.nw.app</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>Folder</string>
+			<key>CFBundleTypeOSTypes</key>
+			<array>
+				<string>fold</string>
+			</array>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>None</string>
+		</dict>
+	</array>
+	<key>UTExportedTypeDeclarations</key>
+	<array>
+		<dict>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>com.pkware.zip-archive</string>
+			</array>
+			<key>UTTypeDescription</key>
+			<string>nwjs App</string>
+			<key>UTTypeIconFile</key>
+			<string>nw.icns</string>
+			<key>UTTypeIdentifier</key>
+			<string>io.nwjs.nw.app</string>
+			<key>UTTypeReferenceURL</key>
+      <string>https://github.com/rogerwang/node-webkit/wiki/How-to-package-and-distribute-your-apps</string>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>com.apple.ostype</key>
+				<string>nwjs</string>
+				<key>public.filename-extension</key>
+				<array>
+					<string>nw</string>
+				</array>
+				<key>public.mime-type</key>
+				<string>application/x-nwjs-app</string>
+			</dict>
+		</dict>
+  </array>
 </dict>
 </plist>
